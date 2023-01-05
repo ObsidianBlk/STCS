@@ -8,6 +8,34 @@
 
 config_version=5
 
+_global_script_classes=[{
+"base": "Resource",
+"class": &"ComponentDB",
+"language": &"GDScript",
+"path": "res://addons/ComponentCreator/resources/ComponentDB.gd"
+}, {
+"base": "RefCounted",
+"class": &"HexCell",
+"language": &"GDScript",
+"path": "res://scripts/hex/HexCell.gd"
+}, {
+"base": "Resource",
+"class": &"HexGrid",
+"language": &"GDScript",
+"path": "res://scripts/hex/HexGrid.gd"
+}, {
+"base": "Node2D",
+"class": &"HexGridView",
+"language": &"GDScript",
+"path": "res://scripts/hex/HexGridView.gd"
+}]
+_global_script_class_icons={
+"ComponentDB": "",
+"HexCell": "",
+"HexGrid": "",
+"HexGridView": ""
+}
+
 [application]
 
 config/name="STCS"

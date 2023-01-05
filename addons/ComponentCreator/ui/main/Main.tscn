@@ -1,0 +1,91 @@
+[gd_scene format=3 uid="uid://b6m373wmjted2"]
+
+[node name="Main" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Columns" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="DatabaseList" type="VBoxContainer" parent="Columns"]
+layout_mode = 2
+
+[node name="ctrls" type="HBoxContainer" parent="Columns/DatabaseList"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Columns/DatabaseList/ctrls"]
+layout_mode = 2
+text = "Databases: "
+
+[node name="Spacer" type="Control" parent="Columns/DatabaseList/ctrls"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AddBD" type="Button" parent="Columns/DatabaseList/ctrls"]
+layout_mode = 2
+text = "Add"
+
+[node name="RemDB" type="Button" parent="Columns/DatabaseList/ctrls"]
+layout_mode = 2
+text = "Rem"
+
+[node name="Databases" type="PanelContainer" parent="Columns/DatabaseList"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Scroll" type="ScrollContainer" parent="Columns/DatabaseList/Databases"]
+layout_mode = 2
+
+[node name="List" type="ItemList" parent="Columns/DatabaseList/Databases/Scroll"]
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="Columns"]
+layout_mode = 2
+
+[node name="ComponentList" type="VBoxContainer" parent="Columns"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+
+[node name="ctrls" type="HBoxContainer" parent="Columns/ComponentList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Columns/ComponentList/ctrls"]
+layout_mode = 2
+text = "Components:"
+
+[node name="Control" type="Control" parent="Columns/ComponentList/ctrls"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AddC" type="Button" parent="Columns/ComponentList/ctrls"]
+layout_mode = 2
+text = "Add"
+
+[node name="RemC" type="Button" parent="Columns/ComponentList/ctrls"]
+layout_mode = 2
+text = "Rem"
+
+[node name="Components" type="PanelContainer" parent="Columns/ComponentList"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Scroll" type="ScrollContainer" parent="Columns/ComponentList/Components"]
+layout_mode = 2
+
+[node name="List" type="ItemList" parent="Columns/ComponentList/Components/Scroll"]
+layout_mode = 2
+
+[node name="VSeparator2" type="VSeparator" parent="Columns"]
+layout_mode = 2
+
+[node name="ComponentDef" type="VBoxContainer" parent="Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
