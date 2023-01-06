@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://b6m373wmjted2"]
+[gd_scene load_steps=3 format=3 uid="uid://b6m373wmjted2"]
+
+[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/ComponentCreator/assets/icons/add.svg" id="1_7ni2a"]
+[ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/ComponentCreator/assets/icons/subtract.svg" id="2_rhceu"]
 
 [node name="Main" type="MarginContainer"]
 anchors_preset = 15
@@ -31,11 +34,11 @@ size_flags_horizontal = 3
 
 [node name="AddBD" type="Button" parent="Columns/DatabaseList/ctrls"]
 layout_mode = 2
-text = "Add"
+icon = ExtResource("1_7ni2a")
 
 [node name="RemDB" type="Button" parent="Columns/DatabaseList/ctrls"]
 layout_mode = 2
-text = "Rem"
+icon = ExtResource("2_rhceu")
 
 [node name="Databases" type="PanelContainer" parent="Columns/DatabaseList"]
 layout_mode = 2
@@ -67,11 +70,11 @@ size_flags_horizontal = 3
 
 [node name="AddC" type="Button" parent="Columns/ComponentList/ctrls"]
 layout_mode = 2
-text = "Add"
+icon = ExtResource("1_7ni2a")
 
 [node name="RemC" type="Button" parent="Columns/ComponentList/ctrls"]
 layout_mode = 2
-text = "Rem"
+icon = ExtResource("2_rhceu")
 
 [node name="Components" type="PanelContainer" parent="Columns/ComponentList"]
 layout_mode = 2

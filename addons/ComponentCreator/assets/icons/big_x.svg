@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 4.2333332 4.2333335"
+   version="1.1"
+   id="svg4102"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
+   sodipodi:docname="big_x.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview4104"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     inkscape:zoom="1"
+     inkscape:cx="-96.5"
+     inkscape:cy="29"
+     inkscape:window-width="1916"
+     inkscape:window-height="1033"
+     inkscape:window-x="0"
+     inkscape:window-y="18"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs4099" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect11173"
+       style="fill:#ffffff;stroke-width:1.00157;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
+       d="M 0.61523438,0.58789062 V 4.6308594 L 11.404297,15.248047 h 4.041015 V 11.207031 L 4.65625,0.58789062 Z"
+       transform="scale(0.26458333)"
+       sodipodi:nodetypes="ccccccc" />
+    <path
+       id="path11198"
+       style="fill:#ffffff;stroke-width:0.264999;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
+       d="M 3.0172123,0.15550162 H 4.0867484 V 1.2250377 L 3.4338361,1.8939991 2.3584837,0.81865073 Z"
+       sodipodi:nodetypes="cccccc" />
+    <path
+       id="path12905"
+       style="fill:#ffffff;stroke-width:0.264999;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
+       d="M 1.2363311,4.0390515 H 0.16679498 V 2.9695154 L 0.81970728,2.300554 1.8950597,3.3759024 Z"
+       sodipodi:nodetypes="cccccc" />
+  </g>
+</svg>
