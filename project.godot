@@ -42,3 +42,7 @@ config/name="STCS"
 run/main_scene="res://scenes/world/World.tscn"
 config/features=PackedStringArray("4.0", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+UUID="*res://addons/ComponentCreator/autos/UUID.gd"
