@@ -7,6 +7,8 @@ class_name ComponentDB
 # --------------------------------------------------------------------------------------------------
 const COMPONENT_STRUCTURE : Dictionary = {
 	&"name":{&"req":true, &"type":TYPE_STRING},
+	&"color_primary":{&"req":true, &"type":TYPE_COLOR},
+	&"color_secondary":{&"req":true, &"type":TYPE_COLOR},
 	&"sp":{&"req":true, &"type":TYPE_INT},
 	&"absorption":{&"req":true, &"type":TYPE_INT},
 	&"bleed":{&"req":true, &"type":TYPE_INT},
@@ -87,6 +89,25 @@ func _get_property_list() -> Array:
 
 
 # --------------------------------------------------------------------------------------------------
+# Private Methods
+# --------------------------------------------------------------------------------------------------
+func _VerifySeatStructure(data : Dictionary) -> Dictionary:
+	var seat : Dictionary = {}
+	for key in SEAT_STRUCTURE.keys():
+		if key in data:
+			var type : int = typeof(data[key])
+			if type != SEAT_STRUCTURE[key][&"type"]:
+				printerr("Seat definition property \"%s\" invalid type."%[key])
+				return {}
+			if type == TYPE_VECTOR2I and &"minmax" in SEAT_STRUCTURE[key]:
+				if SEAT_STRUCTURE[key][&"minmax"] == true and data[key].x > data[key].y:
+					printerr("Seat definition property \"%s\" range invalid."%[key])
+					return {}
+			seat[key] = data[key]
+	return seat
+
+
+# --------------------------------------------------------------------------------------------------
 # Public Methods
 # --------------------------------------------------------------------------------------------------
 func clear() -> void:
@@ -138,8 +159,23 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 							printerr("Component property \"%s\" range invalid."%[key])
 							return ERR_PARAMETER_RANGE_ERROR
 					cmp[key] = def[key]
+				TYPE_ARRAY:
+					if key == &"seats":
+						var seats : Array = []
+						for item in def[key]:
+							if typeof(item) != TYPE_DICTIONARY:
+								printerr("Component property \"%s\" contains invalid entry type."%[key])
+								return ERR_INVALID_DATA
+							var seat = _VerifySeatStructure(item)
+							if seat.empty():
+								# NOTE: Don't need to print anything as _VerifySeatsStructure should do that already.
+								return ERR_INVALID_DATA
+							seats.append(seat)
+						cmp[key] = seats
+					# TODO: Figure out how to handle tagging
+				TYPE_DICTIONARY:
+					pass
 				# TODO: Handle the SEAT and LAYOUT keys via TYPE_ARRAY and TYPE_DICTIONARY respectively.
-				# TODO: Figure out how to handle tagging
 		elif COMPONENT_STRUCTURE[key][&"req"] == true:
 			printerr("Component definition missing required property \"%s\"."%[key])
 			return ERR_DOES_NOT_EXIST
