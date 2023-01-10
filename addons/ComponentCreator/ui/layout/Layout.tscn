@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://wokmi1a21u2w"]
+
+[ext_resource type="Script" path="res://addons/ComponentCreator/controls/ComponentLayout.gd" id="1_jp8vu"]
+
+[node name="Layout" type="PanelContainer"]
+
+[node name="MC" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(150, 100)
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="ComponentLayout" type="Control" parent="MC"]
+layout_mode = 2
+script = ExtResource("1_jp8vu")
