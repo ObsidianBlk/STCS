@@ -3,9 +3,10 @@
 [ext_resource type="Script" path="res://addons/ComponentCreator/controls/ComponentLayout.gd" id="1_jp8vu"]
 
 [node name="Layout" type="PanelContainer"]
+metadata/_edit_vertical_guides_ = []
 
 [node name="MC" type="MarginContainer" parent="."]
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(255, 256)
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
@@ -13,5 +14,9 @@ theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
 [node name="ComponentLayout" type="Control" parent="MC"]
+custom_minimum_size = Vector2(5.19615, 5)
 layout_mode = 2
 script = ExtResource("1_jp8vu")
+selected_bits = 64
+disabled = false
+custom_colors/normal = Color(1, 0.572549, 0.509804, 1)

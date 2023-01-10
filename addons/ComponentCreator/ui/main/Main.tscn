@@ -16,234 +16,355 @@ theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
 [node name="Columns" type="HBoxContainer" parent="."]
-layout_mode = 2
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 1144.0
+offset_bottom = 640.0
 
 [node name="DatabaseList" type="VBoxContainer" parent="Columns"]
-layout_mode = 2
+offset_right = 256.0
+offset_bottom = 632.0
 
 [node name="ctrls" type="HBoxContainer" parent="Columns/DatabaseList"]
 custom_minimum_size = Vector2(256, 0)
-layout_mode = 2
+offset_right = 256.0
+offset_bottom = 26.0
 
 [node name="Label" type="Label" parent="Columns/DatabaseList/ctrls"]
-layout_mode = 2
+offset_right = 90.0
+offset_bottom = 26.0
 text = "Databases: "
 
 [node name="Spacer" type="Control" parent="Columns/DatabaseList/ctrls"]
-layout_mode = 2
+layout_mode = 3
+anchors_preset = 0
+offset_left = 94.0
+offset_right = 200.0
+offset_bottom = 26.0
 size_flags_horizontal = 3
 
 [node name="AddBD" type="Button" parent="Columns/DatabaseList/ctrls"]
-layout_mode = 2
+offset_left = 204.0
+offset_right = 228.0
+offset_bottom = 26.0
 icon = ExtResource("1_7ni2a")
 
 [node name="RemDB" type="Button" parent="Columns/DatabaseList/ctrls"]
-layout_mode = 2
+offset_left = 232.0
+offset_right = 256.0
+offset_bottom = 26.0
 icon = ExtResource("2_rhceu")
 
 [node name="Databases" type="PanelContainer" parent="Columns/DatabaseList"]
-layout_mode = 2
+offset_top = 30.0
+offset_right = 256.0
+offset_bottom = 632.0
 size_flags_vertical = 3
 
 [node name="Scroll" type="ScrollContainer" parent="Columns/DatabaseList/Databases"]
-layout_mode = 2
+offset_right = 256.0
+offset_bottom = 602.0
 
 [node name="List" type="ItemList" parent="Columns/DatabaseList/Databases/Scroll"]
-layout_mode = 2
 
 [node name="VSeparator" type="VSeparator" parent="Columns"]
-layout_mode = 2
+offset_left = 260.0
+offset_right = 264.0
+offset_bottom = 632.0
 
 [node name="ComponentList" type="VBoxContainer" parent="Columns"]
 custom_minimum_size = Vector2(256, 0)
-layout_mode = 2
+offset_left = 268.0
+offset_right = 524.0
+offset_bottom = 632.0
 
 [node name="ctrls" type="HBoxContainer" parent="Columns/ComponentList"]
-layout_mode = 2
+offset_right = 256.0
+offset_bottom = 26.0
 
 [node name="Label" type="Label" parent="Columns/ComponentList/ctrls"]
-layout_mode = 2
+offset_right = 103.0
+offset_bottom = 26.0
 text = "Components:"
 
 [node name="Control" type="Control" parent="Columns/ComponentList/ctrls"]
-layout_mode = 2
+layout_mode = 3
+anchors_preset = 0
+offset_left = 107.0
+offset_right = 200.0
+offset_bottom = 26.0
 size_flags_horizontal = 3
 
 [node name="AddC" type="Button" parent="Columns/ComponentList/ctrls"]
-layout_mode = 2
+offset_left = 204.0
+offset_right = 228.0
+offset_bottom = 26.0
 icon = ExtResource("1_7ni2a")
 
 [node name="RemC" type="Button" parent="Columns/ComponentList/ctrls"]
-layout_mode = 2
+offset_left = 232.0
+offset_right = 256.0
+offset_bottom = 26.0
 icon = ExtResource("2_rhceu")
 
 [node name="Components" type="PanelContainer" parent="Columns/ComponentList"]
-layout_mode = 2
+offset_top = 30.0
+offset_right = 256.0
+offset_bottom = 632.0
 size_flags_vertical = 3
 
 [node name="Scroll" type="ScrollContainer" parent="Columns/ComponentList/Components"]
-layout_mode = 2
+offset_right = 256.0
+offset_bottom = 602.0
 
 [node name="List" type="ItemList" parent="Columns/ComponentList/Components/Scroll"]
-layout_mode = 2
 
 [node name="VSeparator2" type="VSeparator" parent="Columns"]
-layout_mode = 2
+offset_left = 528.0
+offset_right = 532.0
+offset_bottom = 632.0
 
 [node name="ComponentDef" type="VBoxContainer" parent="Columns"]
-layout_mode = 2
+offset_left = 536.0
+offset_right = 1136.0
+offset_bottom = 632.0
 size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
 [node name="Row1" type="HBoxContainer" parent="Columns/ComponentDef"]
-layout_mode = 2
+offset_right = 600.0
+offset_bottom = 31.0
 
 [node name="Name" type="HBoxContainer" parent="Columns/ComponentDef/Row1"]
-layout_mode = 2
+offset_right = 311.0
+offset_bottom = 31.0
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row1/Name"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 51.0
+offset_bottom = 28.0
 text = "Name:"
 
 [node name="TextEdit" type="LineEdit" parent="Columns/ComponentDef/Row1/Name"]
 custom_minimum_size = Vector2(256, 0)
-layout_mode = 2
+offset_left = 55.0
+offset_right = 311.0
+offset_bottom = 31.0
 
 [node name="Spacer" type="Control" parent="Columns/ComponentDef/Row1"]
-layout_mode = 2
+layout_mode = 3
+anchors_preset = 0
+offset_left = 315.0
+offset_right = 360.0
+offset_bottom = 31.0
 size_flags_horizontal = 3
 
 [node name="Colors" type="HBoxContainer" parent="Columns/ComponentDef/Row1"]
-layout_mode = 2
+offset_left = 364.0
+offset_right = 600.0
+offset_bottom = 31.0
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row1/Colors"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 70.0
+offset_bottom = 28.0
 text = "Primary: "
 
 [node name="Primary" type="ColorPickerButton" parent="Columns/ComponentDef/Row1/Colors"]
 custom_minimum_size = Vector2(32, 0)
-layout_mode = 2
+offset_left = 74.0
+offset_right = 106.0
+offset_bottom = 31.0
 
 [node name="Label2" type="Label" parent="Columns/ComponentDef/Row1/Colors"]
-layout_mode = 2
+offset_left = 110.0
+offset_top = 2.0
+offset_right = 200.0
+offset_bottom = 28.0
 text = "Secondary: "
 
 [node name="Secondary" type="ColorPickerButton" parent="Columns/ComponentDef/Row1/Colors"]
 custom_minimum_size = Vector2(32, 0)
-layout_mode = 2
+offset_left = 204.0
+offset_right = 236.0
+offset_bottom = 31.0
 
 [node name="Row2" type="HBoxContainer" parent="Columns/ComponentDef"]
-layout_mode = 2
+offset_top = 43.0
+offset_right = 600.0
+offset_bottom = 74.0
 
 [node name="Type" type="HBoxContainer" parent="Columns/ComponentDef/Row2"]
-layout_mode = 2
+offset_right = 306.0
+offset_bottom = 31.0
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row2/Type"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 46.0
+offset_bottom = 28.0
 text = "Type: "
 
 [node name="LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row2/Type"]
 custom_minimum_size = Vector2(256, 0)
-layout_mode = 2
+offset_left = 50.0
+offset_right = 306.0
+offset_bottom = 31.0
 
 [node name="Spacer" type="Control" parent="Columns/ComponentDef/Row2"]
-layout_mode = 2
+layout_mode = 3
+anchors_preset = 0
+offset_left = 310.0
+offset_right = 334.0
+offset_bottom = 31.0
 size_flags_horizontal = 3
 
 [node name="SizeRange" type="HBoxContainer" parent="Columns/ComponentDef/Row2"]
-layout_mode = 2
+offset_left = 338.0
+offset_right = 600.0
+offset_bottom = 31.0
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row2/SizeRange"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 78.0
+offset_bottom = 28.0
 text = "Size - Min:"
 
 [node name="Min_LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row2/SizeRange"]
-layout_mode = 2
+offset_left = 82.0
+offset_right = 149.0
+offset_bottom = 31.0
 
 [node name="Label2" type="Label" parent="Columns/ComponentDef/Row2/SizeRange"]
-layout_mode = 2
+offset_left = 153.0
+offset_top = 2.0
+offset_right = 191.0
+offset_bottom = 28.0
 text = "Max:"
 
 [node name="Max_LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row2/SizeRange"]
-layout_mode = 2
+offset_left = 195.0
+offset_right = 262.0
+offset_bottom = 31.0
 
 [node name="Row3" type="HBoxContainer" parent="Columns/ComponentDef"]
-layout_mode = 2
+offset_top = 86.0
+offset_right = 600.0
+offset_bottom = 117.0
 
 [node name="SP" type="HBoxContainer" parent="Columns/ComponentDef/Row3"]
-layout_mode = 2
+offset_right = 99.0
+offset_bottom = 31.0
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row3/SP"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 28.0
+offset_bottom = 28.0
 text = "SP: "
 
 [node name="LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row3/SP"]
-layout_mode = 2
+offset_left = 32.0
+offset_right = 99.0
+offset_bottom = 31.0
 
 [node name="Absorp" type="HBoxContainer" parent="Columns/ComponentDef/Row3"]
-layout_mode = 2
+offset_left = 103.0
+offset_right = 269.0
+offset_bottom = 31.0
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row3/Absorp"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 95.0
+offset_bottom = 28.0
 text = "Absorption: "
 
 [node name="LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row3/Absorp"]
-layout_mode = 2
+offset_left = 99.0
+offset_right = 166.0
+offset_bottom = 31.0
 
 [node name="Bleed" type="HBoxContainer" parent="Columns/ComponentDef/Row3"]
-layout_mode = 2
+offset_left = 273.0
+offset_right = 396.0
+offset_bottom = 31.0
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row3/Bleed"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 52.0
+offset_bottom = 28.0
 text = "Bleed: "
 
 [node name="LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row3/Bleed"]
-layout_mode = 2
+offset_left = 56.0
+offset_right = 123.0
+offset_bottom = 31.0
 
 [node name="Stress" type="HBoxContainer" parent="Columns/ComponentDef/Row3"]
-layout_mode = 2
+offset_left = 400.0
+offset_right = 527.0
+offset_bottom = 31.0
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row3/Stress"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 56.0
+offset_bottom = 28.0
 text = "Stress: "
 
 [node name="LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row3/Stress"]
-layout_mode = 2
+offset_left = 60.0
+offset_right = 127.0
+offset_bottom = 31.0
 
 [node name="Row4" type="HBoxContainer" parent="Columns/ComponentDef"]
-layout_mode = 2
+offset_top = 129.0
+offset_right = 600.0
+offset_bottom = 160.0
 theme_override_constants/separation = 12
 
 [node name="Power" type="HBoxContainer" parent="Columns/ComponentDef/Row4"]
-layout_mode = 2
+offset_right = 152.0
+offset_bottom = 31.0
 
 [node name="CheckBox" type="CheckBox" parent="Columns/ComponentDef/Row4/Power"]
-layout_mode = 2
+offset_right = 81.0
+offset_bottom = 31.0
 text = "Power "
 
 [node name="LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row4/Power"]
-layout_mode = 2
+offset_left = 85.0
+offset_right = 152.0
+offset_bottom = 31.0
 
 [node name="Crew" type="HBoxContainer" parent="Columns/ComponentDef/Row4"]
-layout_mode = 2
+offset_left = 164.0
+offset_right = 307.0
+offset_bottom = 31.0
 
 [node name="CheckBox" type="CheckBox" parent="Columns/ComponentDef/Row4/Crew"]
-layout_mode = 2
+offset_right = 72.0
+offset_bottom = 31.0
 text = "Crew "
 
 [node name="LineEdit" type="LineEdit" parent="Columns/ComponentDef/Row4/Crew"]
-layout_mode = 2
+offset_left = 76.0
+offset_right = 143.0
+offset_bottom = 31.0
 
 [node name="LayoutType" type="HBoxContainer" parent="Columns/ComponentDef/Row4"]
-layout_mode = 2
+offset_left = 319.0
+offset_right = 600.0
+offset_bottom = 31.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="Columns/ComponentDef/Row4/LayoutType"]
-layout_mode = 2
+offset_top = 2.0
+offset_right = 99.0
+offset_bottom = 28.0
 text = "Layout Type:"
 
 [node name="MenuButton" type="MenuButton" parent="Columns/ComponentDef/Row4/LayoutType"]
-layout_mode = 2
+offset_left = 103.0
+offset_right = 281.0
+offset_bottom = 31.0
 size_flags_horizontal = 3
 flat = false
 alignment = 0
@@ -256,4 +377,6 @@ popup/item_2/text = "Growable"
 popup/item_2/id = 2
 
 [node name="Layout" parent="Columns/ComponentDef" instance=ExtResource("3_shtxf")]
-layout_mode = 2
+offset_top = 172.0
+offset_right = 600.0
+offset_bottom = 272.0
