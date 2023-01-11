@@ -3,12 +3,27 @@ extends Control
 class_name ComponentLayout
 
 # -------------------------------------------------------------------------
+# Signals
+# -------------------------------------------------------------------------
+signal selected_bits_changed(bits_selected)
+
+# -------------------------------------------------------------------------
 # Constants
 # -------------------------------------------------------------------------
 const THEME_CLASS_NAME : StringName = &"ComponentLayout"
 const SQRT3 : float = sqrt(3)
 const ORIENTATION_POINTY : int = 0
 const ORIENTATION_FLAT : int = 1
+
+const HEXCOORDS : Array = [
+	Vector3i.ZERO,
+	Vector3i(0, -1, 1),
+	Vector3i(-1, 0, 1),
+	Vector3i(-1, 1, 0),
+	Vector3i(0, 1, -1),
+	Vector3i(1, 0, -1),
+	Vector3i(1, -1, 0),
+]
 
 const THEME_DEF : Dictionary = {
 	&"constants":{
@@ -17,7 +32,7 @@ const THEME_DEF : Dictionary = {
 	&"colors":{
 		&"normal": Color.SLATE_BLUE,
 		&"hover": Color.ROYAL_BLUE,
-		&"focus": Color.ROYAL_BLUE,
+		&"focus": Color.TURQUOISE,
 		&"disabled": Color.WEB_GRAY,
 		&"selected": Color.MEDIUM_TURQUOISE
 	}
@@ -34,6 +49,10 @@ var _disabled : bool = false :		set = set_disabled
 # ------------------------------------------------------------------------------
 var _hexes : Array = []
 var _hex_size : Vector2 = Vector2.ZERO
+var _selected_idx : int = -1
+
+var _mouse_active : bool = false
+var _focus_active : bool = false
 
 # ------------------------------------------------------------------------------
 # Setters
@@ -43,6 +62,7 @@ func set_selected_bits(b : int) -> void:
 	if b != _selected_bits:
 		_selected_bits = b
 		queue_redraw()
+		selected_bits_changed.emit(_selected_bits)
 
 func set_disabled(d : bool) -> void:
 	if d != _disabled:
@@ -53,6 +73,7 @@ func set_disabled(d : bool) -> void:
 # Override Methods
 # ------------------------------------------------------------------------------
 func _ready() -> void:
+	self.focus_mode = Control.FOCUS_ALL
 	_CalculateHexes()
 	set_custom_minimum_size(_hex_size)
 
@@ -63,30 +84,87 @@ func _draw() -> void:
 	if target_size.x <= 0.0 or target_size.y <= 0.0:
 		return
 	
-	var color = _GetColor(&"normal") if not _disabled else _GetColor(&"disabled")
+	var color : Color = _GetColor(&"normal")
+	if _disabled:
+		color = _GetColor(&"disabled")
+	elif _focus_active:
+		color = _GetColor(&"focus")
 	var hex_scale : Transform2D = Transform2D(0.0, target_size/_hex_size, 0.0, Vector2.ZERO)
 	var hex_position : Transform2D = Transform2D(0.0, -(target_size * 0.5))
 	
 	for idx in range(_hexes.size()):
-		if _selected_bits & (1 << idx) > 0:
+		if not _disabled and _selected_idx != idx:
+			if _selected_bits & (1 << idx) > 0:
+				var sel_colors : PackedColorArray = PackedColorArray([color,color,color,color,color,color,color])
+				draw_polygon(_hexes[idx] * hex_scale * hex_position, sel_colors)
+			else:
+				draw_polyline(_hexes[idx] * hex_scale * hex_position, color, 1.0, true)
+	
+	if not _disabled and _selected_idx >= 0:
+		color = _GetColor(&"hover")
+		if _selected_bits & (1 << _selected_idx) > 0:
 			var sel_colors : PackedColorArray = PackedColorArray([color,color,color,color,color,color,color])
-			draw_polygon(_hexes[idx] * hex_scale * hex_position, sel_colors)
+			draw_polygon(_hexes[_selected_idx] * hex_scale * hex_position, sel_colors)
 		else:
-			draw_polyline(_hexes[idx] * hex_scale * hex_position, color, 1.0, true)
+			draw_polyline(_hexes[_selected_idx] * hex_scale * hex_position, color, 1.0, true)
 
 func _gui_input(event : InputEvent) -> void:
-	pass
+	if _mouse_active and event is InputEventMouse:
+		if event is InputEventMouseMotion:
+			_selected_idx = _MouseToHex()
+			accept_event()
+			queue_redraw()
+		elif event is InputEventMouseButton and _selected_idx >= 0:
+			if event.is_pressed() and not event.is_echo():
+				if _selected_bits & (1 << _selected_idx) > 0:
+					set_selected_bits(_selected_bits & ((~(1 << _selected_idx)) & 0x7F))
+				else:
+					set_selected_bits(_selected_bits | (1 << _selected_idx))
+				accept_event()
+				queue_redraw()
+	elif _focus_active:
+		if not event.is_echo():
+			var proc : bool = false
+			if event.is_action_pressed("ui_up"):
+				_selected_idx = max(0, min(6, (_selected_idx + 1) % 7))
+				proc = true
+			if event.is_action_pressed("ui_down"):
+				_selected_idx = 6 if _selected_idx - 1 < 0 else _selected_idx - 1
+				proc = true
+			if event.is_action_pressed("ui_left"):
+				_selected_idx = max(0, min(6, (_selected_idx + 1) % 7))
+				proc = true
+			if event.is_action_pressed("ui_right"):
+				_selected_idx = 6 if _selected_idx - 1 < 0 else _selected_idx - 1
+				proc = true
+			if _selected_idx >= 0:
+				if event.is_action_pressed("ui_accept") or event.is_action_pressed("ui_select"):
+					if _selected_bits & (1 << _selected_idx) > 0:
+						set_selected_bits(_selected_bits & ((~(1 << _selected_idx)) & 0x7F))
+					else:
+						set_selected_bits(_selected_bits | (1 << _selected_idx))
+					proc = true
+				if event.is_action_pressed("ui_cancel"):
+					set_selected_bits(_selected_bits & ((~(1 << _selected_idx)) & 0x7F))
+					proc = true
+			
+			if proc:
+				accept_event()
+				queue_redraw()
+
 
 func _notification(what : int) -> void:
 	match what:
 		NOTIFICATION_MOUSE_ENTER:
-			pass # Mouse entered the area of this control.
+			_mouse_active = true
 		NOTIFICATION_MOUSE_EXIT:
-			pass # Mouse exited the area of this control.
+			_mouse_active = false
 		NOTIFICATION_FOCUS_ENTER:
-			pass # Control gained focus.
+			_focus_active = true
+			queue_redraw()
 		NOTIFICATION_FOCUS_EXIT:
-			pass # Control lost focus.
+			_focus_active = false
+			queue_redraw()
 		NOTIFICATION_THEME_CHANGED:
 			queue_redraw()
 		NOTIFICATION_VISIBILITY_CHANGED:
@@ -235,6 +313,48 @@ func _HexToPoint(hex : Vector3i) -> Vector2:
 				y = 1.5 * hex.z
 	return Vector2(x,y)
 
+func _RoundHex(v : Vector3) -> Vector3i:
+	var _q : float = round(v.x)
+	var _r : float = round(v.z)
+	var _s : float = round(v.y)
+	
+	var dq : float = abs(v.x - _q)
+	var dr : float = abs(v.z - _r)
+	var ds : float = abs(v.y - _s)
+	
+	if dq > dr and dq > ds:
+		_q = -_r -_s
+	elif dr > ds:
+		_r = -_q -_s
+	else:
+		_s = -_q -_r
+	
+	return Vector3i(int(_q), int(_s), int(_r))
+
+func _PointToHex(point : Vector2) -> Vector3i:
+	var fq : float = 0.0
+	var fr : float = 0.0
+	var orientation : int = _GetOrientation()
+	match orientation:
+		ORIENTATION_POINTY:
+			fq = ((SQRT3/3.0) * point.x) - ((1.0/3.0) * point.y)
+			fr = (2.0/3.0) * point.y
+		ORIENTATION_FLAT:
+			fq = (2.0/3.0) * point.x
+			fr = ((-1.0/3.0) * point.x) + ((SQRT3/3.0) * point.y)
+	var fs : float = -fq -fr
+	return _RoundHex(Vector3(fq, fs, fr))
+
+func _MouseToHex() -> int:
+	var target_size : Vector2 = get_size()
+	if target_size.x > 0.0 and target_size.y > 0.0 and _hex_size.x > 0.0 and _hex_size.y > 0.0:
+		var mouse_pos : Vector2 = get_local_mouse_position()
+		mouse_pos -= target_size * 0.5
+		mouse_pos *= _hex_size / target_size
+		var coord : Vector3i = _PointToHex(mouse_pos)
+		return HEXCOORDS.find(coord)
+	return -1
+
 func _GetHexPoints(coord : Vector3i) -> PackedVector2Array:
 	var points : Array = []
 	var origin : Vector2 = _HexToPoint(coord)
@@ -249,13 +369,14 @@ func _CalculateHexes() -> void:
 	_hexes.clear()
 	var pos_min : Vector2 = Vector2.ZERO
 	var pos_max : Vector2 = Vector2.ZERO
-	_hexes.append(_GetHexPoints(Vector3i.ZERO))
-	_hexes.append(_GetHexPoints(Vector3i(0, -1, 1)))
-	_hexes.append(_GetHexPoints(Vector3i(-1, 0, 1)))
-	_hexes.append(_GetHexPoints(Vector3i(-1, 1, 0)))
-	_hexes.append(_GetHexPoints(Vector3i(0, 1, -1)))
-	_hexes.append(_GetHexPoints(Vector3i(1, 0, -1)))
-	_hexes.append(_GetHexPoints(Vector3i(1, -1, 0)))
+	for coord in HEXCOORDS:
+		_hexes.append(_GetHexPoints(coord))
+#	_hexes.append(_GetHexPoints(Vector3i(0, -1, 1)))
+#	_hexes.append(_GetHexPoints(Vector3i(-1, 0, 1)))
+#	_hexes.append(_GetHexPoints(Vector3i(-1, 1, 0)))
+#	_hexes.append(_GetHexPoints(Vector3i(0, 1, -1)))
+#	_hexes.append(_GetHexPoints(Vector3i(1, 0, -1)))
+#	_hexes.append(_GetHexPoints(Vector3i(1, -1, 0)))
 	
 	for hex in _hexes:
 		for point in hex:
