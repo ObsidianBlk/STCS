@@ -8,6 +8,7 @@ extends Control
 @export var max_value : int = 0 :						set = set_max_value
 @export var min_value : int = 0 :						set = set_min_value
 @export_range(1, 0x7F) var default_entry : int = 1 :	set = set_default_entry
+@export var editable : bool = true
 
 
 # ------------------------------------------------------------------------------
@@ -63,6 +64,14 @@ func set_default_entry(d : int) -> void:
 	if d > 0 and d <= 0x7F:
 		default_entry = d
 
+func set_editable(e : bool) -> void:
+	if e != editable:
+		editable = e
+		if _size_slider != null:
+			_size_slider.editable = editable
+		if _component_layout != null:
+			_component_layout.disabled = not editable
+
 # ------------------------------------------------------------------------------
 # Override Methods
 # ------------------------------------------------------------------------------
@@ -70,6 +79,8 @@ func _ready() -> void:
 	_component_layout.selected_bits_changed.connect(_on_selected_bits_changed)
 	_size_slider.value_changed.connect(_on_size_value_changed)
 	set_range(min_value, max_value)
+	_size_slider.editable = editable
+	_component_layout.disabled = not editable
 
 
 # ------------------------------------------------------------------------------
@@ -93,7 +104,7 @@ func clear() -> void:
 func get_entries() -> Array[int]:
 	return _entries.duplicate()
 
-func set_range(min_v : int, max_v : int) -> void:
+func set_range(min_v : int, max_v : int, reset_index : bool = false) -> void:
 	print("Setting Range: ", min_v, " -> ", max_v)
 	if min_v <= max_v:
 		if min_v > max_value:
@@ -102,6 +113,8 @@ func set_range(min_v : int, max_v : int) -> void:
 		else:
 			min_value = min_v
 			max_value = max_v
+		if reset_index:
+			_idx = 0
 		_UpdateSizeSlider()
 
 # ------------------------------------------------------------------------------

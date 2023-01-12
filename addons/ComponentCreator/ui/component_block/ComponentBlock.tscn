@@ -1,0 +1,168 @@
+[gd_scene load_steps=2 format=3 uid="uid://cp6oa0xn52jca"]
+
+[ext_resource type="PackedScene" uid="uid://wokmi1a21u2w" path="res://addons/ComponentCreator/ui/layout/Layout.tscn" id="1_8lcqn"]
+
+[node name="ComponentBlock" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Row1" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Name" type="HBoxContainer" parent="Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Row1/Name"]
+layout_mode = 2
+text = "Name:"
+
+[node name="TextEdit" type="LineEdit" parent="Row1/Name"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Type" type="HBoxContainer" parent="Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Row1/Type"]
+layout_mode = 2
+text = "Type: "
+
+[node name="LineEdit" type="LineEdit" parent="Row1/Type"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Row2" type="GridContainer" parent="."]
+layout_mode = 2
+theme_override_constants/h_separation = 24
+columns = 2
+
+[node name="BasicStats" type="VBoxContainer" parent="Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Row2/BasicStats"]
+layout_mode = 2
+text = "Basic Stats:"
+
+[node name="Data" type="GridContainer" parent="Row2/BasicStats"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="SP_Label" type="Label" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+text = "Struct. Pts.:"
+
+[node name="SP_LineEdit" type="LineEdit" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+
+[node name="Absorp_Label" type="Label" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+text = "Absorption: "
+
+[node name="Absorp_LineEdit" type="LineEdit" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+
+[node name="Bleed_Label" type="Label" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+text = "Bleed: "
+
+[node name="Bleed_LineEdit" type="LineEdit" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+
+[node name="Stress_Label" type="Label" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+text = "Stress: "
+
+[node name="Stress_LineEdit" type="LineEdit" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+
+[node name="Power_CheckBox" type="CheckBox" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+text = "Power:"
+
+[node name="Power_LineEdit" type="LineEdit" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+
+[node name="Crew_CheckBox" type="CheckBox" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+text = "Crew:"
+
+[node name="Crew_LineEdit" type="LineEdit" parent="Row2/BasicStats/Data"]
+layout_mode = 2
+
+[node name="LimitsLayouts" type="VBoxContainer" parent="Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Row2/LimitsLayouts"]
+layout_mode = 2
+text = "Structure Limits / Layout:"
+
+[node name="SizeRange" type="GridContainer" parent="Row2/LimitsLayouts"]
+layout_mode = 2
+theme_override_constants/h_separation = 24
+columns = 2
+
+[node name="MinValue" type="HBoxContainer" parent="Row2/LimitsLayouts/SizeRange"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Row2/LimitsLayouts/SizeRange/MinValue"]
+layout_mode = 2
+text = "Min:"
+
+[node name="Min_LineEdit" type="LineEdit" parent="Row2/LimitsLayouts/SizeRange/MinValue"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MaxValue" type="HBoxContainer" parent="Row2/LimitsLayouts/SizeRange"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="Row2/LimitsLayouts/SizeRange/MaxValue"]
+layout_mode = 2
+text = "Max:"
+
+[node name="Max_LineEdit" type="LineEdit" parent="Row2/LimitsLayouts/SizeRange/MaxValue"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LayoutType" type="HBoxContainer" parent="Row2/LimitsLayouts"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="Label" type="Label" parent="Row2/LimitsLayouts/LayoutType"]
+layout_mode = 2
+text = "Layout: "
+
+[node name="MenuButton" type="MenuButton" parent="Row2/LimitsLayouts/LayoutType"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = false
+alignment = 0
+item_count = 3
+popup/item_0/text = "Static"
+popup/item_0/id = 0
+popup/item_1/text = "Cluster"
+popup/item_1/id = 1
+popup/item_2/text = "Growable"
+popup/item_2/id = 2
+
+[node name="LayoutConfig" parent="Row2/LimitsLayouts" instance=ExtResource("1_8lcqn")]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_vertical = 0
+max_value = 10
+min_value = 5
+editable = true

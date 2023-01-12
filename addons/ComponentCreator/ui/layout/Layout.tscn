@@ -18,6 +18,7 @@ border_blend = true
 
 [node name="Layout" type="MarginContainer"]
 script = ExtResource("1_jnl3q")
+editable = null
 metadata/_edit_vertical_guides_ = []
 
 [node name="VBC" type="VBoxContainer" parent="."]
@@ -29,12 +30,11 @@ layout_mode = 2
 [node name="HSlider" type="HSlider" parent="VBC/Size"]
 layout_mode = 2
 size_flags_vertical = 4
-max_value = 1.0
+max_value = 0.0
 
 [node name="Label" type="Label" parent="VBC/Size"]
 layout_mode = 2
-text = "0
-"
+text = "-1"
 horizontal_alignment = 1
 
 [node name="CmpLayout" type="AspectRatioContainer" parent="VBC"]
@@ -46,7 +46,7 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ai0ul")
 
 [node name="ComponentLayout" type="Control" parent="VBC/CmpLayout/PC"]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(5.19615, 5)
 layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 2
