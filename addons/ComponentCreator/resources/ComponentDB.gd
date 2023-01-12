@@ -21,18 +21,13 @@ const COMPONENT_STRUCTURE : Dictionary = {
 	&"size_range":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true},
 	&"seats":{&"req":false, &"type":TYPE_ARRAY, &"sub_type":TYPE_DICTIONARY},
 	&"layout_type":{&"req":true, &"type":TYPE_INT},
-	&"layout":{&"req":false, &"type":TYPE_DICTIONARY},
+	&"layout_list":{&"req":false, &"type":TYPE_ARRAY},
 	&"attributes":{&"req":false, &"type":TYPE_DICTIONARY}
 }
 
 const SEAT_STRUCTURE : Dictionary = {
 	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
 	&"rank":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true}
-}
-
-const LAYOUT_STRUCTURE : Dictionary = {
-	&"target":{&"req":true, &"type":TYPE_INT},
-	&"list":{&"req":true, &"type":TYPE_ARRAY, &"sub_type":TYPE_INT}
 }
 
 
@@ -114,29 +109,29 @@ func _VerifySeatStructure(data : Dictionary) -> Dictionary:
 			seat[key] = data[key]
 	return seat
 
-func _VerifyLayoutStructure(data : Dictionary) -> Dictionary:
-	var layout : Dictionary = {}
-	for key in LAYOUT_STRUCTURE.keys():
-		if not typeof(key) == TYPE_STRING_NAME:
-			printerr("Seat definition property key type invalid.")
-			return {}
-		
-		if key in data:
-			if typeof(data[key]) != LAYOUT_STRUCTURE[key][&"type"]:
-				printerr("Layout definition property \"%s\" invalid type."%[key])
-				return {}
-			if key == &"list":
-				var list : Array = []
-				for item in data[key]:
-					if item >= 0 and item < 6:
-						list.append(item)
-					else:
-						printerr("Layout definition property \"%s\" item value out of range."%[key])
-						return {}
-				layout[key] = list
-			else:
-				layout[key] = data[key]
-	return layout
+#func _VerifyLayoutStructure(data : Dictionary) -> Dictionary:
+#	var layout : Dictionary = {}
+#	for key in LAYOUT_STRUCTURE.keys():
+#		if not typeof(key) == TYPE_STRING_NAME:
+#			printerr("Seat definition property key type invalid.")
+#			return {}
+#
+#		if key in data:
+#			if typeof(data[key]) != LAYOUT_STRUCTURE[key][&"type"]:
+#				printerr("Layout definition property \"%s\" invalid type."%[key])
+#				return {}
+#			if key == &"list":
+#				var list : Array = []
+#				for item in data[key]:
+#					if item >= 0 and item < 6:
+#						list.append(item)
+#					else:
+#						printerr("Layout definition property \"%s\" item value out of range."%[key])
+#						return {}
+#				layout[key] = list
+#			else:
+#				layout[key] = data[key]
+#	return layout
 
 func _VerifyAttributes(data : Dictionary) -> Dictionary:
 	var attrib : Dictionary = {}
@@ -180,7 +175,7 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 	else:
 		cmp[&"uuid"] = UUID.v4()
 	
-	var layout_def_req : bool = false
+	var layout_list_req : bool = false
 	for key in COMPONENT_STRUCTURE.keys():
 		if key in def:
 			if typeof(def[key]) != COMPONENT_STRUCTURE[key][&"type"]:
@@ -195,7 +190,7 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 						if not COMPONENT_LAYOUT_TYPE.values().find(def[key]) >= 0:
 							printerr("Component property \"%s\" value out of range."%[key])
 							return ERR_PARAMETER_RANGE_ERROR
-						layout_def_req = (def[key] == COMPONENT_LAYOUT_TYPE.Static)
+						layout_list_req = (def[key] == COMPONENT_LAYOUT_TYPE.Static)
 					cmp[key] = def[key]
 				TYPE_STRING:
 					if def[key] == "":
@@ -214,28 +209,45 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 							return ERR_PARAMETER_RANGE_ERROR
 					cmp[key] = def[key]
 				TYPE_ARRAY:
-					if key == &"seats":
-						var seats : Array = []
-						for item in def[key]:
-							if typeof(item) != TYPE_DICTIONARY:
-								printerr("Component property \"%s\" contains invalid entry type."%[key])
-								return ERR_INVALID_DATA
-							var seat = _VerifySeatStructure(item)
-							if seat.empty():
-								# NOTE: Don't need to print anything as _VerifySeatsStructure should do that already.
-								return ERR_INVALID_DATA
-							seats.append(seat)
-						cmp[key] = seats
+					match key:
+						&"seats":
+							var seats : Array = []
+							for item in def[key]:
+								if typeof(item) != TYPE_DICTIONARY:
+									printerr("Component property \"%s\" contains invalid entry type."%[key])
+									return ERR_INVALID_DATA
+								var seat = _VerifySeatStructure(item)
+								if seat.empty():
+									# NOTE: Don't need to print anything as _VerifySeatsStructure should do that already.
+									return ERR_INVALID_DATA
+								seats.append(seat)
+							cmp[key] = seats
+						&"layout_list":
+							if layout_list_req == true:
+								var item_count : int = (cmp[&"size_range"].y - cmp[&"size_range"].x) + 1
+								if def[key].size() != item_count:
+									printerr("Component property \"%s\" missing required number of values."%[key])
+									return ERR_PARAMETER_RANGE_ERROR
+								var llist : Array = []
+								for item in def[key]:
+									if typeof(item) != TYPE_INT:
+										printerr("Component property \"%s\" contains invalid entry type."%[key])
+										return ERR_INVALID_DATA
+									if item <= 0 or item > 0x7F:
+										printerr("Component property \"%s\" entry value out of range."%[key])
+										return ERR_PARAMETER_RANGE_ERROR
+									llist.append(item)
+								cmp[key] = llist
 					# TODO: Figure out how to handle tagging
 				TYPE_DICTIONARY:
 					match key:
-						&"layout":
-							if layout_def_req == true:
-								var layout_def : Dictionary = _VerifyLayoutStructure(def[key])
-								if layout_def.is_empty():
-									# NOTE: Don't need to print anything as _VerifyLayoutStructure should do that already.
-									return ERR_INVALID_DATA
-								cmp[key] = layout_def
+#						&"layout":
+#							if layout_def_req == true:
+#								var layout_def : Dictionary = _VerifyLayoutStructure(def[key])
+#								if layout_def.is_empty():
+#									# NOTE: Don't need to print anything as _VerifyLayoutStructure should do that already.
+#									return ERR_INVALID_DATA
+#								cmp[key] = layout_def
 						&"attributes":
 							var attrib : Dictionary = _VerifyAttributes(def[key])
 							if attrib.is_empty():
@@ -245,7 +257,7 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 			printerr("Component definition missing required property \"%s\"."%[key])
 			return ERR_DOES_NOT_EXIST
 		else:
-			if key == &"layout" and layout_def_req == true:
+			if key == &"layout_list" and layout_list_req == true:
 				printerr("Component definition missing required property \"%s\"."%[key])
 				return ERR_DOES_NOT_EXIST
 			if &"default" in COMPONENT_STRUCTURE[key]:

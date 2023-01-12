@@ -11,18 +11,13 @@ const PLUGIN_ICON : Texture = preload("res://addons/ComponentCreator/assets/icon
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
-var _uuid_preloaded : bool = false
 var _main_control : Control = null
 
 # ------------------------------------------------------------------------------
 # Override Methods
 # ------------------------------------------------------------------------------
 func _enter_tree() -> void:
-	if get_node_or_null("/root/%s"%[AUTO_UUID_NAME]) == null:
-		add_autoload_singleton(AUTO_UUID_NAME, "res://addons/ComponentCreator/autos/UUID.gd")
-	else:
-		_uuid_preloaded = true
-	
+	add_autoload_singleton(AUTO_UUID_NAME, "res://addons/ComponentCreator/autos/UUID.gd")
 	if _main_control == null:
 		_main_control = CCMAIN.instantiate()
 	get_editor_interface().get_editor_main_screen().add_child(_main_control)
@@ -30,10 +25,7 @@ func _enter_tree() -> void:
 
 
 func _exit_tree() -> void:
-	if not _uuid_preloaded:
-		remove_autoload_singleton(AUTO_UUID_NAME)
-	_uuid_preloaded = false
-	
+	remove_autoload_singleton(AUTO_UUID_NAME)
 	if _main_control != null:
 		_main_control.queue_free()
 		_main_control = null

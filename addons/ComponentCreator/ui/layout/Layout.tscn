@@ -1,22 +1,55 @@
-[gd_scene load_steps=2 format=3 uid="uid://wokmi1a21u2w"]
+[gd_scene load_steps=4 format=3 uid="uid://wokmi1a21u2w"]
 
+[ext_resource type="Script" path="res://addons/ComponentCreator/ui/layout/Layout.gd" id="1_jnl3q"]
 [ext_resource type="Script" path="res://addons/ComponentCreator/controls/ComponentLayout.gd" id="1_jp8vu"]
 
-[node name="Layout" type="PanelContainer"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ai0ul"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0.0980392, 0.164706, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.643137, 0.847059, 1)
+border_blend = true
+
+[node name="Layout" type="MarginContainer"]
+script = ExtResource("1_jnl3q")
 metadata/_edit_vertical_guides_ = []
 
-[node name="MC" type="MarginContainer" parent="."]
-custom_minimum_size = Vector2(255, 256)
+[node name="VBC" type="VBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
 
-[node name="ComponentLayout" type="Control" parent="MC"]
-custom_minimum_size = Vector2(5.19615, 5)
+[node name="Size" type="MarginContainer" parent="VBC"]
 layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="VBC/Size"]
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
+
+[node name="Label" type="Label" parent="VBC/Size"]
+layout_mode = 2
+text = "0
+"
+horizontal_alignment = 1
+
+[node name="CmpLayout" type="AspectRatioContainer" parent="VBC"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PC" type="PanelContainer" parent="VBC/CmpLayout"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ai0ul")
+
+[node name="ComponentLayout" type="Control" parent="VBC/CmpLayout/PC"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
 script = ExtResource("1_jp8vu")
-selected_bits = 64
+selected_bits = 0
 disabled = false
-custom_colors/normal = Color(1, 0.572549, 0.509804, 1)
