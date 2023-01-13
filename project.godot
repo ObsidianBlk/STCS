@@ -12,12 +12,12 @@ _global_script_classes=[{
 "base": "Resource",
 "class": &"ComponentDB",
 "language": &"GDScript",
-"path": "res://addons/ComponentCreator/resources/ComponentDB.gd"
+"path": "res://addons/STCSDataControl/resources/ComponentDB.gd"
 }, {
 "base": "Control",
 "class": &"ComponentLayout",
 "language": &"GDScript",
-"path": "res://addons/ComponentCreator/controls/ComponentLayout.gd"
+"path": "res://addons/STCSDataControl/controls/ComponentLayout.gd"
 }, {
 "base": "RefCounted",
 "class": &"HexCell",

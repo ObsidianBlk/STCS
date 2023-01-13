@@ -1,7 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://wokmi1a21u2w"]
+[gd_scene load_steps=4 format=3 uid="uid://crdxegc5jk0r4"]
 
-[ext_resource type="Script" path="res://addons/ComponentCreator/ui/layout/Layout.gd" id="1_jnl3q"]
-[ext_resource type="Script" path="res://addons/ComponentCreator/controls/ComponentLayout.gd" id="1_jp8vu"]
+[ext_resource type="Script" path="res://addons/STCSDataControl/ui/component_database/layout_config/LayoutConfig.gd" id="1_hfay3"]
+[ext_resource type="Script" path="res://addons/STCSDataControl/controls/ComponentLayout.gd" id="2_3y5f7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ai0ul"]
 content_margin_left = 4.0
@@ -16,9 +16,8 @@ border_width_bottom = 1
 border_color = Color(0, 0.643137, 0.847059, 1)
 border_blend = true
 
-[node name="Layout" type="MarginContainer"]
-script = ExtResource("1_jnl3q")
-editable = null
+[node name="LayoutConfig" type="MarginContainer"]
+script = ExtResource("1_hfay3")
 metadata/_edit_vertical_guides_ = []
 
 [node name="VBC" type="VBoxContainer" parent="."]
@@ -50,6 +49,6 @@ custom_minimum_size = Vector2(5.19615, 5)
 layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 2
-script = ExtResource("1_jp8vu")
+script = ExtResource("2_3y5f7")
 selected_bits = 0
 disabled = false

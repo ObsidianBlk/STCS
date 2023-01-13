@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://b6m373wmjted2"]
+[gd_scene load_steps=4 format=3]
 
-[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/ComponentCreator/assets/icons/add.svg" id="1_7ni2a"]
-[ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/ComponentCreator/assets/icons/subtract.svg" id="2_rhceu"]
-[ext_resource type="PackedScene" uid="uid://cp6oa0xn52jca" path="res://addons/ComponentCreator/ui/component_block/ComponentBlock.tscn" id="3_41i2i"]
+[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/STCSDataControl/assets/icons/add.svg" id="1_7ni2a"]
+[ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/STCSDataControl/assets/icons/subtract.svg" id="2_rhceu"]
+[ext_resource type="PackedScene" path="res://addons/STCSDataControl/ui/component_database/component_block/ComponentBlock.tscn" id="3_41i2i"]
 
 [node name="Main" type="MarginContainer"]
 anchor_right = 1.0

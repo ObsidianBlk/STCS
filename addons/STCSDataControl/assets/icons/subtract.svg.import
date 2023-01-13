@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xch026vn771l"
-path="res://.godot/imported/subtract.svg-fa32b07d7618b359d64ceb3ccf19800f.ctex"
+path="res://.godot/imported/subtract.svg-5aae19462f5998629874c7179e82b53b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/ComponentCreator/assets/icons/subtract.svg"
-dest_files=["res://.godot/imported/subtract.svg-fa32b07d7618b359d64ceb3ccf19800f.ctex"]
+source_file="res://addons/STCSDataControl/assets/icons/subtract.svg"
+dest_files=["res://.godot/imported/subtract.svg-5aae19462f5998629874c7179e82b53b.ctex"]
 
 [params]
 

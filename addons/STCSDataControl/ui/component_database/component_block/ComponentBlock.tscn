@@ -1,9 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cp6oa0xn52jca"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="PackedScene" uid="uid://wokmi1a21u2w" path="res://addons/ComponentCreator/ui/layout/Layout.tscn" id="1_8lcqn"]
+[ext_resource type="PackedScene" uid="uid://wokmi1a21u2w" path="res://addons/ComponentCreator/ui/component_definition/layout/Layout.tscn" id="1_8lcqn"]
 
 [node name="ComponentBlock" type="VBoxContainer"]
-anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
