@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://buhtoypxxitlu"]
 
-[ext_resource type="PackedScene" uid="uid://wokmi1a21u2w" path="res://addons/ComponentCreator/ui/component_definition/layout/Layout.tscn" id="1_8lcqn"]
+[ext_resource type="PackedScene" uid="uid://crdxegc5jk0r4" path="res://addons/STCSDataControl/ui/component_database/layout_config/LayoutConfig.tscn" id="1_bv7uk"]
 
 [node name="ComponentBlock" type="VBoxContainer"]
 anchor_right = 1.0
@@ -158,10 +158,8 @@ popup/item_1/id = 1
 popup/item_2/text = "Growable"
 popup/item_2/id = 2
 
-[node name="LayoutConfig" parent="Row2/LimitsLayouts" instance=ExtResource("1_8lcqn")]
-custom_minimum_size = Vector2(256, 256)
+[node name="LayoutConfig" parent="Row2/LimitsLayouts" instance=ExtResource("1_bv7uk")]
+custom_minimum_size = Vector2(0, 384)
 layout_mode = 2
-size_flags_vertical = 0
 max_value = 10
 min_value = 5
-editable = true

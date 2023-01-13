@@ -1,10 +1,11 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3 uid="uid://dd3sd3dous1db"]
 
-[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/STCSDataControl/assets/icons/add.svg" id="1_7ni2a"]
-[ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/STCSDataControl/assets/icons/subtract.svg" id="2_rhceu"]
-[ext_resource type="PackedScene" path="res://addons/STCSDataControl/ui/component_database/component_block/ComponentBlock.tscn" id="3_41i2i"]
+[ext_resource type="Script" path="res://addons/STCSDataControl/ui/component_database/component_database_main/ComponentDatabaseMain.gd" id="1_0xiid"]
+[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/STCSDataControl/assets/icons/add.svg" id="2_ei5er"]
+[ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/STCSDataControl/assets/icons/subtract.svg" id="3_lg83f"]
+[ext_resource type="PackedScene" path="res://addons/STCSDataControl/ui/component_database/component_block/ComponentBlock.tscn" id="4_5cvwm"]
 
-[node name="Main" type="MarginContainer"]
+[node name="ComponentDatabaseMain" type="MarginContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -13,6 +14,7 @@ theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
+script = ExtResource("1_0xiid")
 
 [node name="Columns" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -34,11 +36,11 @@ size_flags_horizontal = 3
 
 [node name="AddBD" type="Button" parent="Columns/DatabaseList/ctrls"]
 layout_mode = 2
-icon = ExtResource("1_7ni2a")
+icon = ExtResource("2_ei5er")
 
 [node name="RemDB" type="Button" parent="Columns/DatabaseList/ctrls"]
 layout_mode = 2
-icon = ExtResource("2_rhceu")
+icon = ExtResource("3_lg83f")
 
 [node name="Databases" type="PanelContainer" parent="Columns/DatabaseList"]
 layout_mode = 2
@@ -70,11 +72,11 @@ size_flags_horizontal = 3
 
 [node name="AddC" type="Button" parent="Columns/ComponentList/ctrls"]
 layout_mode = 2
-icon = ExtResource("1_7ni2a")
+icon = ExtResource("2_ei5er")
 
 [node name="RemC" type="Button" parent="Columns/ComponentList/ctrls"]
 layout_mode = 2
-icon = ExtResource("2_rhceu")
+icon = ExtResource("3_lg83f")
 
 [node name="Components" type="PanelContainer" parent="Columns/ComponentList"]
 layout_mode = 2
@@ -89,6 +91,5 @@ layout_mode = 2
 [node name="VSeparator2" type="VSeparator" parent="Columns"]
 layout_mode = 2
 
-[node name="ComponentBlock" parent="Columns" instance=ExtResource("3_41i2i")]
+[node name="ComponentBlock" parent="Columns" instance=ExtResource("4_5cvwm")]
 layout_mode = 2
-size_flags_horizontal = 3
