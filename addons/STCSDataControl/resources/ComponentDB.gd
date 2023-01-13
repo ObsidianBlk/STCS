@@ -8,9 +8,6 @@ class_name ComponentDB
 enum COMPONENT_LAYOUT_TYPE {Static=0, Cluster=1, Growable=2}
 const COMPONENT_STRUCTURE : Dictionary = {
 	&"name":{&"req":true, &"type":TYPE_STRING},
-	&"color_primary":{&"req":true, &"type":TYPE_COLOR},
-	&"color_secondary":{&"req":true, &"type":TYPE_COLOR},
-	&"icon":{&"req":false, &"type":TYPE_STRING},
 	&"sp":{&"req":true, &"type":TYPE_INT},
 	&"absorption":{&"req":true, &"type":TYPE_INT},
 	&"bleed":{&"req":true, &"type":TYPE_INT},
@@ -29,6 +26,23 @@ const SEAT_STRUCTURE : Dictionary = {
 	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
 	&"rank":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true}
 }
+
+
+static func get_empty_entry() -> Dictionary:
+	var entry : Dictionary = {}
+	for key in COMPONENT_STRUCTURE.keys():
+		var item : Dictionary = COMPONENT_STRUCTURE[key]
+		if item[&"req"] == true:
+			match item[&"type"]:
+				TYPE_INT:
+					entry[key] = 0
+				TYPE_STRING:
+					entry[key] = ""
+				TYPE_STRING_NAME:
+					entry[key] = &""
+				TYPE_VECTOR2I:
+					entry[key] = Vector2i.ZERO
+	return entry
 
 
 # --------------------------------------------------------------------------------------------------
