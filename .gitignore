@@ -16,5 +16,6 @@ Work/*
 
 # Mono-specific ignores
 .mono/
-data_*/
+# This was causing an issue.
+#data_*/
 
