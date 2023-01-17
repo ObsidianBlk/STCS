@@ -40,4 +40,6 @@ func _on_AddDB_pressed():
 		info_dialog.popup_centered()
 
 func _on_new_db_name(db_name : String) -> void:
-	print("The new DB name is: ", db_name)
+	if db_name.strip_edges() != "":
+		CCDB.create_database(db_name)
+	#print("The new DB name is: ", db_name)

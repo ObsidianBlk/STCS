@@ -62,6 +62,8 @@ var _db : Dictionary = {}
 # Variables
 # --------------------------------------------------------------------------------------------------
 var _tags : Dictionary = {}
+var _dirty : bool = false
+var _locked : bool = false
 
 # --------------------------------------------------------------------------------------------------
 # Override Methods
@@ -167,14 +169,35 @@ func _VerifyAttributes(data : Dictionary) -> Dictionary:
 # --------------------------------------------------------------------------------------------------
 # Public Methods
 # --------------------------------------------------------------------------------------------------
+func lock() -> void:
+	_locked = true
+
+func is_locked() -> bool:
+	return _locked
+
 func clear() -> void:
-	_db.clear()
+	if not _locked:
+		_db.clear()
 
 func size() -> int:
 	return _db.size()
 
 func is_empty() -> bool:
 	return _db.is_empty()
+
+func is_dirty() -> bool:
+	return _dirty
+
+func clear_dirty() -> void:
+	_dirty = false
+
+func save(path : String) -> int:
+	var res : int = OK
+	if _dirty == true:
+		res = ResourceSaver.save(self, path)
+		if res == OK:
+			_dirty = false
+	return res
 
 func get_component_list() -> Array:
 	var items : Array = []
@@ -214,13 +237,18 @@ func get_component(uuid : StringName) -> Dictionary:
 	return cmp
 
 func remove_component(uuid : StringName) -> int:
+	if _locked:
+		return ERR_LOCKED
 	if not uuid in _db:
 		return ERR_DOES_NOT_EXIST
 	_db.erase(uuid)
+	_dirty = true
 	component_removed.emit(uuid)
 	return OK
 
 func set_database_dictionary(db : Dictionary, fail_on_warnings : bool = false) -> int:
+	if _locked:
+		return ERR_LOCKED
 	_db.clear()
 	for key in db:
 		var result : int = add_component(db[key])
@@ -232,6 +260,8 @@ func set_database_dictionary(db : Dictionary, fail_on_warnings : bool = false) -
 	return OK
 
 func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
+	if _locked:
+		return ERR_LOCKED
 	var cmp : Dictionary = {&"uuid":&""}
 	if &"uuid" in def:
 		cmp[&"uuid"] = def[&"uuid"]
@@ -329,5 +359,6 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 				cmp[key] = COMPONENT_STRUCTURE[key][&"default"]
 		
 	_db[cmp[&"uuid"]] = cmp
+	_dirty = true
 	component_added.emit(cmp[&"uuid"])
 	return OK
