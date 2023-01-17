@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3 uid="uid://bunws61t0mry6"]
+
+[ext_resource type="Script" path="res://addons/STCSDataControl/ui/info_request_dialog/InfoRequestDialog.gd" id="1_tlghm"]
+
+[node name="InfoRequestDialog" type="PopupPanel"]
+initial_position = 1
+title = "Spiffy Title"
+size = Vector2i(384, 104)
+current_screen = -2
+visible = true
+script = ExtResource("1_tlghm")
+
+[node name="Container" type="CenterContainer" parent="."]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 380.0
+offset_bottom = 100.0
+
+[node name="Layout" type="VBoxContainer" parent="Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Container/Layout"]
+layout_mode = 2
+text = "Some fancy text goes here you see..."
+
+[node name="LineEdit" type="LineEdit" parent="Container/Layout"]
+layout_mode = 2
+
+[node name="Options" type="HBoxContainer" parent="Container/Layout"]
+layout_mode = 2
+
+[node name="Accept" type="Button" parent="Container/Layout/Options"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Accept"
+
+[node name="Cancel" type="Button" parent="Container/Layout/Options"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel
+"
+
+[connection signal="text_submitted" from="Container/Layout/LineEdit" to="." method="_on_line_edit_text_submitted"]
+[connection signal="pressed" from="Container/Layout/Options/Accept" to="." method="_on_accept_pressed"]
+[connection signal="pressed" from="Container/Layout/Options/Cancel" to="." method="_on_cancel_pressed"]

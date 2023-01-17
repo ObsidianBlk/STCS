@@ -1,6 +1,13 @@
+@tool
 extends Resource
 class_name ComponentDB
 
+
+# --------------------------------------------------------------------------------------------------
+# Signals
+# --------------------------------------------------------------------------------------------------
+signal component_added(uuid)
+signal component_removed(uuid)
 
 # --------------------------------------------------------------------------------------------------
 # Constants
@@ -169,6 +176,50 @@ func size() -> int:
 func is_empty() -> bool:
 	return _db.is_empty()
 
+func get_component_list() -> Array:
+	var items : Array = []
+	for uuid in _db.keys():
+		items.append({
+			&"uuid": uuid,
+			&"type":_db[uuid][&"type"],
+			&"name":_db[uuid][&"name"],
+			&"size_range":_db[uuid][&"size_range"]
+		})
+	return items
+
+func has_component(uuid : StringName) -> bool:
+	return uuid in _db
+
+func get_component(uuid : StringName) -> Dictionary:
+	var cmp : Dictionary = {}
+	if uuid in _db:
+		for key in _db[uuid].keys():
+			match typeof(_db[uuid][key]):
+				TYPE_ARRAY:
+					var data : Array = []
+					for item in _db[uuid][key]:
+						if key == &"seats":
+							data.append({
+								&"type": item[&"type"],
+								&"rank": item[&"rank"]
+							})
+						else:
+							data.append(item)
+				TYPE_DICTIONARY:
+					# TODO: Copy the Attribute list... and any other dictionary structure I feel like
+					#   F&^%ing myself with in the future.
+					printerr("There shouldn't be anything here yet! Bugger off!")
+				_:
+					cmp[key] = _db[uuid][key]
+	return cmp
+
+func remove_component(uuid : StringName) -> int:
+	if not uuid in _db:
+		return ERR_DOES_NOT_EXIST
+	_db.erase(uuid)
+	component_removed.emit(uuid)
+	return OK
+
 func set_database_dictionary(db : Dictionary, fail_on_warnings : bool = false) -> int:
 	_db.clear()
 	for key in db:
@@ -278,4 +329,5 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 				cmp[key] = COMPONENT_STRUCTURE[key][&"default"]
 		
 	_db[cmp[&"uuid"]] = cmp
+	component_added.emit(cmp[&"uuid"])
 	return OK
