@@ -8,6 +8,7 @@ class_name ComponentDB
 # --------------------------------------------------------------------------------------------------
 signal component_added(uuid)
 signal component_removed(uuid)
+signal saved()
 
 # --------------------------------------------------------------------------------------------------
 # Constants
@@ -132,29 +133,6 @@ func _VerifySeatStructure(data : Dictionary) -> Dictionary:
 			seat[key] = data[key]
 	return seat
 
-#func _VerifyLayoutStructure(data : Dictionary) -> Dictionary:
-#	var layout : Dictionary = {}
-#	for key in LAYOUT_STRUCTURE.keys():
-#		if not typeof(key) == TYPE_STRING_NAME:
-#			printerr("Seat definition property key type invalid.")
-#			return {}
-#
-#		if key in data:
-#			if typeof(data[key]) != LAYOUT_STRUCTURE[key][&"type"]:
-#				printerr("Layout definition property \"%s\" invalid type."%[key])
-#				return {}
-#			if key == &"list":
-#				var list : Array = []
-#				for item in data[key]:
-#					if item >= 0 and item < 6:
-#						list.append(item)
-#					else:
-#						printerr("Layout definition property \"%s\" item value out of range."%[key])
-#						return {}
-#				layout[key] = list
-#			else:
-#				layout[key] = data[key]
-#	return layout
 
 func _VerifyAttributes(data : Dictionary) -> Dictionary:
 	var attrib : Dictionary = {}
@@ -193,10 +171,11 @@ func clear_dirty() -> void:
 
 func save(path : String) -> int:
 	var res : int = OK
-	if _dirty == true:
-		res = ResourceSaver.save(self, path)
-		if res == OK:
-			_dirty = false
+	print("Attempting to save to: ", path)
+	res = ResourceSaver.save(self, path)
+	if res == OK:
+		_dirty = false
+		saved.emit()
 	return res
 
 func get_component_list() -> Array:
@@ -336,13 +315,6 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 					# TODO: Figure out how to handle tagging
 				TYPE_DICTIONARY:
 					match key:
-#						&"layout":
-#							if layout_def_req == true:
-#								var layout_def : Dictionary = _VerifyLayoutStructure(def[key])
-#								if layout_def.is_empty():
-#									# NOTE: Don't need to print anything as _VerifyLayoutStructure should do that already.
-#									return ERR_INVALID_DATA
-#								cmp[key] = layout_def
 						&"attributes":
 							var attrib : Dictionary = _VerifyAttributes(def[key])
 							if attrib.is_empty():

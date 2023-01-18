@@ -5,8 +5,9 @@ extends Node
 # ------------------------------------------------------------------------------
 # Signals
 # ------------------------------------------------------------------------------
-signal database_added(db_name)
-signal database_removed(db_name)
+signal database_saved(db_key)
+signal database_added(db_key, db_name)
+signal database_dropped(db_key, db_name)
 
 # ------------------------------------------------------------------------------
 # Constants
@@ -36,12 +37,13 @@ func _SaveDB(sha : StringName) -> int:
 	if not DirAccess.dir_exists_absolute(path):
 		var res : int = DirAccess.make_dir_recursive_absolute(path)
 		if res != OK:
+			printerr("[", res, "]: Path creation failed.")
 			return res
 	var file_path : String = "%s%s"%[path, _dbcollection[sha][&"filename"]]
 	return _dbcollection[sha][&"db"].save(file_path)
 
 
-func _RemoveDB(sha : StringName) -> int:
+func _EraseDB(sha : StringName) -> int:
 	var path_id : StringName = _dbcollection[sha][&"path_id"]
 	var path : String = CDB_PATH[path_id]
 	var file_path : String = "%s%s"%[path, _dbcollection[sha][&"filename"]]
@@ -49,12 +51,20 @@ func _RemoveDB(sha : StringName) -> int:
 	if res == OK:
 		var db : ComponentDB = _dbcollection[sha][&"db"]
 		_dbcollection.erase(sha)
-		database_removed.emit(db.name)
+		database_dropped.emit(sha, db.name)
+		#database_removed.emit(sha, db.name)
 	return res
 
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
+func clear(save_dirty : bool = false) -> void:
+	for key in _dbcollection:
+		if save_dirty == true and _dbcollection[key][&"db"].is_dirty():
+			var res : int = _SaveDB(key)
+			if res == OK:
+				database_saved.emit(key)
+
 func set_active_path_id(path_id : StringName) -> void:
 	if path_id in CDB_PATH and path_id != &"user":
 		_active_path_id = path_id
@@ -91,26 +101,50 @@ func add_database_resource(db : ComponentDB, auto_save_db : bool = true) -> int:
 	if auto_save_db:
 		var res : int = _SaveDB(sha)
 		if res != OK:
+			printerr("[", res, "]: Failed to save component database.")
 			_dbcollection.erase(sha)
 			return res
-	database_added.emit(db.name)
+		database_saved.emit(sha)
+	database_added.emit(sha, db.name)
 	return OK
 
-func remove_database(db_name : String) -> int:
-	return remove_database_by_key(db_name.sha256_text())
+func erase_database(db_name : String) -> int:
+	return erase_database_by_key(db_name.sha256_text())
 
-func remove_database_by_key(key : StringName) -> int:
+func erase_database_by_key(key : StringName) -> int:
 	if key in _dbcollection:
 		if _dbcollection[key][&"path_id"] != &"user":
 			if not Engine.is_editor_hint():
 				return ERR_LOCKED
-		return _RemoveDB(key)
+		return _EraseDB(key)
+	return OK
+
+func drop_database(db_name : String) -> int:
+	return drop_database(db_name.sha256_text())
+
+func drop_database_by_key(key : StringName) -> int:
+	if not key in _dbcollection:
+		return ERR_DOES_NOT_EXIST
+	var db : ComponentDB = _dbcollection[key][&"db"]
+	_dbcollection.erase(key)
+	database_dropped.emit(key, db.name)
 	return OK
 
 func create_database(db_name : String, auto_save_db : bool = true) -> int:
-	var db : ComponentDB = CCDB.create_black_component_database()
+	var db : ComponentDB = ComponentDB.new() #CCDB.create_blank_component_database()
 	db.name = db_name
 	return add_database_resource(db, auto_save_db)
+
+func get_database_key_from_name(db_name : String) -> StringName:
+	var sha : StringName = db_name.sha256_text()
+	if sha in _dbcollection:
+		return sha
+	return &""
+
+func get_database_name_from_key(key : StringName) -> String:
+	if key in _dbcollection:
+		return _dbcollection[key][&"db"].name
+	return ""
 
 func get_database(db_name : String) -> ComponentDB:
 	return get_database_by_key(db_name.sha256_text())
@@ -120,13 +154,21 @@ func get_database_by_key(key : StringName) -> ComponentDB:
 		return _dbcollection[key][&"db"]
 	return null
 
-func get_database_list() -> Array:
+func get_database_path_id(db_name : String) -> StringName:
+	return get_database_path_id_by_key(db_name.sha256_text())
+
+func get_database_path_id_by_key(key : StringName) -> StringName:
+	if key in _dbcollection:
+		return _dbcollection[key][&"path_id"]
+	return &""
+
+func get_database_list(limit_to_path_id : StringName = &"") -> Array:
 	var list : Array = []
 	for key in _dbcollection.keys():
-		list.append({
-			&"key": key,
-			&"name": _dbcollection[key][&"db"].name
-		})
+		if limit_to_path_id == &"" or _dbcollection[key][&"path_id"] == limit_to_path_id:
+			list.append({
+				&"key": key,
+				&"name": _dbcollection[key][&"db"].name
+			})
 	return list
-
 

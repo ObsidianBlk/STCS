@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dd3sd3dous1db"]
+[gd_scene load_steps=6 format=3 uid="uid://dd3sd3dous1db"]
 
 [ext_resource type="Script" path="res://addons/STCSDataControl/ui/component_database/component_database_main/ComponentDatabaseMain.gd" id="1_0xiid"]
+[ext_resource type="PackedScene" uid="uid://0dd4kvh1dle5" path="res://addons/STCSDataControl/ui/component_database/component_database_main/database_list/DatabaseList.tscn" id="2_7o2sr"]
 [ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/STCSDataControl/assets/icons/add.svg" id="2_ei5er"]
 [ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/STCSDataControl/assets/icons/subtract.svg" id="3_lg83f"]
 [ext_resource type="PackedScene" uid="uid://buhtoypxxitlu" path="res://addons/STCSDataControl/ui/component_database/component_block/ComponentBlock.tscn" id="4_5cvwm"]
@@ -20,37 +21,7 @@ script = ExtResource("1_0xiid")
 [node name="Columns" type="HBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="DatabaseList" type="VBoxContainer" parent="Columns"]
-layout_mode = 2
-
-[node name="ctrls" type="HBoxContainer" parent="Columns/DatabaseList"]
-custom_minimum_size = Vector2(256, 0)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Columns/DatabaseList/ctrls"]
-layout_mode = 2
-text = "Databases: "
-
-[node name="Spacer" type="Control" parent="Columns/DatabaseList/ctrls"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="AddDB" type="Button" parent="Columns/DatabaseList/ctrls"]
-layout_mode = 2
-icon = ExtResource("2_ei5er")
-
-[node name="RemDB" type="Button" parent="Columns/DatabaseList/ctrls"]
-layout_mode = 2
-icon = ExtResource("3_lg83f")
-
-[node name="Databases" type="PanelContainer" parent="Columns/DatabaseList"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Scroll" type="ScrollContainer" parent="Columns/DatabaseList/Databases"]
-layout_mode = 2
-
-[node name="List" type="ItemList" parent="Columns/DatabaseList/Databases/Scroll"]
+[node name="DatabaseList" parent="Columns" instance=ExtResource("2_7o2sr")]
 layout_mode = 2
 
 [node name="VSeparator" type="VSeparator" parent="Columns"]
@@ -95,5 +66,3 @@ layout_mode = 2
 
 [node name="ComponentBlock" parent="Columns" instance=ExtResource("4_5cvwm")]
 layout_mode = 2
-
-[connection signal="pressed" from="Columns/DatabaseList/ctrls/AddDB" to="." method="_on_AddDB_pressed"]
