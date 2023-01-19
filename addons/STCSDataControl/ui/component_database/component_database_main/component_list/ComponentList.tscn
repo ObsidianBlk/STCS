@@ -39,3 +39,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 hide_root = true
+
+[connection signal="pressed" from="ctrls/AddC" to="." method="_on_add_component_pressed"]
+[connection signal="pressed" from="ctrls/RemC" to="." method="_on_rem_component_pressed"]
+[connection signal="item_selected" from="Components/Scroll/Tree" to="." method="_on_tree_item_selected"]

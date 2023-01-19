@@ -34,3 +34,5 @@ layout_mode = 2
 
 [node name="ComponentBlock" parent="Columns" instance=ExtResource("4_5cvwm")]
 layout_mode = 2
+
+[connection signal="database_selected" from="Columns/DatabaseList" to="Columns/ComponentList" method="show_database_components"]

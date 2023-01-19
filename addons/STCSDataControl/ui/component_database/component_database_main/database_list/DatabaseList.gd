@@ -134,3 +134,7 @@ func _on_remove_yes_pressed() -> void:
 	var db_key : StringName = sel.get_metadata(0)
 	CCDB.erase_database_by_key(db_key)
 
+func _on_tree_item_selected():
+	var item : TreeItem = db_tree.get_selected()
+	if item == null: return
+	database_selected.emit(item.get_metadata(0))

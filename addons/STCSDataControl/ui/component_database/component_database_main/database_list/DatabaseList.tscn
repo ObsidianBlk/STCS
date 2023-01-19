@@ -38,6 +38,8 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+hide_root = true
 
 [connection signal="pressed" from="ctrls/AddDB" to="." method="_on_add_db_pressed"]
 [connection signal="pressed" from="ctrls/RemDB" to="." method="_on_rem_db_pressed"]
+[connection signal="item_selected" from="Databases/Scroll/Tree" to="." method="_on_tree_item_selected"]
