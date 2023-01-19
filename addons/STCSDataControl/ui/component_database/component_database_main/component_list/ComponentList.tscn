@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://btkp0evqlqbuf"]
+
+[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/STCSDataControl/assets/icons/add.svg" id="1_4xj44"]
+[ext_resource type="Script" path="res://addons/STCSDataControl/ui/component_database/component_database_main/component_list/ComponentList.gd" id="1_qihml"]
+[ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/STCSDataControl/assets/icons/subtract.svg" id="2_36wu2"]
+
+[node name="ComponentList" type="VBoxContainer"]
+custom_minimum_size = Vector2(256, 0)
+script = ExtResource("1_qihml")
+
+[node name="ctrls" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ctrls"]
+layout_mode = 2
+text = "Components:"
+
+[node name="Control" type="Control" parent="ctrls"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AddC" type="Button" parent="ctrls"]
+layout_mode = 2
+icon = ExtResource("1_4xj44")
+
+[node name="RemC" type="Button" parent="ctrls"]
+layout_mode = 2
+icon = ExtResource("2_36wu2")
+
+[node name="Components" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Scroll" type="ScrollContainer" parent="Components"]
+layout_mode = 2
+
+[node name="Tree" type="Tree" parent="Components/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+hide_root = true

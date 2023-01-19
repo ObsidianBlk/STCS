@@ -15,12 +15,12 @@ signal database_dropped(db_key, db_name)
 const CDB_PATH : Dictionary = {
 	&"core": "res://data/core/cdb/",
 	#&"exp1": "res://data/exp1/cdb/",  # Example of an "expansion" data folder.
-	&"user": ["user://data/cdb/"]
+	&"user": "user://data/cdb/"
 }
 
 
-func create_blank_component_database():
-	return preload("res://addons/STCSDataControl/resources/ComponentDB.gd").new()
+#func create_blank_component_database():
+#	return preload("res://addons/STCSDataControl/resources/ComponentDB.gd").new()
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -76,15 +76,17 @@ func load_database_resources() -> int:
 	for path_id in CDB_PATH.keys():
 		var base_path : String = CDB_PATH[path_id]
 		var dir : DirAccess = DirAccess.open(base_path)
-		dir.list_dir_begin()
-		var filename : String = dir.get_next()
-		while filename != "":
-			if not dir.current_is_dir():
-				if filename.begins_with("CDB_") and filename.ends_with(".res"):
-					var db = ResourceLoader.load("%s%s"%[base_path, filename])
-					if db is ComponentDB:
-						add_database_resource(db, false)
-			filename = dir.get_next()
+		if dir != null:
+			dir.list_dir_begin()
+			var filename : String = dir.get_next()
+			while filename != "":
+				if not dir.current_is_dir():
+					if filename.begins_with("CDB_") and filename.ends_with(".res"):
+						var db = ResourceLoader.load("%s%s"%[base_path, filename])
+						if db is ComponentDB:
+							add_database_resource(db, false)
+				filename = dir.get_next()
+			dir.list_dir_end()
 	return OK
 
 func add_database_resource(db : ComponentDB, auto_save_db : bool = true) -> int:

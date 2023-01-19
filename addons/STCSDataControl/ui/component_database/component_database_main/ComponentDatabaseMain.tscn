@@ -1,9 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://dd3sd3dous1db"]
+[gd_scene load_steps=5 format=3 uid="uid://dd3sd3dous1db"]
 
 [ext_resource type="Script" path="res://addons/STCSDataControl/ui/component_database/component_database_main/ComponentDatabaseMain.gd" id="1_0xiid"]
 [ext_resource type="PackedScene" uid="uid://0dd4kvh1dle5" path="res://addons/STCSDataControl/ui/component_database/component_database_main/database_list/DatabaseList.tscn" id="2_7o2sr"]
-[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/STCSDataControl/assets/icons/add.svg" id="2_ei5er"]
-[ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/STCSDataControl/assets/icons/subtract.svg" id="3_lg83f"]
+[ext_resource type="PackedScene" uid="uid://btkp0evqlqbuf" path="res://addons/STCSDataControl/ui/component_database/component_database_main/component_list/ComponentList.tscn" id="3_ct6r7"]
 [ext_resource type="PackedScene" uid="uid://buhtoypxxitlu" path="res://addons/STCSDataControl/ui/component_database/component_block/ComponentBlock.tscn" id="4_5cvwm"]
 
 [node name="ComponentDatabaseMain" type="MarginContainer"]
@@ -27,39 +26,8 @@ layout_mode = 2
 [node name="VSeparator" type="VSeparator" parent="Columns"]
 layout_mode = 2
 
-[node name="ComponentList" type="VBoxContainer" parent="Columns"]
-custom_minimum_size = Vector2(256, 0)
+[node name="ComponentList" parent="Columns" instance=ExtResource("3_ct6r7")]
 layout_mode = 2
-
-[node name="ctrls" type="HBoxContainer" parent="Columns/ComponentList"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Columns/ComponentList/ctrls"]
-layout_mode = 2
-text = "Components:"
-
-[node name="Control" type="Control" parent="Columns/ComponentList/ctrls"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="AddC" type="Button" parent="Columns/ComponentList/ctrls"]
-layout_mode = 2
-icon = ExtResource("2_ei5er")
-
-[node name="RemC" type="Button" parent="Columns/ComponentList/ctrls"]
-layout_mode = 2
-icon = ExtResource("3_lg83f")
-
-[node name="Components" type="PanelContainer" parent="Columns/ComponentList"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Scroll" type="ScrollContainer" parent="Columns/ComponentList/Components"]
-layout_mode = 2
-
-[node name="Tree" type="Tree" parent="Columns/ComponentList/Components/Scroll"]
-layout_mode = 2
-hide_root = true
 
 [node name="VSeparator2" type="VSeparator" parent="Columns"]
 layout_mode = 2

@@ -1,3 +1,4 @@
+@tool
 extends Control
 
 
@@ -10,6 +11,7 @@ signal database_selected(db_key)
 # Constants
 # --------------------------------------------------------------------------------------------------
 const INFOREQUESTDIALOG : PackedScene = preload("res://addons/STCSDataControl/ui/info_request_dialog/InfoRequestDialog.tscn")
+const CONFIRMDIALOG : PackedScene = preload("res://addons/STCSDataControl/ui/confirm_dialog/ConfirmDialog.tscn")
 
 # --------------------------------------------------------------------------------------------------
 # Variables
@@ -26,6 +28,7 @@ const INFOREQUESTDIALOG : PackedScene = preload("res://addons/STCSDataControl/ui
 func _ready() -> void:
 	CCDB.database_added.connect(_on_db_added)
 	CCDB.database_dropped.connect(_on_db_dropped)
+	_RebuildDatabaseTree()
 
 # --------------------------------------------------------------------------------------------------
 # Private Methods
@@ -38,6 +41,7 @@ func _RebuildDatabaseTree() -> void:
 		var dbcoll : TreeItem = db_tree.create_item(root)
 		dbcoll.set_text(0, path_id)
 		dbcoll.set_metadata(0, path_id)
+		dbcoll.set_selectable(0, false)
 		for item in CCDB.get_database_list(path_id):
 			var dbitem : TreeItem = db_tree.create_item(dbcoll)
 			dbitem.set_text(0, item[&"name"])
@@ -45,10 +49,18 @@ func _RebuildDatabaseTree() -> void:
 
 func _FindCollectionTreeItem(path_id : StringName) -> TreeItem:
 	var root : TreeItem = db_tree.get_root()
-	for child in root.get_children():
-		if child.get_metadata(0) == path_id:
-			return child
+	if root != null:
+		for child in root.get_children():
+			if child.get_metadata(0) == path_id:
+				return child
 	return null
+
+func _DisplayConfirmDialog(msg : String) -> void:
+	var dialog = CONFIRMDIALOG.instantiate()
+	dialog.text = msg
+	dialog.ok_only = true
+	add_child(dialog)
+	dialog.popup_centered()
 
 # --------------------------------------------------------------------------------------------------
 # Public Methods
@@ -68,8 +80,15 @@ func _on_db_added(db_key : StringName, db_name : String) -> void:
 			dbitem.set_metadata(0, db_key)
 
 func _on_db_dropped(db_key : StringName, db_name : String) -> void:
-	pass
-
+	var sel : TreeItem = db_tree.get_selected()
+	var root : TreeItem = db_tree.get_root()
+	for coll in root.get_children():
+		for entry in coll.get_children():
+			if entry.get_metadata(0) == db_key:
+				if entry == sel:
+					db_tree.deselect_all()
+					database_selected.emit(&"")
+				entry.free()
 
 func _on_add_db_pressed() -> void:
 	var info_dialog = INFOREQUESTDIALOG.instantiate()
@@ -78,16 +97,40 @@ func _on_add_db_pressed() -> void:
 		add_child(info_dialog)
 		info_dialog.dialog_accepted.connect(_on_new_db_name)
 		info_dialog.popup_centered()
+	else:
+		printerr("Failed to open dialog box")
 
 func _on_new_db_name(db_name : String) -> void:
 	if db_name.strip_edges() != "":
 		var res : int = CCDB.create_database(db_name)
 		if res != OK:
-			printerr("Create Database failed with code: ", res)
+			match res:
+				ERR_UNCONFIGURED:
+					_DisplayConfirmDialog.call_deferred("Database name is empty")
+				ERR_ALREADY_EXISTS, ERR_ALREADY_IN_USE:
+					_DisplayConfirmDialog.call_deferred("Database \"%s\" already exists."%[db_name])
+					#_DisplayConfirmDialog("Database \"%s\" already exists."%[db_name])
+				_:
+					_DisplayConfirmDialog.call_deferred("Unrecognized error occured: Error code %s"%[res])
 	else:
 		printerr("Create Database failed... name empty or contains only whitespace.")
 
 func _on_rem_db_pressed() -> void:
-	pass # Replace with function body.
+	var sel : TreeItem = db_tree.get_selected()
+	if sel != null:
+		var dialog = CONFIRMDIALOG.instantiate()
+		dialog.yes_pressed.connect(_on_remove_yes_pressed)
+		dialog.text = "About to permanently remove selected database. Are you sure?"
+		add_child(dialog)
+		dialog.popup_centered()
+	else:
+		_DisplayConfirmDialog("No database selected.")
 
+func _on_remove_yes_pressed() -> void:
+	var sel : TreeItem = db_tree.get_selected()
+	if sel == null:
+		printerr("No database selected.")
+		return
+	var db_key : StringName = sel.get_metadata(0)
+	CCDB.erase_database_by_key(db_key)
 

@@ -62,7 +62,10 @@ var _db : Dictionary = {}
 # --------------------------------------------------------------------------------------------------
 # Variables
 # --------------------------------------------------------------------------------------------------
+var _types : Dictionary = {}
 var _tags : Dictionary = {}
+
+
 var _dirty : bool = false
 var _locked : bool = false
 
@@ -178,6 +181,9 @@ func save(path : String) -> int:
 		saved.emit()
 	return res
 
+func get_component_type_list() -> Array:
+	return _types.keys()
+
 func get_component_list() -> Array:
 	var items : Array = []
 	for uuid in _db.keys():
@@ -187,6 +193,18 @@ func get_component_list() -> Array:
 			&"name":_db[uuid][&"name"],
 			&"size_range":_db[uuid][&"size_range"]
 		})
+	return items
+
+func get_component_list_of_type(type : StringName) -> Array:
+	var items : Array = []
+	if type in _types:
+		for uuid in _types[type]:
+			items.append({
+				&"uuid": uuid,
+				&"type":_db[uuid][&"type"],
+				&"name":_db[uuid][&"name"],
+				&"size_range":_db[uuid][&"size_range"]
+			})
 	return items
 
 func has_component(uuid : StringName) -> bool:
@@ -329,8 +347,23 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 				return ERR_DOES_NOT_EXIST
 			if &"default" in COMPONENT_STRUCTURE[key]:
 				cmp[key] = COMPONENT_STRUCTURE[key][&"default"]
-		
+	
+	# TODO: Possibly move this code to a dedicated method.
+	if cmp[&"uuid"] in _db:
+		var old_cmp : Dictionary = _db[cmp[&"uuid"]]
+		if cmp[&"type"] != old_cmp[&"type"]:
+			if old_cmp[&"type"] in _types:
+				var idx : int = _types[old_cmp[&"type"]].find(old_cmp[&"uuid"])
+				if idx >= 0:
+					_types[old_cmp[&"type"]].remove_at(idx)
+					if _types[old_cmp[&"type"]].size() <= 0:
+						_types.erase(old_cmp[&"type"])
+	
 	_db[cmp[&"uuid"]] = cmp
+	if not cmp[&"type"] in _types:
+		_types[cmp[&"type"]] = []
+	_types[cmp[&"type"]].append(cmp[&"uuid"])
+
 	_dirty = true
 	component_added.emit(cmp[&"uuid"])
 	return OK

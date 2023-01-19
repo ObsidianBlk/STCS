@@ -20,6 +20,7 @@ var _main_control : Control = null
 func _enter_tree() -> void:
 	#add_autoload_singleton(AUTO_UUID_NAME, "res://addons/STCSDataControl/autos/UUID.gd")
 	#add_autoload_singleton(AUTO_CCDB_NAME, "res://addons/STCSDataControl/autos/CCDB.gd")
+	CCDB.load_database_resources()
 	if _main_control == null:
 		_main_control = DCMAIN.instantiate()
 	get_editor_interface().get_editor_main_screen().add_child(_main_control)
@@ -32,6 +33,7 @@ func _exit_tree() -> void:
 	if _main_control != null:
 		_main_control.queue_free()
 		_main_control = null
+	CCDB.clear(true)
 
 
 func _make_visible(visible : bool) -> void:
