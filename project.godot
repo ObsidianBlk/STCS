@@ -52,4 +52,5 @@ config/icon="res://icon.svg"
 [autoload]
 
 UUID="*res://addons/STCSDataControl/autos/UUID.gd"
+DSV="*res://addons/STCSDataControl/autos/DSV.gd"
 CCDB="*res://addons/STCSDataControl/autos/CCDB.gd"

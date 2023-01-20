@@ -3,36 +3,59 @@ extends Resource
 class_name ComponentDB
 
 
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Signals
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 signal component_added(uuid)
 signal component_removed(uuid)
 signal saved()
 
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Constants
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 enum COMPONENT_LAYOUT_TYPE {Static=0, Cluster=1, Growable=2}
 const COMPONENT_STRUCTURE : Dictionary = {
 	&"name":{&"req":true, &"type":TYPE_STRING},
+	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
 	&"sp":{&"req":true, &"type":TYPE_INT},
 	&"absorption":{&"req":true, &"type":TYPE_INT},
 	&"bleed":{&"req":true, &"type":TYPE_INT},
 	&"stress":{&"req":true, &"type":TYPE_INT},
-	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
-	&"power":{&"req":false, &"type":TYPE_INT, &"default":0},
-	&"crew":{&"req":false, &"type":TYPE_INT, &"default":0},
+	&"layout_type":{&"req":true, &"type":TYPE_INT, &"min":0, &"max":2},
+	&"layout_list":{&"req":false, &"type":TYPE_ARRAY, &"item":{&"type":TYPE_INT}},
 	&"size_range":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true},
-	&"seats":{&"req":false, &"type":TYPE_ARRAY, &"sub_type":TYPE_DICTIONARY},
-	&"layout_type":{&"req":true, &"type":TYPE_INT},
-	&"layout_list":{&"req":false, &"type":TYPE_ARRAY},
 	&"attributes":{&"req":false, &"type":TYPE_DICTIONARY}
 }
 
-const SEAT_STRUCTURE : Dictionary = {
-	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
-	&"rank":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true}
+const ATTRIBUTE_STRUCTURES : Dictionary = {
+	&"pow_gen":{
+		&"ppt":{&"req":true, &"type":TYPE_INT, &"min":1}
+	},
+	&"pow_req":{
+		&"pmax":{&"req":true, &"type":TYPE_INT, &"min":1},
+		&"preq":{&"req":true, &"type":TYPE_INT, &"min":1},
+		&"auto":{&"req":true, &"type":TYPE_BOOL} # Automatically recieve power without command requirement
+	},
+	&"pow_bat":{
+		&"points":{&"req":true, &"type":TYPE_INT, &"min":1}
+	},
+	&"engine":{
+		&"mpt":{&"req":true, &"type":TYPE_INT, &"min":1}
+	},
+	&"crew_req":{
+		&"cmax":{&"req":true, &"type":TYPE_INT, &"min":1},
+		&"creq":{&"req":true, &"type":TYPE_INT, &"min":1}
+	},
+	&"seats":{
+		&"list":{&"req":true, &"type":TYPE_ARRAY, &"item":{
+				&"type":TYPE_DICTIONARY,
+				&"def":{
+					&"type":{&"req":true, &"type":TYPE_STRING_NAME},
+					&"rank":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true}
+				}
+			}
+		}
+	}
 }
 
 
@@ -53,15 +76,15 @@ static func get_empty_entry() -> Dictionary:
 	return entry
 
 
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # "Export" Variables
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 var _name : String = ""
 var _db : Dictionary = {}
 
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Variables
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 var _types : Dictionary = {}
 var _tags : Dictionary = {}
 
@@ -69,9 +92,9 @@ var _tags : Dictionary = {}
 var _dirty : bool = false
 var _locked : bool = false
 
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Override Methods
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func _get(property : StringName):
 	match property:
 		&"name":
@@ -114,42 +137,14 @@ func _get_property_list() -> Array:
 	return arr
 
 
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Private Methods
-# --------------------------------------------------------------------------------------------------
-func _VerifySeatStructure(data : Dictionary) -> Dictionary:
-	var seat : Dictionary = {}
-	for key in SEAT_STRUCTURE.keys():
-		if not typeof(key) == TYPE_STRING_NAME:
-			printerr("Seat definition property key type invalid.")
-			return {}
-		
-		if key in data:
-			var type : int = typeof(data[key])
-			if type != SEAT_STRUCTURE[key][&"type"]:
-				printerr("Seat definition property \"%s\" invalid type."%[key])
-				return {}
-			if type == TYPE_VECTOR2I and &"minmax" in SEAT_STRUCTURE[key]:
-				if SEAT_STRUCTURE[key][&"minmax"] == true and data[key].x > data[key].y:
-					printerr("Seat definition property \"%s\" range invalid."%[key])
-					return {}
-			seat[key] = data[key]
-	return seat
+# ------------------------------------------------------------------------------
 
 
-func _VerifyAttributes(data : Dictionary) -> Dictionary:
-	var attrib : Dictionary = {}
-	for key in data.keys():
-		if not typeof(key) == TYPE_STRING_NAME:
-			printerr("Seat definition property key type invalid.")
-			return {}
-		# TODO: Check if value is only within a small set of TYPE_*s
-		attrib[key] = data[key]
-	return attrib
-
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Public Methods
-# --------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 func lock() -> void:
 	_locked = true
 
@@ -259,99 +254,29 @@ func set_database_dictionary(db : Dictionary, fail_on_warnings : bool = false) -
 func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 	if _locked:
 		return ERR_LOCKED
-	var cmp : Dictionary = {&"uuid":&""}
 	if &"uuid" in def:
-		cmp[&"uuid"] = def[&"uuid"]
-		if not allow_uuid_override and cmp[&"uuid"] in _db:
+		if not allow_uuid_override and def[&"uuid"] in _db:
 			return ERR_ALREADY_EXISTS
 	else:
-		cmp[&"uuid"] = UUID.v4()
+		def[&"uuid"] = UUID.v4()
 	
-	var layout_list_req : bool = false
-	for key in COMPONENT_STRUCTURE.keys():
-		if key in def:
-			if typeof(def[key]) != COMPONENT_STRUCTURE[key][&"type"]:
-				printerr("Component definition property \"%s\" invalid value type."%[key])
-				return ERR_INVALID_DATA
-			match COMPONENT_STRUCTURE[key][&"type"]:
-				TYPE_INT:
-					if def[key] < 0:
-						printerr("Component property \"%s\" value out of range."%[key])
-						return ERR_PARAMETER_RANGE_ERROR
-					if key == &"layout_type":
-						if not COMPONENT_LAYOUT_TYPE.values().find(def[key]) >= 0:
-							printerr("Component property \"%s\" value out of range."%[key])
-							return ERR_PARAMETER_RANGE_ERROR
-						layout_list_req = (def[key] == COMPONENT_LAYOUT_TYPE.Static)
-					cmp[key] = def[key]
-				TYPE_STRING:
-					if def[key] == "":
-						printerr("Component property \"%s\" is empty string."%[key])
-						return ERR_PARAMETER_RANGE_ERROR
-					cmp[key] = def[key]
-				TYPE_STRING_NAME:
-					if def[key] == &"":
-						printerr("Component property \"%s\" is empty string."%[key])
-						return ERR_PARAMETER_RANGE_ERROR
-					cmp[key] = def[key]
-				TYPE_VECTOR2I:
-					if &"minmax" in COMPONENT_STRUCTURE[key]:
-						if COMPONENT_STRUCTURE[key][&"minmax"] == true and def[key].x > def[key].y:
-							printerr("Component property \"%s\" range invalid."%[key])
-							return ERR_PARAMETER_RANGE_ERROR
-					cmp[key] = def[key]
-				TYPE_ARRAY:
-					match key:
-						&"seats":
-							var seats : Array = []
-							for item in def[key]:
-								if typeof(item) != TYPE_DICTIONARY:
-									printerr("Component property \"%s\" contains invalid entry type."%[key])
-									return ERR_INVALID_DATA
-								var seat = _VerifySeatStructure(item)
-								if seat.empty():
-									# NOTE: Don't need to print anything as _VerifySeatsStructure should do that already.
-									return ERR_INVALID_DATA
-								seats.append(seat)
-							cmp[key] = seats
-						&"layout_list":
-							if layout_list_req == true:
-								var item_count : int = (cmp[&"size_range"].y - cmp[&"size_range"].x) + 1
-								if def[key].size() != item_count:
-									printerr("Component property \"%s\" missing required number of values."%[key])
-									return ERR_PARAMETER_RANGE_ERROR
-								var llist : Array = []
-								for item in def[key]:
-									if typeof(item) != TYPE_INT:
-										printerr("Component property \"%s\" contains invalid entry type."%[key])
-										return ERR_INVALID_DATA
-									if item <= 0 or item > 0x7F:
-										printerr("Component property \"%s\" entry value out of range."%[key])
-										return ERR_PARAMETER_RANGE_ERROR
-									llist.append(item)
-								cmp[key] = llist
-					# TODO: Figure out how to handle tagging
-				TYPE_DICTIONARY:
-					match key:
-						&"attributes":
-							var attrib : Dictionary = _VerifyAttributes(def[key])
-							if attrib.is_empty():
-								return ERR_INVALID_DATA
-							cmp[key] = attrib
-		elif COMPONENT_STRUCTURE[key][&"req"] == true:
-			printerr("Component definition missing required property \"%s\"."%[key])
-			return ERR_DOES_NOT_EXIST
-		else:
-			if key == &"layout_list" and layout_list_req == true:
-				printerr("Component definition missing required property \"%s\"."%[key])
-				return ERR_DOES_NOT_EXIST
-			if &"default" in COMPONENT_STRUCTURE[key]:
-				cmp[key] = COMPONENT_STRUCTURE[key][&"default"]
+	var res : int = DSV.verify(def, COMPONENT_STRUCTURE)
+	if res != OK:
+		return res
+	
+	if &"attributes" in def: # Special handlers!
+		for attrib in def[&"attributes"].keys():
+			if not attrib in ATTRIBUTE_STRUCTURES:
+				printerr("Unknown attribute \"%s\"."%[attrib])
+				return ERR_INVALID_PARAMETER
+			res = DSV.verify(def[&"attributes"][attrib], ATTRIBUTE_STRUCTURES[attrib])
+			if res != OK:
+				return res
 	
 	# TODO: Possibly move this code to a dedicated method.
-	if cmp[&"uuid"] in _db:
-		var old_cmp : Dictionary = _db[cmp[&"uuid"]]
-		if cmp[&"type"] != old_cmp[&"type"]:
+	if def[&"uuid"] in _db:
+		var old_cmp : Dictionary = _db[def[&"uuid"]]
+		if def[&"type"] != old_cmp[&"type"]:
 			if old_cmp[&"type"] in _types:
 				var idx : int = _types[old_cmp[&"type"]].find(old_cmp[&"uuid"])
 				if idx >= 0:
@@ -359,11 +284,11 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 					if _types[old_cmp[&"type"]].size() <= 0:
 						_types.erase(old_cmp[&"type"])
 	
-	_db[cmp[&"uuid"]] = cmp
-	if not cmp[&"type"] in _types:
-		_types[cmp[&"type"]] = []
-	_types[cmp[&"type"]].append(cmp[&"uuid"])
+	_db[def[&"uuid"]] = def
+	if not def[&"type"] in _types:
+		_types[def[&"type"]] = []
+	_types[def[&"type"]].append(def[&"uuid"])
 
 	_dirty = true
-	component_added.emit(cmp[&"uuid"])
+	component_added.emit(def[&"uuid"])
 	return OK
