@@ -8,40 +8,6 @@
 
 config_version=5
 
-_global_script_classes=[{
-"base": "Resource",
-"class": &"ComponentDB",
-"language": &"GDScript",
-"path": "res://addons/STCSDataControl/resources/ComponentDB.gd"
-}, {
-"base": "Control",
-"class": &"ComponentLayout",
-"language": &"GDScript",
-"path": "res://addons/STCSDataControl/controls/ComponentLayout.gd"
-}, {
-"base": "RefCounted",
-"class": &"HexCell",
-"language": &"GDScript",
-"path": "res://scripts/hex/HexCell.gd"
-}, {
-"base": "Resource",
-"class": &"HexGrid",
-"language": &"GDScript",
-"path": "res://scripts/hex/HexGrid.gd"
-}, {
-"base": "Node2D",
-"class": &"HexGridView",
-"language": &"GDScript",
-"path": "res://scripts/hex/HexGridView.gd"
-}]
-_global_script_class_icons={
-"ComponentDB": "",
-"ComponentLayout": "",
-"HexCell": "",
-"HexGrid": "",
-"HexGridView": ""
-}
-
 [application]
 
 config/name="STCS"
@@ -54,3 +20,7 @@ config/icon="res://icon.svg"
 UUID="*res://addons/STCSDataControl/autos/UUID.gd"
 DSV="*res://addons/STCSDataControl/autos/DSV.gd"
 CCDB="*res://addons/STCSDataControl/autos/CCDB.gd"
+
+[editor]
+
+export/convert_text_resources_to_binary=true
