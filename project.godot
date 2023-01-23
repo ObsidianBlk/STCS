@@ -17,9 +17,9 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-UUID="*res://addons/STCSDataControl/autos/UUID.gd"
-DSV="*res://addons/STCSDataControl/autos/DSV.gd"
-CCDB="*res://addons/STCSDataControl/autos/CCDB.gd"
+UUID="*res://addons/Components/autos/UUID.gd"
+DSV="*res://addons/Components/autos/DSV.gd"
+CCDB="*res://addons/Components/autos/CCDB.gd"
 
 [editor]
 

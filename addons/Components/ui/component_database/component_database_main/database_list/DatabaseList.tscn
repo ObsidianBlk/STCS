@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/component_database_main/database_list/DatabaseList.gd" id="1_e6ddm"]
+[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/Components/assets/icons/add.svg" id="1_pn2a0"]
+[ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/Components/assets/icons/subtract.svg" id="2_355i3"]
+
+[node name="DatabaseList" type="VBoxContainer"]
+script = ExtResource("1_e6ddm")
+
+[node name="ctrls" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ctrls"]
+layout_mode = 2
+text = "Databases: "
+
+[node name="Spacer" type="Control" parent="ctrls"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AddDB" type="Button" parent="ctrls"]
+layout_mode = 2
+icon = ExtResource("1_pn2a0")
+
+[node name="RemDB" type="Button" parent="ctrls"]
+layout_mode = 2
+icon = ExtResource("2_355i3")
+
+[node name="Databases" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Scroll" type="ScrollContainer" parent="Databases"]
+layout_mode = 2
+
+[node name="Tree" type="Tree" parent="Databases/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+hide_root = true
+
+[connection signal="pressed" from="ctrls/AddDB" to="." method="_on_add_db_pressed"]
+[connection signal="pressed" from="ctrls/RemDB" to="." method="_on_rem_db_pressed"]
+[connection signal="item_selected" from="Databases/Scroll/Tree" to="." method="_on_tree_item_selected"]

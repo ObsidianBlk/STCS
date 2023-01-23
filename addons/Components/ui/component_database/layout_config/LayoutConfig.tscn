@@ -1,0 +1,54 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/layout_config/LayoutConfig.gd" id="1_hfay3"]
+[ext_resource type="Script" path="res://addons/Components/controls/ComponentLayout.gd" id="2_3y5f7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ai0ul"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0.0980392, 0.164706, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.643137, 0.847059, 1)
+border_blend = true
+
+[node name="LayoutConfig" type="MarginContainer"]
+script = ExtResource("1_hfay3")
+metadata/_edit_vertical_guides_ = []
+
+[node name="VBC" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Size" type="MarginContainer" parent="VBC"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="VBC/Size"]
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 0.0
+
+[node name="Label" type="Label" parent="VBC/Size"]
+layout_mode = 2
+text = "-1"
+horizontal_alignment = 1
+
+[node name="CmpLayout" type="AspectRatioContainer" parent="VBC"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PC" type="PanelContainer" parent="VBC/CmpLayout"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ai0ul")
+
+[node name="ComponentLayout" type="Control" parent="VBC/CmpLayout/PC"]
+custom_minimum_size = Vector2(5.19615, 5)
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+script = ExtResource("2_3y5f7")
+selected_bits = 0
+disabled = false
