@@ -17,10 +17,10 @@ enum COMPONENT_LAYOUT_TYPE {Static=0, Cluster=1, Growable=2}
 const COMPONENT_STRUCTURE : Dictionary = {
 	&"name":{&"req":true, &"type":TYPE_STRING},
 	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
-	&"sp":{&"req":true, &"type":TYPE_INT},
+	&"max_sp":{&"req":true, &"type":TYPE_INT},
 	&"absorption":{&"req":true, &"type":TYPE_INT},
 	&"bleed":{&"req":true, &"type":TYPE_INT},
-	&"stress":{&"req":true, &"type":TYPE_INT},
+	&"max_stress":{&"req":true, &"type":TYPE_INT},
 	&"layout_type":{&"req":true, &"type":TYPE_INT, &"min":0, &"max":2},
 	&"layout_list":{&"req":false, &"type":TYPE_ARRAY, &"item":{&"type":TYPE_INT}},
 	&"size_range":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true},
@@ -206,27 +206,9 @@ func has_component(uuid : StringName) -> bool:
 	return uuid in _db
 
 func get_component(uuid : StringName) -> Dictionary:
-	var cmp : Dictionary = {}
 	if uuid in _db:
-		for key in _db[uuid].keys():
-			match typeof(_db[uuid][key]):
-				TYPE_ARRAY:
-					var data : Array = []
-					for item in _db[uuid][key]:
-						if key == &"seats":
-							data.append({
-								&"type": item[&"type"],
-								&"rank": item[&"rank"]
-							})
-						else:
-							data.append(item)
-				TYPE_DICTIONARY:
-					# TODO: Copy the Attribute list... and any other dictionary structure I feel like
-					#   F&^%ing myself with in the future.
-					printerr("There shouldn't be anything here yet! Bugger off!")
-				_:
-					cmp[key] = _db[uuid][key]
-	return cmp
+		return _db[uuid]
+	return {}
 
 func remove_component(uuid : StringName) -> int:
 	if _locked:

@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 UUID="*res://addons/Components/autos/UUID.gd"
 DSV="*res://addons/Components/autos/DSV.gd"
+CSys="*res://addons/Components/autos/CSys.gd"
 CCDB="*res://addons/Components/autos/CCDB.gd"
 
 [editor]
