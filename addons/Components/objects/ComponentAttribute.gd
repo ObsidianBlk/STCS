@@ -1,31 +1,26 @@
 @tool
-extends "res://addons/Components/objects/ComponentAttribute.gd"
-
-
+extends RefCounted
+class_name ComponentAttribute
 
 # ------------------------------------------------------------------------------
-# Constants
+# Signals
 # ------------------------------------------------------------------------------
-const ANAME : StringName = &"pow_gen"
-const SCHEMA : Dictionary = {
-	&"ppt":{&"req":true, &"type":TYPE_INT, &"min":1}
-}
+signal response(msg)
 
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
 func get_name() -> StringName:
-	return ANAME
+	return &""
+
+func get_instance_data(component : Dictionary) -> Dictionary:
+	return {}
 
 func validate_attribute_data(data : Dictionary) -> int:
-	return DSV.verify(data, SCHEMA)
+	return OK
 
 func handle_request(req : Dictionary, component : Dictionary, instance : Dictionary) -> void:
-	# NOTE: This method is assuming req, component, and instance are formatted properly.
-	#  after all, this script shouldn't be readibly available to the game at large.
-	if req[&"request"] == ANAME:
-		response.emit({
-			&"from" : ANAME,
-			&"power" : component[ANAME][&"ppt"]
-		})
+	pass
 
+func handle_response(res : Dictionary, component : Dictionary, instance : Dictionary) -> void:
+	pass
