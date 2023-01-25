@@ -17,6 +17,9 @@ const SCHEMA : Dictionary = {
 func get_name() -> StringName:
 	return ANAME
 
+func get_attribute_data() -> Dictionary:
+	return {&"ppt":1}
+
 func validate_attribute_data(data : Dictionary) -> int:
 	return DSV.verify(data, SCHEMA)
 

@@ -18,7 +18,10 @@ const SCHEMA : Dictionary = {
 func get_name() -> StringName:
 	return ANAME
 
-func get_instance_data(component : Dictionary) -> Dictionary:
+func get_attribute_data() -> Dictionary:
+	return {&"points":1}
+
+func create_instance(component : Dictionary) -> Dictionary:
 	return {
 		&"stored": 0
 	}

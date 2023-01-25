@@ -13,67 +13,67 @@ signal saved()
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
-enum COMPONENT_LAYOUT_TYPE {Static=0, Cluster=1, Growable=2}
-const COMPONENT_STRUCTURE : Dictionary = {
-	&"name":{&"req":true, &"type":TYPE_STRING},
-	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
-	&"max_sp":{&"req":true, &"type":TYPE_INT},
-	&"absorption":{&"req":true, &"type":TYPE_INT},
-	&"bleed":{&"req":true, &"type":TYPE_INT},
-	&"max_stress":{&"req":true, &"type":TYPE_INT},
-	&"layout_type":{&"req":true, &"type":TYPE_INT, &"min":0, &"max":2},
-	&"layout_list":{&"req":false, &"type":TYPE_ARRAY, &"item":{&"type":TYPE_INT}},
-	&"size_range":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true},
-	&"attributes":{&"req":false, &"type":TYPE_DICTIONARY}
-}
+#enum COMPONENT_LAYOUT_TYPE {Static=0, Cluster=1, Growable=2}
+#const COMPONENT_STRUCTURE : Dictionary = {
+#	&"name":{&"req":true, &"type":TYPE_STRING},
+#	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
+#	&"max_sp":{&"req":true, &"type":TYPE_INT},
+#	&"absorption":{&"req":true, &"type":TYPE_INT},
+#	&"bleed":{&"req":true, &"type":TYPE_INT},
+#	&"max_stress":{&"req":true, &"type":TYPE_INT},
+#	&"layout_type":{&"req":true, &"type":TYPE_INT, &"min":0, &"max":2},
+#	&"layout_list":{&"req":false, &"type":TYPE_ARRAY, &"item":{&"type":TYPE_INT}},
+#	&"size_range":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true},
+#	&"attributes":{&"req":false, &"type":TYPE_DICTIONARY}
+#}
 
-const ATTRIBUTE_STRUCTURES : Dictionary = {
-	&"pow_gen":{
-		&"ppt":{&"req":true, &"type":TYPE_INT, &"min":1}
-	},
-	&"pow_req":{
-		&"pmax":{&"req":true, &"type":TYPE_INT, &"min":1},
-		&"preq":{&"req":true, &"type":TYPE_INT, &"min":1},
-		&"auto":{&"req":true, &"type":TYPE_BOOL} # Automatically recieve power without command requirement
-	},
-	&"pow_bat":{
-		&"points":{&"req":true, &"type":TYPE_INT, &"min":1}
-	},
-	&"engine":{
-		&"mpt":{&"req":true, &"type":TYPE_INT, &"min":1}
-	},
-	&"crew_req":{
-		&"cmax":{&"req":true, &"type":TYPE_INT, &"min":1},
-		&"creq":{&"req":true, &"type":TYPE_INT, &"min":1}
-	},
-	&"seats":{
-		&"list":{&"req":true, &"type":TYPE_ARRAY, &"item":{
-				&"type":TYPE_DICTIONARY,
-				&"def":{
-					&"type":{&"req":true, &"type":TYPE_STRING_NAME},
-					&"rank":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true}
-				}
-			}
-		}
-	}
-}
+#const ATTRIBUTE_STRUCTURES : Dictionary = {
+#	&"pow_gen":{
+#		&"ppt":{&"req":true, &"type":TYPE_INT, &"min":1}
+#	},
+#	&"pow_req":{
+#		&"pmax":{&"req":true, &"type":TYPE_INT, &"min":1},
+#		&"preq":{&"req":true, &"type":TYPE_INT, &"min":1},
+#		&"auto":{&"req":true, &"type":TYPE_BOOL} # Automatically recieve power without command requirement
+#	},
+#	&"pow_bat":{
+#		&"points":{&"req":true, &"type":TYPE_INT, &"min":1}
+#	},
+#	&"engine":{
+#		&"mpt":{&"req":true, &"type":TYPE_INT, &"min":1}
+#	},
+#	&"crew_req":{
+#		&"cmax":{&"req":true, &"type":TYPE_INT, &"min":1},
+#		&"creq":{&"req":true, &"type":TYPE_INT, &"min":1}
+#	},
+#	&"seats":{
+#		&"list":{&"req":true, &"type":TYPE_ARRAY, &"item":{
+#				&"type":TYPE_DICTIONARY,
+#				&"def":{
+#					&"type":{&"req":true, &"type":TYPE_STRING_NAME},
+#					&"rank":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true}
+#				}
+#			}
+#		}
+#	}
+#}
 
 
-static func get_empty_entry() -> Dictionary:
-	var entry : Dictionary = {}
-	for key in COMPONENT_STRUCTURE.keys():
-		var item : Dictionary = COMPONENT_STRUCTURE[key]
-		if item[&"req"] == true:
-			match item[&"type"]:
-				TYPE_INT:
-					entry[key] = 0
-				TYPE_STRING:
-					entry[key] = ""
-				TYPE_STRING_NAME:
-					entry[key] = &""
-				TYPE_VECTOR2I:
-					entry[key] = Vector2i.ZERO
-	return entry
+#static func get_empty_entry() -> Dictionary:
+#	var entry : Dictionary = {}
+#	for key in COMPONENT_STRUCTURE.keys():
+#		var item : Dictionary = COMPONENT_STRUCTURE[key]
+#		if item[&"req"] == true:
+#			match item[&"type"]:
+#				TYPE_INT:
+#					entry[key] = 0
+#				TYPE_STRING:
+#					entry[key] = ""
+#				TYPE_STRING_NAME:
+#					entry[key] = &""
+#				TYPE_VECTOR2I:
+#					entry[key] = Vector2i.ZERO
+#	return entry
 
 
 # ------------------------------------------------------------------------------
@@ -242,18 +242,28 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 	else:
 		def[&"uuid"] = UUID.v4()
 	
-	var res : int = DSV.verify(def, COMPONENT_STRUCTURE)
+	var res : int = CSys.validate_component_data(def)
 	if res != OK:
 		return res
-	
-	if &"attributes" in def: # Special handlers!
-		for attrib in def[&"attributes"].keys():
-			if not attrib in ATTRIBUTE_STRUCTURES:
-				printerr("Unknown attribute \"%s\"."%[attrib])
-				return ERR_INVALID_PARAMETER
-			res = DSV.verify(def[&"attributes"][attrib], ATTRIBUTE_STRUCTURES[attrib])
-			if res != OK:
-				return res
+#	var res : int = DSV.verify(def, COMPONENT_STRUCTURE)
+#	if res != OK:
+#		return res
+#
+#	if &"attributes" in def: # Special handlers!
+#		for attrib in def[&"attributes"].keys():
+#			var attrib_handler : ComponentAttribute = CSys.get_attribute_handler(attrib)
+#			if attrib_handler == null:
+#				printerr("Unknown attribute \"%s\"."%[attrib])
+#				return ERR_INVALID_PARAMETER
+#			res = attrib_handler.validate_attribute_data(def[&"attributes"][attrib])
+#			if res != OK:
+#				return res
+#			if not attrib in ATTRIBUTE_STRUCTURES:
+#				printerr("Unknown attribute \"%s\"."%[attrib])
+#				return ERR_INVALID_PARAMETER
+#			res = DSV.verify(def[&"attributes"][attrib], ATTRIBUTE_STRUCTURES[attrib])
+#			if res != OK:
+#				return res
 	
 	# TODO: Possibly move this code to a dedicated method.
 	if def[&"uuid"] in _db:
