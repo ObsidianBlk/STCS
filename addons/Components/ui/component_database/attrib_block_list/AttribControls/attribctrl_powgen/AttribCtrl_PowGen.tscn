@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://c87av2jkb0smo"]
+
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powgen/AttribCtrl_PowGen.gd" id="1_31dj7"]
+
+[node name="AttribCTRL_PowGen" type="HBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_31dj7")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Power Per Turn: "
+
+[node name="LineEdit" type="LineEdit" parent="."]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+placeholder_text = "Int Value"
+virtual_keyboard_type = 2
+
+[connection signal="text_changed" from="LineEdit" to="." method="_on_text_changed"]
+[connection signal="text_submitted" from="LineEdit" to="." method="_on_line_edit_text_submitted"]

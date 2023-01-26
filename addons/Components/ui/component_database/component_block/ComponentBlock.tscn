@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://bjtlok2bi817j"]
 
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/component_block/ComponentBlock.gd" id="1_a3dq2"]
-[ext_resource type="PackedScene" uid="uid://crdxegc5jk0r4" path="res://addons/Components/ui/component_database/layout_config/LayoutConfig.tscn" id="1_bv7uk"]
+[ext_resource type="PackedScene" path="res://addons/Components/ui/component_database/layout_config/LayoutConfig.tscn" id="1_bv7uk"]
+[ext_resource type="PackedScene" uid="uid://cagrkjh3g4yfo" path="res://addons/Components/ui/component_database/attrib_block_list/AttribBlockList.tscn" id="2_q0pm5"]
 
 [node name="ComponentBlock" type="GridContainer"]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -111,23 +113,9 @@ layout_mode = 2
 caret_blink = true
 caret_blink_interval = 0.5
 
-[node name="Power_CheckBox" type="CheckBox" parent="BasicStats/Data"]
+[node name="AttribBlockList" parent="BasicStats" instance=ExtResource("2_q0pm5")]
 layout_mode = 2
-text = "Power:"
-
-[node name="Power_LineEdit" type="LineEdit" parent="BasicStats/Data"]
-layout_mode = 2
-caret_blink = true
-caret_blink_interval = 0.5
-
-[node name="Crew_CheckBox" type="CheckBox" parent="BasicStats/Data"]
-layout_mode = 2
-text = "Crew:"
-
-[node name="Crew_LineEdit" type="LineEdit" parent="BasicStats/Data"]
-layout_mode = 2
-caret_blink = true
-caret_blink_interval = 0.5
+size_flags_vertical = 3
 
 [node name="LimitsLayouts" type="VBoxContainer" parent="."]
 layout_mode = 2

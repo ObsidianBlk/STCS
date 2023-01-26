@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://cagrkjh3g4yfo"]
+
+[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/Components/assets/icons/add.svg" id="1_8auoq"]
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribBlockList.gd" id="1_sxipg"]
+
+[node name="AttribBlockList" type="MarginContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_sxipg")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="AvailableAttribs" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Layout/AvailableAttribs"]
+layout_mode = 2
+text = "Attributes: "
+
+[node name="MenuButton" type="MenuButton" parent="Layout/AvailableAttribs"]
+layout_mode = 2
+text = "Select an Attribute"
+flat = false
+
+[node name="AddAttrib" type="Button" parent="Layout/AvailableAttribs"]
+layout_mode = 2
+icon = ExtResource("1_8auoq")
+
+[node name="HSeparator" type="HSeparator" parent="Layout"]
+layout_mode = 2
+
+[node name="AttribList" type="PanelContainer" parent="Layout"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Scroll" type="ScrollContainer" parent="Layout/AttribList"]
+layout_mode = 2
+
+[node name="List" type="VBoxContainer" parent="Layout/AttribList/Scroll"]
+layout_mode = 2
