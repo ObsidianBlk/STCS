@@ -1,3 +1,4 @@
+@tool
 extends Control
 
 
@@ -17,17 +18,29 @@ const ATTRIB_EDITOR_CONTROL : Dictionary = {
 	&"pow_gen": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powgen/AttribCtrl_PowGen.tscn"),
 	
 }
+const ATTRIB_MENU_DEFAULT_TEXT : String = "Select an Attribute"
 
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
-
+var _active_attrib_choice : StringName = &""
 
 # ------------------------------------------------------------------------------
 # Onready Variables
 # ------------------------------------------------------------------------------
 @onready var _list : VBoxContainer = $Layout/AttribList/Scroll/List
+@onready var _attribmenubtn : MenuButton = $Layout/AvailableAttribs/AttribMenuBtn
 
+# ------------------------------------------------------------------------------
+# Override Methods
+# ------------------------------------------------------------------------------
+func _ready() -> void:
+	var mpop : PopupMenu = _attribmenubtn.get_popup()
+	mpop.clear() # We're a tool. Make sure this list is empty!
+	mpop.id_pressed.connect(_on_attrib_menu_id_pressed)
+	for key in ATTRIB_EDITOR_CONTROL:
+		mpop.add_item(String(key))
+		mpop.set_item_metadata(-1, key)
 
 # ------------------------------------------------------------------------------
 # Private Methods
@@ -43,9 +56,32 @@ func _GetAttributeItem(attrib_name : StringName) -> Control:
 func _AttributeItemExists(attrib_name : StringName) -> bool:
 	return _GetAttributeItem(attrib_name) != null
 
+func _AddAttribToAvailable(attrib_name : StringName) -> void:
+	if attrib_name in ATTRIB_EDITOR_CONTROL:
+		var mpop : PopupMenu = _attribmenubtn.get_popup()
+		mpop.add_item(String(attrib_name))
+		mpop.set_item_metadata(-1, attrib_name)
+
+func _RemoveAttribFromAvailable(attrib_name : StringName) -> void:
+	var mpop : PopupMenu = _attribmenubtn.get_popup()
+	for idx in range(mpop.item_count):
+		if mpop.get_item_metadata(idx) == attrib_name:
+			mpop.remove_item(idx)
+			if _active_attrib_choice == attrib_name:
+				_active_attrib_choice = &""
+				_attribmenubtn.text = ATTRIB_MENU_DEFAULT_TEXT
+
 # ------------------------------------------------------------------------------
 # Public Methods
 # ------------------------------------------------------------------------------
+func clear() -> void:
+	var alist : Array = get_assigned_attributes()
+	for attrib_name in alist:
+		remove_attribute(attrib_name)
+
+func get_assigned_attribute_count() -> int:
+	return get_assigned_attributes().size()
+
 func get_available_attributes() -> Array:
 	var alist : Array = []
 	for attrib_name in ATTRIB_EDITOR_CONTROL.keys():
@@ -77,6 +113,7 @@ func add_attribute(attrib_name : StringName) -> void:
 			_list.add_child(item)
 			item.remove_requested.connect(remove_attribute.bind(attrib_name))
 			item.content_revealed.connect(_on_item_content_revealed.bind(attrib_name))
+			_RemoveAttribFromAvailable(attrib_name)
 			attribute_added.emit(attrib_name)
 
 
@@ -85,6 +122,7 @@ func remove_attribute(attrib_name : StringName) -> void:
 	if item != null:
 		_list.remove_child(item)
 		item.queue_free()
+		_AddAttribToAvailable(attrib_name)
 		attribute_removed.emit(attrib_name)
 
 func set_attribute_data(attrib_name : StringName, data : Dictionary) -> void:
@@ -93,6 +131,17 @@ func set_attribute_data(attrib_name : StringName, data : Dictionary) -> void:
 	
 	var ctrl : Control = item.get_content_control()
 	if ctrl == null: return
+	
+	ctrl.set_data(data)
+
+func get_attribute_data(attrib_name : StringName) -> Dictionary:
+	var item : Control = _GetAttributeItem(attrib_name)
+	if item != null:
+		var ctrl : Control = item.get_content_control()
+		if ctrl != null:
+			return ctrl.get_data()
+	return {}
+
 
 # ------------------------------------------------------------------------------
 # Handler Methods
@@ -102,3 +151,13 @@ func _on_item_content_revealed(showing : bool, attrib_name : StringName) -> void
 
 func _on_attrib_data_updated(data : Dictionary, attrib_name : StringName) -> void:
 	attribute_data_changed.emit(attrib_name, data)
+
+func _on_attrib_menu_id_pressed(id : int) -> void:
+	var mpop : PopupMenu = _attribmenubtn.get_popup()
+	var idx : int = mpop.get_item_index(id)
+	_attribmenubtn.text = mpop.get_item_text(idx)
+	_active_attrib_choice = mpop.get_item_metadata(idx)
+
+func _on_add_attrib_pressed():
+	if _active_attrib_choice != &"":
+		add_attribute(_active_attrib_choice)

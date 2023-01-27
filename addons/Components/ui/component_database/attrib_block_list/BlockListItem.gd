@@ -48,6 +48,7 @@ func _ready() -> void:
 	if _content_control != null:
 		_content.add_child(_content_control)
 	_content.visible = false
+	_revealer_btn.icon = ARROW_LEFT
 
 
 # ------------------------------------------------------------------------------

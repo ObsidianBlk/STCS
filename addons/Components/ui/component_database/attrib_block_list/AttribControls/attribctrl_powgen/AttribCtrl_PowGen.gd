@@ -38,7 +38,7 @@ func _ready() -> void:
 func _GetNewData() -> Dictionary:
 	var ah : ComponentAttribute = CSys.get_attribute_handler(ANAME)
 	if ah != null:
-		_data = ah.get_attribute_data()
+		return ah.get_attribute_data()
 	return {}
 
 # ------------------------------------------------------------------------------
@@ -56,6 +56,9 @@ func set_data(data : Dictionary) -> void:
 			_line.editable = true
 			_line.text = "%s"%_data[&"ppt"]
 		data_updated.emit(_data)
+
+func get_data() -> Dictionary:
+	return _data
 
 # ------------------------------------------------------------------------------
 # Handler Methods

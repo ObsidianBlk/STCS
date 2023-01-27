@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://dirka7khh81lv"]
+[gd_scene load_steps=5 format=3 uid="uid://dirka7khh81lv"]
 
-[ext_resource type="Texture2D" uid="uid://c8y8lrciiyokw" path="res://addons/Components/assets/icons/arrow_left.svg" id="1_kwmh7"]
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/BlockListItem.gd" id="1_vm5i1"]
 [ext_resource type="Texture2D" uid="uid://jxas6kr6golu" path="res://addons/Components/assets/icons/big_x.svg" id="2_75861"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i8gx7"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y2bkj"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
@@ -18,7 +17,7 @@ border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yf82k"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6h18b"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
@@ -34,24 +33,23 @@ corner_radius_bottom_left = 4
 [node name="BlockListItem" type="VBoxContainer"]
 offset_right = 40.0
 offset_bottom = 40.0
+size_flags_horizontal = 3
 theme_override_constants/separation = 0
 script = ExtResource("1_vm5i1")
 
 [node name="Header" type="PanelContainer" parent="."]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_i8gx7")
+theme_override_styles/panel = SubResource("StyleBoxFlat_y2bkj")
 
 [node name="Layout" type="HBoxContainer" parent="Header"]
 layout_mode = 2
 
 [node name="Revealer" type="Button" parent="Header/Layout"]
 layout_mode = 2
-icon = ExtResource("1_kwmh7")
 flat = true
 
 [node name="Title" type="Label" parent="Header/Layout"]
 layout_mode = 2
-text = "Entry Title"
 
 [node name="Spacer" type="Control" parent="Header/Layout"]
 layout_mode = 2
@@ -62,8 +60,9 @@ layout_mode = 2
 icon = ExtResource("2_75861")
 
 [node name="Content" type="PanelContainer" parent="."]
+visible = false
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_yf82k")
+theme_override_styles/panel = SubResource("StyleBoxFlat_6h18b")
 
 [connection signal="pressed" from="Header/Layout/Revealer" to="." method="_on_revealer_pressed"]
 [connection signal="pressed" from="Header/Layout/Remove" to="." method="_on_remove_pressed"]

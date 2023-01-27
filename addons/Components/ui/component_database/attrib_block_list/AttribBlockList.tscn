@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cagrkjh3g4yfo"]
+[gd_scene load_steps=4 format=3 uid="uid://cagrkjh3g4yfo"]
 
 [ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/Components/assets/icons/add.svg" id="1_8auoq"]
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribBlockList.gd" id="1_sxipg"]
+[ext_resource type="Texture2D" uid="uid://cgh5n7pdt7j8s" path="res://addons/Components/assets/icons/arrow_down.svg" id="2_lmnco"]
 
 [node name="AttribBlockList" type="MarginContainer"]
 offset_right = 40.0
@@ -18,10 +19,22 @@ layout_mode = 2
 layout_mode = 2
 text = "Attributes: "
 
-[node name="MenuButton" type="MenuButton" parent="Layout/AvailableAttribs"]
+[node name="AttribMenuBtn" type="MenuButton" parent="Layout/AvailableAttribs"]
+custom_minimum_size = Vector2(192, 0)
 layout_mode = 2
 text = "Select an Attribute"
+icon = ExtResource("2_lmnco")
 flat = false
+clip_text = true
+alignment = 0
+icon_alignment = 2
+item_count = 1
+popup/item_0/text = "pow_gen"
+popup/item_0/id = 0
+
+[node name="Spacer" type="Control" parent="Layout/AvailableAttribs"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="AddAttrib" type="Button" parent="Layout/AvailableAttribs"]
 layout_mode = 2
@@ -34,9 +47,13 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_vertical = 3
+theme_type_variation = &"Tree"
 
 [node name="Scroll" type="ScrollContainer" parent="Layout/AttribList"]
 layout_mode = 2
 
 [node name="List" type="VBoxContainer" parent="Layout/AttribList/Scroll"]
 layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="pressed" from="Layout/AvailableAttribs/AddAttrib" to="." method="_on_add_attrib_pressed"]
