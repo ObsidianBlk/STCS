@@ -35,6 +35,10 @@ const THEME_DEF : Dictionary = {
 		&"focus": Color.TURQUOISE,
 		&"disabled": Color.WEB_GRAY,
 		&"selected": Color.MEDIUM_TURQUOISE
+	},
+	&"styles":{
+		&"panel": null,
+		&"selected": null,
 	}
 }
 
@@ -186,6 +190,9 @@ func _get(property : StringName):
 		&"custom_colors":
 			if prop_split.size() == 2 and has_theme_color_override(prop_split[1]):
 				return get_theme_color(prop_split[1])
+		&"custom_styles":
+			if prop_split.size() == 2 and has_theme_stylebox_override(prop_split[1]):
+				return get_theme_stylebox(prop_split[1])
 	return null
 
 func _set(property : StringName, value) -> bool:
@@ -224,6 +231,18 @@ func _set(property : StringName, value) -> bool:
 					queue_redraw()
 				else : success = false
 			else : success = false
+		&"custom_styles":
+			if prop_split.size() == 2:
+				if typeof(value) == TYPE_NIL:
+					remove_theme_stylebox_override(prop_split[1])
+					notify_property_list_changed()
+					queue_redraw()
+				elif typeof(value) == TYPE_OBJECT and value is StyleBox:
+					add_theme_stylebox_override(prop_split[1], value)
+					notify_property_list_changed()
+					queue_redraw()
+				else: success = false
+			else: success = false
 		_:
 			success = false
 	return success
@@ -277,6 +296,20 @@ func _get_property_list() -> Array:
 			type=TYPE_COLOR,
 			usage=12 if not has_theme_color_override(key) else 30
 		})
+	arr.append({
+		name="Styles",
+		type=TYPE_NIL,
+		hint_string="custom_styles/",
+		usage=PROPERTY_USAGE_SUBGROUP
+	})
+	for key in THEME_DEF[&"styles"].keys():
+		arr.append({
+			name="custom_styles/%s"%[key],
+			type=TYPE_OBJECT,
+			hint=PROPERTY_HINT_RESOURCE_TYPE,
+			hint_string="StyleBox",
+			usage=12 if not has_theme_stylebox_override(key) else 30
+		})
 	#print(arr)
 	return arr
 
@@ -298,6 +331,15 @@ func _GetColor(color_name : StringName) -> Color:
 			return get_theme_color(color_name, THEME_CLASS_NAME)
 		return THEME_DEF[&"colors"][color_name]
 	return Color.BLACK
+
+func _GetStyleBox(stylebox_name : StringName) -> StyleBox:
+	if stylebox_name in THEME_DEF[&"styles"]:
+		if has_theme_stylebox_override(stylebox_name) or has_theme_stylebox(stylebox_name):
+			return get_theme_stylebox(stylebox_name)
+		if has_theme_stylebox(stylebox_name, THEME_CLASS_NAME):
+			return get_theme_stylebox(stylebox_name, THEME_CLASS_NAME)
+		return get_theme_stylebox(stylebox_name, "Tree")
+	return null
 
 func _HexToPoint(hex : Vector3i) -> Vector2:
 	var x : float = 0.0
