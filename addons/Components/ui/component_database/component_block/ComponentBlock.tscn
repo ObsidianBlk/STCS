@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bjtlok2bi817j"]
 
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/component_block/ComponentBlock.gd" id="1_a3dq2"]
-[ext_resource type="PackedScene" path="res://addons/Components/ui/component_database/layout_config/LayoutConfig.tscn" id="1_bv7uk"]
+[ext_resource type="PackedScene" uid="uid://uk58l8ognu64" path="res://addons/Components/ui/component_database/layout_config/LayoutConfig.tscn" id="1_bv7uk"]
 [ext_resource type="PackedScene" uid="uid://cagrkjh3g4yfo" path="res://addons/Components/ui/component_database/attrib_block_list/AttribBlockList.tscn" id="2_q0pm5"]
 
 [node name="ComponentBlock" type="GridContainer"]
@@ -25,7 +25,8 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "UUID: "
 
-[node name="LineEdit" type="LineEdit" parent="UUID"]
+[node name="UUID_LineEdit" type="LineEdit" parent="UUID"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 editable = false
@@ -43,7 +44,8 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Name: "
 
-[node name="LineEdit" type="LineEdit" parent="Name"]
+[node name="Name_LineEdit" type="LineEdit" parent="Name"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 caret_blink = true
@@ -57,7 +59,8 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Type: "
 
-[node name="LineEdit" type="LineEdit" parent="Type"]
+[node name="Type_LineEdit" type="LineEdit" parent="Type"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 caret_blink = true
@@ -82,6 +85,7 @@ layout_mode = 2
 text = "Struct. Pts.:"
 
 [node name="SP_LineEdit" type="LineEdit" parent="BasicStats/Data"]
+unique_name_in_owner = true
 layout_mode = 2
 caret_blink = true
 caret_blink_interval = 0.5
@@ -91,6 +95,7 @@ layout_mode = 2
 text = "Absorption: "
 
 [node name="Absorp_LineEdit" type="LineEdit" parent="BasicStats/Data"]
+unique_name_in_owner = true
 layout_mode = 2
 caret_blink = true
 caret_blink_interval = 0.5
@@ -100,6 +105,7 @@ layout_mode = 2
 text = "Bleed: "
 
 [node name="Bleed_LineEdit" type="LineEdit" parent="BasicStats/Data"]
+unique_name_in_owner = true
 layout_mode = 2
 caret_blink = true
 caret_blink_interval = 0.5
@@ -109,6 +115,7 @@ layout_mode = 2
 text = "Stress: "
 
 [node name="Stress_LineEdit" type="LineEdit" parent="BasicStats/Data"]
+unique_name_in_owner = true
 layout_mode = 2
 caret_blink = true
 caret_blink_interval = 0.5
@@ -139,7 +146,8 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Min:"
 
-[node name="Min_LineEdit" type="LineEdit" parent="LimitsLayouts/SizeRange/MinValue"]
+[node name="MinSize_LineEdit" type="LineEdit" parent="LimitsLayouts/SizeRange/MinValue"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 caret_blink = true
@@ -153,7 +161,8 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Max:"
 
-[node name="Max_LineEdit" type="LineEdit" parent="LimitsLayouts/SizeRange/MaxValue"]
+[node name="MaxSize_LineEdit" type="LineEdit" parent="LimitsLayouts/SizeRange/MaxValue"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 caret_blink = true
@@ -168,7 +177,8 @@ size_flags_vertical = 0
 layout_mode = 2
 text = "Layout: "
 
-[node name="MenuButton" type="MenuButton" parent="LimitsLayouts/LayoutType"]
+[node name="LayoutType_Dropdown" type="MenuButton" parent="LimitsLayouts/LayoutType"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 flat = false

@@ -57,7 +57,7 @@ func _ready() -> void:
 #		return ERR_DATABASE_CANT_READ
 #	return _attribs[attrib_name].validate_attribute_data(data)
 
-func get_component_data() -> Dictionary:
+func create_component_data() -> Dictionary:
 	return {
 		&"uuid":UUID.v4(),
 		&"name":"Component",

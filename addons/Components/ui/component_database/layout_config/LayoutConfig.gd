@@ -104,6 +104,14 @@ func clear() -> void:
 func get_entries() -> Array[int]:
 	return _entries.duplicate()
 
+func set_entries(earr : Array[int]) -> void:
+	if earr.size() != _entries.size():
+		printerr("Entry list does not match range.")
+		return
+	for i in range(earr.size()):
+		_entries[i] = earr[i] & 0x7F
+	_component_layout.selected_bits = _entries[_idx]
+
 func set_range(min_v : int, max_v : int, reset_index : bool = false) -> void:
 	if min_v <= max_v:
 		if min_v > max_value:
