@@ -22,7 +22,7 @@ var _idx : int = 0
 # ------------------------------------------------------------------------------
 @onready var _size_label : Label = $VBC/Size/Label
 @onready var _size_slider : HSlider = $VBC/Size/HSlider
-@onready var _component_layout : ComponentLayout = $VBC/CmpLayout/PC/ComponentLayout
+@onready var _component_layout : ComponentLayout = $VBC/CmpLayout/ComponentLayout
 
 # ------------------------------------------------------------------------------
 # Setters
@@ -105,7 +105,6 @@ func get_entries() -> Array[int]:
 	return _entries.duplicate()
 
 func set_range(min_v : int, max_v : int, reset_index : bool = false) -> void:
-	print("Setting Range: ", min_v, " -> ", max_v)
 	if min_v <= max_v:
 		if min_v > max_value:
 			max_value = max_v

@@ -21,7 +21,3 @@ UUID="*res://addons/Components/autos/UUID.gd"
 DSV="*res://addons/Components/autos/DSV.gd"
 CSys="*res://addons/Components/autos/CSys.gd"
 CCDB="*res://addons/Components/autos/CCDB.gd"
-
-[editor]
-
-export/convert_text_resources_to_binary=true

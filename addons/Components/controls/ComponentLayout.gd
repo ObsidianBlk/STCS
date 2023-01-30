@@ -14,6 +14,8 @@ const THEME_CLASS_NAME : StringName = &"ComponentLayout"
 const SQRT3 : float = sqrt(3)
 const ORIENTATION_POINTY : int = 0
 const ORIENTATION_FLAT : int = 1
+const DEFAULT_MIN_SIZE : Vector2 = Vector2(16, 16)
+const MIN_ASPECT_SIZE : float = 6.0
 
 const HEXCOORDS : Array = [
 	Vector3i.ZERO,
@@ -38,15 +40,15 @@ const THEME_DEF : Dictionary = {
 	},
 	&"styles":{
 		&"panel": null,
-		&"selected": null,
+		&"focus": null,
 	}
 }
 
 # -------------------------------------------------------------------------
 # "Export" Variables
 # -------------------------------------------------------------------------
-var _selected_bits : int = 0 :		set = set_selected_bits
-var _disabled : bool = false :		set = set_disabled
+var _selected_bits : int = 0 :					set = set_selected_bits
+var _disabled : bool = false :					set = set_disabled
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -79,7 +81,12 @@ func set_disabled(d : bool) -> void:
 func _ready() -> void:
 	self.focus_mode = Control.FOCUS_ALL
 	_CalculateHexes()
-	set_custom_minimum_size(_hex_size)
+	#set_custom_minimum_size(_hex_size)
+
+func _get_minimum_size() -> Vector2:
+	if custom_minimum_size.x > 0.0 or custom_minimum_size.y > 0:
+		return custom_minimum_size
+	return DEFAULT_MIN_SIZE
 
 func _draw() -> void:
 	var target_size : Vector2 = get_size()
@@ -88,13 +95,31 @@ func _draw() -> void:
 	if target_size.x <= 0.0 or target_size.y <= 0.0:
 		return
 	
+	var origin : Vector2 = Vector2.ZERO
+	
+	var style : StyleBox = _GetStyleBox(&"panel")
+	if style != null:
+		style.draw(self.get_canvas_item(), Rect2(Vector2.ZERO, target_size))
+		if _focus_active:
+			var fstyle : StyleBox = _GetStyleBox(&"focus")
+			if fstyle != null:
+				fstyle.draw(self.get_canvas_item(), Rect2(Vector2.ZERO, target_size))
+		
+		# Given we have a background panel, let's adjust out "target_size" for the hexes
+		# to respect the panel content margines as best as possible
+		var ntsx : float = target_size.x - (style.content_margin_left + style.content_margin_right)
+		var ntsy : float = target_size.y - (style.content_margin_top + style.content_margin_bottom)
+		if ntsx >= MIN_ASPECT_SIZE and ntsy >= MIN_ASPECT_SIZE:
+			target_size = Vector2(ntsx, ntsy)
+			origin = Vector2(style.content_margin_left, style.content_margin_top)
+	
 	var color : Color = _GetColor(&"normal")
 	if _disabled:
 		color = _GetColor(&"disabled")
 	elif _focus_active:
 		color = _GetColor(&"focus")
 	var hex_scale : Transform2D = Transform2D(0.0, target_size/_hex_size, 0.0, Vector2.ZERO)
-	var hex_position : Transform2D = Transform2D(0.0, -(target_size * 0.5))
+	var hex_position : Transform2D = Transform2D(0.0, -(origin + (target_size * 0.5)))
 	
 	for idx in range(_hexes.size()):
 		if not _disabled and _selected_idx != idx:
