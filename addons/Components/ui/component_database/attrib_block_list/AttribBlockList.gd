@@ -116,6 +116,13 @@ func add_attribute(attrib_name : StringName) -> void:
 			_RemoveAttribFromAvailable(attrib_name)
 			attribute_added.emit(attrib_name)
 
+func set_attribute_dictionary(adict : Dictionary, clear_existing : bool = false) -> void:
+	if clear_existing:
+		clear()
+	for key in adict.keys():
+		if typeof(key) == TYPE_STRING_NAME and typeof(adict[key]) == TYPE_DICTIONARY:
+			add_attribute(key)
+			set_attribute_data(key, adict[key])
 
 func remove_attribute(attrib_name : StringName) -> void:
 	var item : Control = _GetAttributeItem(attrib_name)
@@ -142,6 +149,14 @@ func get_attribute_data(attrib_name : StringName) -> Dictionary:
 			return ctrl.get_data()
 	return {}
 
+func get_attribute_dictionary() -> Dictionary:
+	var attrib_dict : Dictionary = {}
+	var attrib_list : Array = get_assigned_attributes()
+	for attrib_name in attrib_list:
+		var data : Dictionary = get_attribute_data(attrib_name)
+		if not data.is_empty():
+			attrib_dict[attrib_name] = data
+	return attrib_dict
 
 # ------------------------------------------------------------------------------
 # Handler Methods

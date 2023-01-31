@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bjtlok2bi817j"]
+[gd_scene load_steps=5 format=3 uid="uid://bjtlok2bi817j"]
 
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/component_block/ComponentBlock.gd" id="1_a3dq2"]
 [ext_resource type="PackedScene" uid="uid://uk58l8ognu64" path="res://addons/Components/ui/component_database/layout_config/LayoutConfig.tscn" id="1_bv7uk"]
 [ext_resource type="PackedScene" uid="uid://cagrkjh3g4yfo" path="res://addons/Components/ui/component_database/attrib_block_list/AttribBlockList.tscn" id="2_q0pm5"]
+[ext_resource type="Texture2D" uid="uid://cgh5n7pdt7j8s" path="res://addons/Components/assets/icons/arrow_down.svg" id="3_enmfe"]
 
 [node name="ComponentBlock" type="GridContainer"]
 anchors_preset = 15
@@ -136,7 +137,7 @@ text = "Structure Limits / Layout:"
 [node name="SizeRange" type="GridContainer" parent="LimitsLayouts"]
 layout_mode = 2
 theme_override_constants/h_separation = 24
-columns = 2
+columns = 3
 
 [node name="MinValue" type="HBoxContainer" parent="LimitsLayouts/SizeRange"]
 layout_mode = 2
@@ -168,6 +169,13 @@ size_flags_horizontal = 3
 caret_blink = true
 caret_blink_interval = 0.5
 
+[node name="RangeIndicator" type="Label" parent="LimitsLayouts/SizeRange"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[ VALID ]"
+horizontal_alignment = 1
+
 [node name="LayoutType" type="HBoxContainer" parent="LimitsLayouts"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -181,8 +189,11 @@ text = "Layout: "
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Hoopdidoo Review	"
+icon = ExtResource("3_enmfe")
 flat = false
 alignment = 0
+icon_alignment = 2
 item_count = 3
 popup/item_0/text = "Static"
 popup/item_0/id = 0

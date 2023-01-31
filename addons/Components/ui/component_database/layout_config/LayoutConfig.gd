@@ -99,6 +99,7 @@ func _UpdateSizeSlider() -> void:
 func clear() -> void:
 	for i in range(_entries.size()):
 		_entries[i] = default_entry
+	_component_layout.selected_bits = default_entry
 	_idx = 0
 
 func get_entries() -> Array[int]:
@@ -123,6 +124,14 @@ func set_range(min_v : int, max_v : int, reset_index : bool = false) -> void:
 		if reset_index:
 			_idx = 0
 		_UpdateSizeSlider()
+
+func set_range_vector(range_vec : Vector2i, reset_index : bool = false) -> void:
+	set_range(range_vec.x, range_vec.y, reset_index)
+
+
+func get_range_vector() -> Vector2i:
+	return Vector2i(min_value, max_value)
+
 
 # ------------------------------------------------------------------------------
 # Handler Methods
