@@ -8,7 +8,7 @@ extends Control
 @export var max_value : int = 0 :						set = set_max_value
 @export var min_value : int = 0 :						set = set_min_value
 @export_range(1, 0x7F) var default_entry : int = 1 :	set = set_default_entry
-@export var editable : bool = true
+@export var editable : bool = true :					set = set_editable
 
 
 # ------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ func set_min_value(v : int) -> void:
 	if v >= 0 and v <= max_value:
 		var grow_entries : bool = v < min_value
 		min_value = v
-		var rng : int = max_value - min_value
+		var rng : int = (max_value - min_value) + 1
 		if grow_entries:
 			var count : int = rng - _entries.size()
 			for _i in range(count):
@@ -48,7 +48,7 @@ func set_max_value(v : int) -> void:
 	if v >= 0 and v >= min_value:
 		var grow_entries : bool = v > max_value
 		max_value = v
-		var rng : int = max_value - min_value
+		var rng : int = (max_value - min_value) + 1
 		if grow_entries:
 			var count : int = rng - _entries.size()
 			for _i in range(count):
@@ -123,6 +123,7 @@ func set_range(min_v : int, max_v : int, reset_index : bool = false) -> void:
 			max_value = max_v
 		if reset_index:
 			_idx = 0
+		print("Range: ", min_value, " -> ", max_value, " | Entries: ", _entries)
 		_UpdateSizeSlider()
 
 func set_range_vector(range_vec : Vector2i, reset_index : bool = false) -> void:
@@ -142,4 +143,5 @@ func _on_selected_bits_changed(bits : int) -> void:
 func _on_size_value_changed(value : float) -> void:
 	_idx = int(value)
 	_size_label.text = "%s"%[min_value + _idx]
-	_component_layout.selected_bits = _entries[_idx]
+	if _entries.size() > 0:
+		_component_layout.selected_bits = _entries[_idx]

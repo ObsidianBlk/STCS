@@ -1,9 +1,11 @@
+@tool
 extends Control
 
 # ------------------------------------------------------------------------------
 # Signals
 # ------------------------------------------------------------------------------
 signal store_data_requested(data)
+signal data_canceled()
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -24,8 +26,11 @@ var _data : Dictionary = {}
 @onready var max_size_line_edit : LineEdit  = %MaxSize_LineEdit
 @onready var range_indicator_label : Label = %RangeIndicator
 @onready var layout_type_dropdown : MenuButton = %LayoutType_Dropdown
-@onready var attrib_block_list : Control = $BasicStats/AttribBlockList
-@onready var layout_config : Control = $LimitsLayouts/LayoutConfig
+@onready var attrib_block_list : Control = $Layout/BasicStats/AttribBlockList
+@onready var layout_config : Control = $Layout/LimitsLayouts/LayoutConfig
+@onready var cancel_btn : Button = $ButtonGroup/Cancel
+@onready var save_btn : Button = $ButtonGroup/Save
+
 
 # ------------------------------------------------------------------------------
 # Override Methods
@@ -40,9 +45,9 @@ func _ready() -> void:
 	min_size_line_edit.text_submitted.connect(_on_layout_range_line_edit_text_submitted.bind(true))
 	max_size_line_edit.text_submitted.connect(_on_layout_range_line_edit_text_submitted.bind(false))
 	
-	layout_config.set_range(0, 0, true)
-	layout_config.clear()
-	layout_config.editable = true
+	#layout_config.set_range(0, 0, true)
+	#layout_config.clear()
+	#layout_config.editable = true
 	
 	layout_type_dropdown.text = "Static"
 	var ltpop : PopupMenu = layout_type_dropdown.get_popup()
@@ -51,11 +56,29 @@ func _ready() -> void:
 	ltpop.add_item("Static", CSys.COMPONENT_LAYOUT_TYPE.Static)
 	ltpop.id_pressed.connect(_on_layout_type_id_pressed)
 	
-	_UpdateRangeIndicator()
+	clear()
+	#_UpdateRangeIndicator()
 
 # ------------------------------------------------------------------------------
 # Private Methods
 # ------------------------------------------------------------------------------
+func _EnableControls(enable : bool = true) -> void:
+	#uuid_line_edit.editable = enable
+	name_line_edit.editable = enable
+	type_line_edit.editable = enable
+	sp_line_edit.editable = enable
+	absorp_line_edit.editable = enable
+	bleed_line_edit.editable = enable
+	stress_line_edit.editable = enable
+	min_size_line_edit.editable = enable
+	max_size_line_edit.editable = enable
+	layout_type_dropdown.disabled = not enable
+	attrib_block_list.editable = enable
+	
+	cancel_btn.disabled = not enable
+	save_btn.disabled = not enable
+
+
 func _UpdateLayoutConfigRange() -> void:
 	var close_layout : bool = _data.is_empty() or _data[&"layout_type"] == CSys.COMPONENT_LAYOUT_TYPE.Static
 	if close_layout:
@@ -102,6 +125,7 @@ func clear() -> void:
 	attrib_block_list.clear()
 	_UpdateRangeIndicator()
 	_UpdateLayoutConfigRange()
+	_EnableControls(false)
 
 func create_new_record() -> void:
 	# TODO: This method may be unneeded. There's no reason this couldn't be handled
@@ -111,6 +135,7 @@ func create_new_record() -> void:
 
 func set_record(crecord : Dictionary) -> void:
 	# NOTE: For now, assume <crecord> is a valid component dictionary.
+	_EnableControls(true)
 	_data = crecord
 	uuid_line_edit.text = _data[&"uuid"]
 	name_line_edit.text = _data[&"name"]
@@ -190,3 +215,14 @@ func _on_layout_type_id_pressed(id : int) -> void:
 		CSys.COMPONENT_LAYOUT_TYPE.Static:
 			layout_type_dropdown.text = "Static"
 	_UpdateLayoutConfigRange()
+
+func _on_cancel_pressed():
+	data_canceled.emit()
+
+func _on_save_pressed():
+	if not _data.is_empty():
+		if attrib_block_list.get_assigned_attribute_count() > 0:
+			_data[&"attributes"] = attrib_block_list.get_attribute_dictionary()
+		if _data[&"layout_type"] == CSys.COMPONENT_LAYOUT_TYPE.Static:
+			_data[&"layout_list"] = layout_config.get_entries()
+		store_data_requested.emit(_data)

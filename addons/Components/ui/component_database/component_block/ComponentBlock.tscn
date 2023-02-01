@@ -52,6 +52,7 @@ text = "Name: "
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+editable = false
 caret_blink = true
 caret_blink_interval = 0.5
 
@@ -67,6 +68,7 @@ text = "Type: "
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+editable = false
 caret_blink = true
 caret_blink_interval = 0.5
 
@@ -91,6 +93,7 @@ text = "Struct. Pts.:"
 [node name="SP_LineEdit" type="LineEdit" parent="Layout/BasicStats/Data"]
 unique_name_in_owner = true
 layout_mode = 2
+editable = false
 caret_blink = true
 caret_blink_interval = 0.5
 
@@ -101,6 +104,7 @@ text = "Absorption: "
 [node name="Absorp_LineEdit" type="LineEdit" parent="Layout/BasicStats/Data"]
 unique_name_in_owner = true
 layout_mode = 2
+editable = false
 caret_blink = true
 caret_blink_interval = 0.5
 
@@ -111,6 +115,7 @@ text = "Bleed: "
 [node name="Bleed_LineEdit" type="LineEdit" parent="Layout/BasicStats/Data"]
 unique_name_in_owner = true
 layout_mode = 2
+editable = false
 caret_blink = true
 caret_blink_interval = 0.5
 
@@ -121,12 +126,14 @@ text = "Stress: "
 [node name="Stress_LineEdit" type="LineEdit" parent="Layout/BasicStats/Data"]
 unique_name_in_owner = true
 layout_mode = 2
+editable = false
 caret_blink = true
 caret_blink_interval = 0.5
 
 [node name="AttribBlockList" parent="Layout/BasicStats" instance=ExtResource("2_q0pm5")]
 layout_mode = 2
 size_flags_vertical = 3
+editable = false
 
 [node name="LimitsLayouts" type="VBoxContainer" parent="Layout"]
 layout_mode = 2
@@ -154,6 +161,8 @@ text = "Min:"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+text = "0"
+editable = false
 caret_blink = true
 caret_blink_interval = 0.5
 
@@ -169,6 +178,8 @@ text = "Max:"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+text = "0"
+editable = false
 caret_blink = true
 caret_blink_interval = 0.5
 
@@ -176,7 +187,7 @@ caret_blink_interval = 0.5
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[ VALID ]"
+text = "[ N/A ]"
 horizontal_alignment = 1
 
 [node name="LayoutType" type="HBoxContainer" parent="Layout/LimitsLayouts"]
@@ -192,21 +203,48 @@ text = "Layout: "
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Hoopdidoo Review	"
+disabled = true
+text = "Static"
 icon = ExtResource("3_enmfe")
 flat = false
 alignment = 0
 icon_alignment = 2
-item_count = 3
+item_count = 6
 popup/item_0/text = "Static"
 popup/item_0/id = 0
 popup/item_1/text = "Cluster"
 popup/item_1/id = 1
 popup/item_2/text = "Growable"
 popup/item_2/id = 2
+popup/item_3/text = "Cluster"
+popup/item_3/id = 1
+popup/item_4/text = "Growable"
+popup/item_4/id = 2
+popup/item_5/text = "Static"
+popup/item_5/id = 0
 
 [node name="LayoutConfig" parent="Layout/LimitsLayouts" instance=ExtResource("1_bv7uk")]
 custom_minimum_size = Vector2(0, 384)
 layout_mode = 2
-max_value = 10
-min_value = 5
+editable = false
+
+[node name="ButtonGroup" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 3
+
+[node name="Cancel" type="Button" parent="ButtonGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="Control" type="Control" parent="ButtonGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Save" type="Button" parent="ButtonGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save"
+
+[connection signal="pressed" from="ButtonGroup/Cancel" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="ButtonGroup/Save" to="." method="_on_save_pressed"]

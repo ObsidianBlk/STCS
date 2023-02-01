@@ -21,6 +21,11 @@ const ATTRIB_EDITOR_CONTROL : Dictionary = {
 const ATTRIB_MENU_DEFAULT_TEXT : String = "Select an Attribute"
 
 # ------------------------------------------------------------------------------
+# Export Variables
+# ------------------------------------------------------------------------------
+@export var editable : bool = true :			set = set_editable
+
+# ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
 var _active_attrib_choice : StringName = &""
@@ -30,6 +35,18 @@ var _active_attrib_choice : StringName = &""
 # ------------------------------------------------------------------------------
 @onready var _list : VBoxContainer = $Layout/AttribList/Scroll/List
 @onready var _attribmenubtn : MenuButton = $Layout/AvailableAttribs/AttribMenuBtn
+@onready var _addattribbtn : Button = $Layout/AvailableAttribs/AddAttrib
+
+
+# ------------------------------------------------------------------------------
+# Setters
+# ------------------------------------------------------------------------------
+func set_editable(e : bool) -> void:
+	editable = e
+	if _attribmenubtn != null:
+		_attribmenubtn.disabled = not editable
+	if _addattribbtn != null:
+		_addattribbtn.disabled = not editable
 
 # ------------------------------------------------------------------------------
 # Override Methods
@@ -41,6 +58,8 @@ func _ready() -> void:
 	for key in ATTRIB_EDITOR_CONTROL:
 		mpop.add_item(String(key))
 		mpop.set_item_metadata(-1, key)
+	_attribmenubtn.disabled = not editable
+	_addattribbtn.disabled = not editable
 
 # ------------------------------------------------------------------------------
 # Private Methods
