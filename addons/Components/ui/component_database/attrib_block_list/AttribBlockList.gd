@@ -139,7 +139,7 @@ func set_attribute_dictionary(adict : Dictionary, clear_existing : bool = false)
 	if clear_existing:
 		clear()
 	for key in adict.keys():
-		if typeof(key) == TYPE_STRING_NAME and typeof(adict[key]) == TYPE_DICTIONARY:
+		if typeof(adict[key]) == TYPE_DICTIONARY:
 			add_attribute(key)
 			set_attribute_data(key, adict[key])
 

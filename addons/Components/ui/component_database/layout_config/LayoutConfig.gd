@@ -14,7 +14,7 @@ extends Control
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
-var _entries : Array = [1]
+var _entries : Array[int] = [1]
 var _idx : int = 0
 
 # ------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ func set_range(min_v : int, max_v : int, reset_index : bool = false) -> void:
 			max_value = max_v
 		if reset_index:
 			_idx = 0
-		print("Range: ", min_value, " -> ", max_value, " | Entries: ", _entries)
+		#print("Range: ", min_value, " -> ", max_value, " | Entries: ", _entries)
 		_UpdateSizeSlider()
 
 func set_range_vector(range_vec : Vector2i, reset_index : bool = false) -> void:

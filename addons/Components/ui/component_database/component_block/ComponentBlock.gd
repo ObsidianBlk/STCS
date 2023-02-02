@@ -37,13 +37,25 @@ var _data : Dictionary = {}
 # ------------------------------------------------------------------------------
 func _ready() -> void:
 	name_line_edit.text_submitted.connect(_on_line_edit_text_submitted.bind(&"name", name_line_edit))
+	name_line_edit.focus_exited.connect(_on_line_edit_focus_exited.bind(&"name", name_line_edit))
+	
 	sp_line_edit.text_submitted.connect(_on_line_edit_text_submitted.bind(&"max_sp", sp_line_edit))
+	sp_line_edit.focus_exited.connect(_on_line_edit_focus_exited.bind(&"max_sp", sp_line_edit))
+	
 	absorp_line_edit.text_submitted.connect(_on_line_edit_text_submitted.bind(&"absorption", absorp_line_edit))
+	absorp_line_edit.focus_exited.connect(_on_line_edit_focus_exited.bind(&"absorption", absorp_line_edit))
+	
 	bleed_line_edit.text_submitted.connect(_on_line_edit_text_submitted.bind(&"bleed", bleed_line_edit))
+	bleed_line_edit.focus_exited.connect(_on_line_edit_focus_exited.bind(&"bleed", bleed_line_edit))
+	
 	stress_line_edit.text_submitted.connect(_on_line_edit_text_submitted.bind(&"max_stress", stress_line_edit))
+	stress_line_edit.focus_exited.connect(_on_line_edit_focus_exited.bind(&"max_stress", stress_line_edit))
 	
 	min_size_line_edit.text_submitted.connect(_on_layout_range_line_edit_text_submitted.bind(true))
+	min_size_line_edit.focus_exited.connect(_on_layout_range_line_edit_focus_exited.bind(true))
+	
 	max_size_line_edit.text_submitted.connect(_on_layout_range_line_edit_text_submitted.bind(false))
+	max_size_line_edit.focus_exited.connect(_on_layout_range_line_edit_focus_exited.bind(false))
 	
 	#layout_config.set_range(0, 0, true)
 	#layout_config.clear()
@@ -51,6 +63,7 @@ func _ready() -> void:
 	
 	layout_type_dropdown.text = "Static"
 	var ltpop : PopupMenu = layout_type_dropdown.get_popup()
+	ltpop.clear()
 	ltpop.add_item("Cluster", CSys.COMPONENT_LAYOUT_TYPE.Cluster)
 	ltpop.add_item("Growable", CSys.COMPONENT_LAYOUT_TYPE.Growable)
 	ltpop.add_item("Static", CSys.COMPONENT_LAYOUT_TYPE.Static)
@@ -80,7 +93,7 @@ func _EnableControls(enable : bool = true) -> void:
 
 
 func _UpdateLayoutConfigRange() -> void:
-	var close_layout : bool = _data.is_empty() or _data[&"layout_type"] == CSys.COMPONENT_LAYOUT_TYPE.Static
+	var close_layout : bool = _data.is_empty() or _data[&"layout_type"] != CSys.COMPONENT_LAYOUT_TYPE.Static
 	if close_layout:
 		layout_config.editable = true
 		layout_config.set_range(0, 0, true)
@@ -140,10 +153,10 @@ func set_record(crecord : Dictionary) -> void:
 	uuid_line_edit.text = _data[&"uuid"]
 	name_line_edit.text = _data[&"name"]
 	type_line_edit.text = _data[&"type"]
-	sp_line_edit.text = _data[&"max_sp"]
-	absorp_line_edit.text = _data[&"absorption"]
-	bleed_line_edit.text = _data[&"bleed"]
-	stress_line_edit.text = _data[&"max_stress"]
+	sp_line_edit.text = "%s"%[_data[&"max_sp"]]
+	absorp_line_edit.text = "%s"%[_data[&"absorption"]]
+	bleed_line_edit.text = "%s"%[_data[&"bleed"]]
+	stress_line_edit.text = "%s"%[_data[&"max_stress"]]
 	min_size_line_edit.text = "%s"%[_data[&"size_range"].x]
 	max_size_line_edit.text = "%s"%[_data[&"size_range"].y]
 	_UpdateRangeIndicator()
@@ -160,10 +173,17 @@ func set_record(crecord : Dictionary) -> void:
 	if &"attributes" in _data:
 		attrib_block_list.set_attribute_dictionary(_data[&"attributes"], true)
 
+func get_record_uuid() -> StringName:
+	if _data.is_empty():
+		return &""
+	return _data[&"uuid"]
 
 # ------------------------------------------------------------------------------
 # Handler Methods
 # ------------------------------------------------------------------------------
+func _on_line_edit_focus_exited(val_name : StringName, lenode : LineEdit) -> void:
+	_on_line_edit_text_submitted(lenode.text, val_name, lenode)
+
 func _on_line_edit_text_submitted(new_text : String, val_name : StringName, lenode : LineEdit) -> void:
 	if not val_name in _data: return
 	
@@ -178,6 +198,12 @@ func _on_line_edit_text_submitted(new_text : String, val_name : StringName, leno
 			lenode.text = "%s"%[_data[val_name]]
 	else:
 		_data[val_name] = new_text
+
+func _on_layout_range_line_edit_focus_exited(is_min : bool) -> void:
+	if is_min:
+		_on_layout_range_line_edit_text_submitted(min_size_line_edit.text, is_min)
+	else:
+		_on_layout_range_line_edit_text_submitted(max_size_line_edit.text, is_min)
 
 func _on_layout_range_line_edit_text_submitted(new_text : String, is_min : bool) -> void:
 	if _data.is_empty(): return
@@ -207,6 +233,7 @@ func _on_layout_range_line_edit_text_submitted(new_text : String, is_min : bool)
 
 func _on_layout_type_id_pressed(id : int) -> void:
 	if _data.is_empty(): return
+	var id_valid : bool = true
 	match id:
 		CSys.COMPONENT_LAYOUT_TYPE.Cluster:
 			layout_type_dropdown.text = "Cluster"
@@ -214,6 +241,10 @@ func _on_layout_type_id_pressed(id : int) -> void:
 			layout_type_dropdown.text = "Growable"
 		CSys.COMPONENT_LAYOUT_TYPE.Static:
 			layout_type_dropdown.text = "Static"
+		_:
+			id_valid = false
+	if id_valid:
+		_data[&"layout_type"] = id
 	_UpdateLayoutConfigRange()
 
 func _on_cancel_pressed():

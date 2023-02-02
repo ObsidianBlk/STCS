@@ -209,7 +209,7 @@ icon = ExtResource("3_enmfe")
 flat = false
 alignment = 0
 icon_alignment = 2
-item_count = 6
+item_count = 15
 popup/item_0/text = "Static"
 popup/item_0/id = 0
 popup/item_1/text = "Cluster"
@@ -222,6 +222,24 @@ popup/item_4/text = "Growable"
 popup/item_4/id = 2
 popup/item_5/text = "Static"
 popup/item_5/id = 0
+popup/item_6/text = "Cluster"
+popup/item_6/id = 1
+popup/item_7/text = "Growable"
+popup/item_7/id = 2
+popup/item_8/text = "Static"
+popup/item_8/id = 0
+popup/item_9/text = "Cluster"
+popup/item_9/id = 1
+popup/item_10/text = "Growable"
+popup/item_10/id = 2
+popup/item_11/text = "Static"
+popup/item_11/id = 0
+popup/item_12/text = "Cluster"
+popup/item_12/id = 1
+popup/item_13/text = "Growable"
+popup/item_13/id = 2
+popup/item_14/text = "Static"
+popup/item_14/id = 0
 
 [node name="LayoutConfig" parent="Layout/LimitsLayouts" instance=ExtResource("1_bv7uk")]
 custom_minimum_size = Vector2(0, 384)
@@ -235,6 +253,7 @@ columns = 3
 [node name="Cancel" type="Button" parent="ButtonGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
+disabled = true
 text = "Cancel"
 
 [node name="Control" type="Control" parent="ButtonGroup"]
@@ -244,6 +263,7 @@ size_flags_horizontal = 3
 [node name="Save" type="Button" parent="ButtonGroup"]
 layout_mode = 2
 size_flags_horizontal = 3
+disabled = true
 text = "Save"
 
 [connection signal="pressed" from="ButtonGroup/Cancel" to="." method="_on_cancel_pressed"]

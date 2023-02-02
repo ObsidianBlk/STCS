@@ -14,6 +14,8 @@ const INFOREQUESTDIALOG : PackedScene = preload("res://addons/Components/ui/info
 # --------------------------------------------------------------------------------------------------
 # Onready Variables
 # --------------------------------------------------------------------------------------------------
+@onready var _component_block : Control = $Columns/ComponentBlock
+
 
 # --------------------------------------------------------------------------------------------------
 # Override Methods
@@ -45,3 +47,17 @@ func _on_new_db_name(db_name : String) -> void:
 		if res != OK:
 			printerr("Create Database failed with code: ", res)
 	#print("The new DB name is: ", db_name)
+
+func _on_new_component_requested() -> void:
+	var data : Dictionary = CSys.create_component_data()
+	_component_block.set_record(data)
+
+func _on_component_selection_cleared() -> void:
+	_component_block.clear()
+
+func _on_component_selected(db_key : StringName, uuid : StringName) -> void:
+	var cdb : ComponentDB = CCDB.get_database_by_key(db_key)
+	if cdb != null:
+		var data : Dictionary = cdb.get_component(uuid)
+		if not data.is_empty():
+			_component_block.set_record(data)

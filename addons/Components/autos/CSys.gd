@@ -67,7 +67,7 @@ func create_component_data() -> Dictionary:
 		&"bleed":2,
 		&"max_stress":4,
 		&"layout_type":COMPONENT_LAYOUT_TYPE.Static,
-		&"layout_list":[1],
+		&"layout_list":Array([int(1)], TYPE_INT, &"", null),
 		&"size_range":Vector2i(1,1),
 	}
 
@@ -78,7 +78,7 @@ func validate_component_data(component : Dictionary) -> int:
 	
 	if &"attributes" in component: # Special handlers!
 		for attrib_name in component[&"attributes"].keys():
-			if attrib_name in _attribs:
+			if not attrib_name in _attribs:
 				printerr("Unknown attribute \"%s\"."%[attrib_name])
 				return ERR_INVALID_PARAMETER
 			res = _attribs[attrib_name].validate_attribute_data(

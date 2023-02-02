@@ -43,14 +43,30 @@ func _GetTypeItem(type : StringName, create_if_missing : bool = false) -> TreeIt
 			return coll
 	return null
 
-func _AddComponentToTree(comp : Dictionary) -> TreeItem:
+func _GetCompEntryItem(comp : Dictionary) -> TreeItem:
 	if comp.is_empty(): return null
 	var coll : TreeItem = _GetTypeItem(comp[&"type"], true)
 	if coll == null: return null
 	
-	var item : TreeItem = _comp_tree.create_item(coll)
-	item.set_text(0, comp[&"name"])
-	item.set_metadata(0, comp[&"uuid"])
+	for child in coll.get_children():
+		var md = child.get_metadata(0)
+		if typeof(md) == TYPE_STRING_NAME:
+			if md == comp[&"uuid"]:
+				return child
+	return null
+
+func _AddComponentToTree(comp : Dictionary) -> TreeItem:
+	var item : TreeItem = _GetCompEntryItem(comp)
+	if item != null:
+		item.set_text(0, comp[&"name"])
+	else:
+		if comp.is_empty(): return null
+		var coll : TreeItem = _GetTypeItem(comp[&"type"], true)
+		if coll == null: return null
+		
+		item = _comp_tree.create_item(coll)
+		item.set_text(0, comp[&"name"])
+		item.set_metadata(0, comp[&"uuid"])
 	return item
 	
 
@@ -110,13 +126,13 @@ func show_database_components(db_key : StringName) -> void:
 func add_component_to_database(comp : Dictionary) -> int:
 	var db : ComponentDB = _db.get_ref()
 	if db == null: return ERR_UNAVAILABLE
-	var res : int = db.add_component_to_database(comp, true)
-	if res == OK:
-		var item : TreeItem = _AddComponentToTree(comp)
-		if item != null:
-			_comp_tree.deselect_all()
-			item.select(0)
-			component_selected.emit(_db_key, comp[&"uuid"])
+	var res : int = db.add_component(comp, true)
+#	if res == OK:
+#		var item : TreeItem = _AddComponentToTree(comp)
+#		if item != null:
+#			_comp_tree.deselect_all()
+#			item.select(0)
+#			component_selected.emit(_db_key, comp[&"uuid"])
 	return res
 
 
@@ -141,7 +157,11 @@ func _on_component_removed(uuid : StringName) -> void:
 	for coll in root.get_children():
 		for child in coll.get_children():
 			if child.get_metadata(0) == uuid:
+				if child.is_selected(0):
+					selection_cleared.emit()
 				child.free()
+				if coll.get_child_count() <= 0:
+					coll.free()
 				return
 
 func _on_tree_item_selected():
@@ -189,3 +209,5 @@ func _on_rem_component_confirmed(comp : Dictionary) -> void:
 				_DisplayConfirmDialog("Cannot remove component. Database is locked.")
 			ERR_DOES_NOT_EXIST:
 				_DisplayConfirmDialog("Failed to find component within active database!")
+				
+
