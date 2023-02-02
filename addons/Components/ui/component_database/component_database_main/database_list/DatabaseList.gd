@@ -26,6 +26,7 @@ const CONFIRMDIALOG : PackedScene = preload("res://addons/Components/ui/confirm_
 # Override Methods
 # --------------------------------------------------------------------------------------------------
 func _ready() -> void:
+	CCDB.database_saved.connect(_on_db_saved)
 	CCDB.database_added.connect(_on_db_added)
 	CCDB.database_dropped.connect(_on_db_dropped)
 	_RebuildDatabaseTree()
@@ -33,8 +34,22 @@ func _ready() -> void:
 # --------------------------------------------------------------------------------------------------
 # Private Methods
 # --------------------------------------------------------------------------------------------------
-func _RebuildDatabaseTree() -> void:
+func _ClearTree() -> void:
+	if db_tree == null: return
+	var db_root : TreeItem = db_tree.get_root()
+	if db_root == null: return
+	
+	for coll in db_root.get_children():
+		for item in coll.get_children():
+			var db_key : StringName = item.get_metadata(0)
+			var db : ComponentDB = CCDB.get_database_by_key(db_key)
+			if db != null:
+				if db.dirtied.is_connected(_on_db_dirtied.bind(db_key, db.name)):
+					db.dirtied.disconnect(_on_db_dirtied.bind(db_key, db.name))
 	db_tree.clear()
+
+func _RebuildDatabaseTree() -> void:
+	_ClearTree()
 	var root : TreeItem = db_tree.create_item()
 	db_tree.hide_root = true
 	for path_id in CCDB.CDB_PATH.keys():
@@ -44,6 +59,10 @@ func _RebuildDatabaseTree() -> void:
 		dbcoll.set_selectable(0, false)
 		for item in CCDB.get_database_list(path_id):
 			var dbitem : TreeItem = db_tree.create_item(dbcoll)
+			var db : ComponentDB = CCDB.get_database_by_key(item[&"key"])
+			if db != null:
+				if not db.dirtied.is_connected(_on_db_dirtied.bind(item[&"key"], item[&"name"])):
+					db.dirtied.connect(_on_db_dirtied.bind(item[&"key"], item[&"name"]))
 			dbitem.set_text(0, item[&"name"])
 			dbitem.set_metadata(0, item[&"key"])
 
@@ -75,6 +94,9 @@ func _on_db_added(db_key : StringName, db_name : String) -> void:
 	if path_id != &"":
 		var coll : TreeItem = _FindCollectionTreeItem(path_id)
 		if coll != null:
+			var db : ComponentDB = CCDB.get_database_by_key(db_key)
+			if db != null:
+				db.dirtied.connect(_on_db_dirtied.bind(db_key, db_name))
 			var dbitem : TreeItem = db_tree.create_item(coll)
 			dbitem.set_text(0, db_name)
 			dbitem.set_metadata(0, db_key)
@@ -138,3 +160,39 @@ func _on_tree_item_selected():
 	var item : TreeItem = db_tree.get_selected()
 	if item == null: return
 	database_selected.emit(item.get_metadata(0))
+
+func _on_save_db_pressed():
+	var sel : TreeItem = db_tree.get_selected()
+	if sel != null:
+		var db_key : StringName = sel.get_metadata(0)
+		var res : int = CCDB.save_database_by_key(db_key)
+		if res != OK:
+			_DisplayConfirmDialog("Failed to save database. Error code %s"%[res])
+	else:
+		_DisplayConfirmDialog("No database selected.")
+
+func _on_db_saved(db_key : StringName) -> void:
+	var path_id : StringName = CCDB.get_database_path_id_by_key(db_key)
+	if path_id == &"": return
+	
+	var coll : TreeItem = _FindCollectionTreeItem(path_id)
+	if coll == null: return
+	
+	var db : ComponentDB = CCDB.get_database_by_key(db_key)
+	if db == null: return
+	
+	for entry in coll.get_children():
+		if entry.get_metadata(0) == db_key:
+			entry.set_text(0, db.name)
+
+func _on_db_dirtied(db_key : StringName, db_name : String) -> void:
+	var path_id : StringName = CCDB.get_database_path_id_by_key(db_key)
+	if path_id == &"": return
+	
+	var coll : TreeItem = _FindCollectionTreeItem(path_id)
+	if coll == null: return
+	
+	for entry in coll.get_children():
+		if entry.get_metadata(0) == db_key:
+			entry.set_text(0, "%s (*)"%[db_name])
+

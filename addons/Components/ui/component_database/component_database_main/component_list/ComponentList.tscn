@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://c1m7x0bnoic2l"]
 
 [ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/Components/assets/icons/add.svg" id="1_4xj44"]
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/component_database_main/component_list/ComponentList.gd" id="1_qihml"]
@@ -21,11 +21,15 @@ size_flags_horizontal = 3
 
 [node name="AddC" type="Button" parent="ctrls"]
 layout_mode = 2
+tooltip_text = "Create a new Component data block"
 icon = ExtResource("1_4xj44")
+flat = true
 
 [node name="RemC" type="Button" parent="ctrls"]
 layout_mode = 2
+tooltip_text = "Remove currently select Component data block"
 icon = ExtResource("2_36wu2")
+flat = true
 
 [node name="Components" type="PanelContainer" parent="."]
 layout_mode = 2

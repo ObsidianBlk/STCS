@@ -67,6 +67,7 @@ func _AddComponentToTree(comp : Dictionary) -> TreeItem:
 		item = _comp_tree.create_item(coll)
 		item.set_text(0, comp[&"name"])
 		item.set_metadata(0, comp[&"uuid"])
+		item.select(0)
 	return item
 	
 
@@ -134,6 +135,10 @@ func add_component_to_database(comp : Dictionary) -> int:
 #			item.select(0)
 #			component_selected.emit(_db_key, comp[&"uuid"])
 	return res
+
+func deselect() -> void:
+	_comp_tree.deselect_all()
+	selection_cleared.emit()
 
 
 # ------------------------------------------------------------------------------

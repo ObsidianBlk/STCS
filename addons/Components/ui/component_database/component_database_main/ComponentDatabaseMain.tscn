@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://b1ct3d00e6wf8"]
 
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/component_database_main/ComponentDatabaseMain.gd" id="1_0xiid"]
-[ext_resource type="PackedScene" path="res://addons/Components/ui/component_database/component_database_main/database_list/DatabaseList.tscn" id="2_7o2sr"]
-[ext_resource type="PackedScene" path="res://addons/Components/ui/component_database/component_database_main/component_list/ComponentList.tscn" id="3_ct6r7"]
+[ext_resource type="PackedScene" uid="uid://b4datev8ma8h8" path="res://addons/Components/ui/component_database/component_database_main/database_list/DatabaseList.tscn" id="2_7o2sr"]
+[ext_resource type="PackedScene" uid="uid://c1m7x0bnoic2l" path="res://addons/Components/ui/component_database/component_database_main/component_list/ComponentList.tscn" id="3_ct6r7"]
 [ext_resource type="PackedScene" uid="uid://bjtlok2bi817j" path="res://addons/Components/ui/component_database/component_block/ComponentBlock.tscn" id="4_5cvwm"]
 
 [node name="ComponentDatabaseMain" type="MarginContainer"]
@@ -39,4 +39,5 @@ layout_mode = 2
 [connection signal="component_selected" from="Columns/ComponentList" to="." method="_on_component_selected"]
 [connection signal="new_component_requested" from="Columns/ComponentList" to="." method="_on_new_component_requested"]
 [connection signal="selection_cleared" from="Columns/ComponentList" to="." method="_on_component_selection_cleared"]
+[connection signal="data_canceled" from="Columns/ComponentBlock" to="Columns/ComponentList" method="deselect"]
 [connection signal="store_data_requested" from="Columns/ComponentBlock" to="Columns/ComponentList" method="add_component_to_database"]

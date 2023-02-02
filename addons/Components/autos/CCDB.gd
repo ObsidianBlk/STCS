@@ -33,14 +33,17 @@ var _active_path_id : StringName = &"core"
 # ------------------------------------------------------------------------------
 func _SaveDB(sha : StringName) -> int:
 	var path_id : StringName = _dbcollection[sha][&"path_id"]
-	var path : String = CDB_PATH[path_id]
-	if not DirAccess.dir_exists_absolute(path):
-		var res : int = DirAccess.make_dir_recursive_absolute(path)
-		if res != OK:
-			printerr("[", res, "]: Path creation failed.")
-			return res
-	var file_path : String = "%s%s"%[path, _dbcollection[sha][&"filename"]]
-	return _dbcollection[sha][&"db"].save(file_path)
+	if path_id == &"user" or Engine.is_editor_hint():
+		var path : String = CDB_PATH[path_id]
+		if not DirAccess.dir_exists_absolute(path):
+			var res : int = DirAccess.make_dir_recursive_absolute(path)
+			if res != OK:
+				printerr("[", res, "]: Path creation failed.")
+				return res
+		var file_path : String = "%s%s"%[path, _dbcollection[sha][&"filename"]]
+		return _dbcollection[sha][&"db"].save(file_path)
+	printerr("Component database is locked for editing and cannot be saved.")
+	return ERR_LOCKED
 
 
 func _EraseDB(sha : StringName) -> int:
@@ -136,6 +139,18 @@ func create_database(db_name : String, auto_save_db : bool = true) -> int:
 	var db : ComponentDB = ComponentDB.new() #CCDB.create_blank_component_database()
 	db.name = db_name
 	return add_database_resource(db, auto_save_db)
+
+func save_database(db_name : String) -> int:
+	return save_database_by_key(db_name.sha256_text())
+
+func save_database_by_key(key : StringName) -> int:
+	if not key in _dbcollection:
+		return ERR_DOES_NOT_EXIST
+	if _dbcollection[key][&"db"].is_dirty():
+		var res : int = _SaveDB(key)
+		if res == OK:
+			database_saved.emit(key)
+	return OK
 
 func get_database_key_from_name(db_name : String) -> StringName:
 	var sha : StringName = db_name.sha256_text()

@@ -9,6 +9,7 @@ class_name ComponentDB
 signal component_added(uuid)
 signal component_removed(uuid)
 signal saved()
+signal dirtied()
 
 # ------------------------------------------------------------------------------
 # Constants
@@ -93,6 +94,7 @@ func is_locked() -> bool:
 func clear() -> void:
 	if not _locked:
 		_db.clear()
+		_dirty = true
 
 func size() -> int:
 	return _db.size()
@@ -108,7 +110,6 @@ func clear_dirty() -> void:
 
 func save(path : String) -> int:
 	var res : int = OK
-	print("Attempting to save to: ", path)
 	res = ResourceSaver.save(self, path)
 	if res == OK:
 		_dirty = false
@@ -165,6 +166,7 @@ func remove_component(uuid : StringName) -> int:
 	_db.erase(uuid)
 	_dirty = true
 	component_removed.emit(uuid)
+	dirtied.emit()
 	return OK
 
 func set_database_dictionary(db : Dictionary, fail_on_warnings : bool = false) -> int:
@@ -177,7 +179,12 @@ func set_database_dictionary(db : Dictionary, fail_on_warnings : bool = false) -
 			if fail_on_warnings:
 				printerr("Database object contains invalid data. Abandoning import.")
 				_db.clear()
+				_dirty = false
 				return result
+	
+	# This is a sort of special-case method. It's assumed that the database is
+	# not dirty after being set to the given DB dictionary.
+	_dirty = false
 	return OK
 
 func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
@@ -215,4 +222,5 @@ func add_component(def : Dictionary, allow_uuid_override : bool = false) -> int:
 
 	_dirty = true
 	component_added.emit(def[&"uuid"])
+	dirtied.emit()
 	return OK
