@@ -58,6 +58,6 @@ func _on_component_selection_cleared() -> void:
 func _on_component_selected(db_key : StringName, uuid : StringName) -> void:
 	var cdb : ComponentDB = CCDB.get_database_by_key(db_key)
 	if cdb != null:
-		var data : Dictionary = cdb.get_component(uuid)
+		var data : Dictionary = cdb.get_component(uuid, true)
 		if not data.is_empty():
 			_component_block.set_record(data)

@@ -27,6 +27,17 @@ func get_name() -> StringName:
 func get_attribute_data() -> Dictionary:
 	return {&"list":[]}
 
+func duplicate_attribute_data(data : Dictionary) -> Dictionary:
+	if validate_attribute_data(data) == OK:
+		var list : Array = []
+		for item in data[&"list"]:
+			list.append({
+				&"type": item[&"type"],
+				&"rank": item[&"rank"]
+			})
+		return {&"list": list}
+	return {}
+
 func create_instance(component : Dictionary) -> Dictionary:
 	var seats : Array = []
 	for i in range(component[&"attributes"][ANAME][&"list"].size()):

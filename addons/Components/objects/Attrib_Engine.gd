@@ -20,6 +20,11 @@ func get_name() -> StringName:
 func get_attribute_data() -> Dictionary:
 	return {&"mpt":1}
 
+func duplicate_attribute_data(data : Dictionary) -> Dictionary:
+	if validate_attribute_data(data) == OK:
+		return {&"mpt": data[&"mpt"]}
+	return {}
+
 func create_instance(component : Dictionary) -> Dictionary:
 	return {}
 

@@ -20,6 +20,11 @@ func get_name() -> StringName:
 func get_attribute_data() -> Dictionary:
 	return {&"ppt":1}
 
+func duplicate_attribute_data(data : Dictionary) -> Dictionary:
+	if validate_attribute_data(data) == OK:
+		return {&"ppt": data[&"ppt"]}
+	return {}
+
 func validate_attribute_data(data : Dictionary) -> int:
 	return DSV.verify(data, SCHEMA)
 

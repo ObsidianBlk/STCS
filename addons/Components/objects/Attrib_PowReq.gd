@@ -22,6 +22,15 @@ func get_name() -> StringName:
 func get_attribute_data() -> Dictionary:
 	return {&"max":1, &"req":1, &"auto":false}
 
+func duplicate_attribute_data(data : Dictionary) -> Dictionary:
+	if validate_attribute_data(data) == OK:
+		return {
+			&"max": data[&"max"],
+			&"req": data[&"req"],
+			&"auto": data[&"auto"]
+		}
+	return {}
+
 func create_instance(component : Dictionary) -> Dictionary:
 	var auto_enabled : bool = component[&"attributes"][ANAME][&"auto"]
 	var ainst : Dictionary = {

@@ -145,9 +145,20 @@ func get_component_list_of_type(type : StringName) -> Array:
 func has_component(uuid : StringName) -> bool:
 	return uuid in _db
 
-func get_component(uuid : StringName) -> Dictionary:
+func get_component(uuid : StringName, duplicate : bool = false) -> Dictionary:
 	if uuid in _db:
+		if duplicate:
+			return CSys.duplicate_component_data(_db[uuid])
 		return _db[uuid]
+	return {}
+
+func duplicate_component(uuid : StringName, auto_store : bool = true) -> Dictionary:
+	if uuid in _db:
+		var nc : Dictionary = CSys.duplicate_component_data(_db[uuid], true)
+		if auto_store:
+			if add_component(nc) != OK:
+				return {}
+		return nc
 	return {}
 
 func remove_component(uuid : StringName) -> int:

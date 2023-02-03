@@ -20,6 +20,14 @@ func get_name() -> StringName:
 func get_attribute_data() -> Dictionary:
 	return {&"max":1, &"req":1}
 
+func duplicate_attribute_data(data : Dictionary) -> Dictionary:
+	if validate_attribute_data(data) == OK:
+		return {
+			&"max": data[&"max"],
+			&"req": data[&"req"]
+		}
+	return {}
+
 func create_instance(component : Dictionary) -> Dictionary:
 	# Honestly, this may be way more complex than this. A crew member can have the state
 	# of "injured"... and that would need to be represented... as well as "where they sit"

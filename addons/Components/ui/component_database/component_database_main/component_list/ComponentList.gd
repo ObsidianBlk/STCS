@@ -216,3 +216,15 @@ func _on_rem_component_confirmed(comp : Dictionary) -> void:
 				_DisplayConfirmDialog("Failed to find component within active database!")
 				
 
+func _on_dup_component_pressed():
+	var item = _comp_tree.get_selected()
+	if item == null:
+		_DisplayConfirmDialog("No component item selected.")
+		return
+	
+	var db : ComponentDB = _db.get_ref()
+	if db == null:
+		_DisplayConfirmDialog("No component database selected.")
+		return
+	
+	db.duplicate_component(item.get_metadata(0))

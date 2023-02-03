@@ -46,7 +46,7 @@ func _ready() -> void:
 				atti.response.connect(_on_attribute_response)
 
 # ------------------------------------------------------------------------------
-# Semi-Public Methods
+# Private Methods
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -71,12 +71,41 @@ func create_component_data() -> Dictionary:
 		&"size_range":Vector2i(1,1),
 	}
 
-func validate_component_data(component : Dictionary) -> int:
+func duplicate_component_data(component : Dictionary, new_uuid : bool = false) -> Dictionary:
+	if validate_component_data(component, true) == OK:
+		var dup : Dictionary = {
+			&"uuid": UUID.v4() if new_uuid else component[&"uuid"],
+			&"name": component[&"name"],
+			&"type": component[&"type"],
+			&"max_sp": component[&"max_sp"],
+			&"absorption": component[&"absorption"],
+			&"bleed": component[&"bleed"],
+			&"max_stress": component[&"max_stress"],
+			&"layout_type": component[&"layout_type"],
+			&"size_range": component[&"size_range"]
+		}
+		if dup[&"layout_type"] == COMPONENT_LAYOUT_TYPE.Static:
+			dup[&"layout_list"] = Array(component[&"layout_list"], TYPE_INT, &"", null)
+		
+		if &"attributes" in component:
+			dup[&"attributes"] = {}
+			for attrib_name in component[&"attributes"].keys():
+				if not attrib_name in _attribs:
+					printerr("Cannot duplicate attribute \"%s\". Attribute is unknown."%[attrib_name])
+				else:
+					dup[&"attributes"][attrib_name] = \
+						_attribs[attrib_name].duplicate_attribute_data(
+							component[&"attributes"][attrib_name]
+						)
+		return dup
+	return {}
+
+func validate_component_data(component : Dictionary, ignore_attribs : bool = false) -> int:
 	var res : int = DSV.verify(component, COMPONENT_STRUCTURE)
 	if res != OK:
 		return res
 	
-	if &"attributes" in component: # Special handlers!
+	if &"attributes" in component and not ignore_attribs: # Special handlers!
 		for attrib_name in component[&"attributes"].keys():
 			if not attrib_name in _attribs:
 				printerr("Unknown attribute \"%s\"."%[attrib_name])
