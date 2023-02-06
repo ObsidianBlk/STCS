@@ -17,6 +17,14 @@ const SCHEMA : Dictionary = {
 	}
 }
 
+const INSTANCE_SCHEMA : Dictionary = {
+	&"seats":{&"req":true, &"type":TYPE_ARRAY, &"item":{
+			&"type":TYPE_STRING_NAME,
+			&"allow_empty":true
+		}
+	}
+}
+
 
 # ------------------------------------------------------------------------------
 # Public Methods
@@ -26,6 +34,9 @@ func get_name() -> StringName:
 
 func get_attribute_data() -> Dictionary:
 	return {&"list":[]}
+
+func validate_attribute_data(data : Dictionary) -> int:
+	return DSV.verify(data, SCHEMA)
 
 func duplicate_attribute_data(data : Dictionary) -> Dictionary:
 	if validate_attribute_data(data) == OK:
@@ -46,7 +57,13 @@ func create_instance(component : Dictionary) -> Dictionary:
 		})
 	return {&"seats":seats}
 
-func validate_attribute_data(data : Dictionary) -> int:
-	return DSV.verify(data, SCHEMA)
+func validate_instance_data(instance : Dictionary) -> int:
+	return DSV.verify(instance, INSTANCE_SCHEMA)
 
-
+func duplicate_instance_data(instance : Dictionary) -> Dictionary:
+	if DSV.verify(instance, INSTANCE_SCHEMA) == OK:
+		var seats : Array = []
+		for oid in instance[&"seats"]:
+			seats.append(oid)
+		return {&"seats": seats}
+	return {}

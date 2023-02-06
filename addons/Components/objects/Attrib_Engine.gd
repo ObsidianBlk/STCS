@@ -25,9 +25,6 @@ func duplicate_attribute_data(data : Dictionary) -> Dictionary:
 		return {&"mpt": data[&"mpt"]}
 	return {}
 
-func create_instance(component : Dictionary) -> Dictionary:
-	return {}
-
 func validate_attribute_data(data : Dictionary) -> int:
 	return DSV.verify(data, SCHEMA)
 

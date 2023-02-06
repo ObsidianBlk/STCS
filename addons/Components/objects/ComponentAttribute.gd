@@ -22,6 +22,9 @@ func create_instance(component : Dictionary) -> Dictionary:
 func duplicate_attribute_data(data : Dictionary) -> Dictionary:
 	return {}
 
+func duplicate_instance_data(instance : Dictionary) -> Dictionary:
+	return {}
+
 func validate_attribute_data(data : Dictionary) -> int:
 	return OK
 

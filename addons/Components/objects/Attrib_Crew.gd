@@ -20,6 +20,12 @@ func get_name() -> StringName:
 func get_attribute_data() -> Dictionary:
 	return {&"max":1, &"req":1}
 
+func validate_attribute_data(data : Dictionary) -> int:
+	var res : int = DSV.verify(data, SCHEMA)
+	if res == OK and data[&"max"] < data[&"req"]:
+		return ERR_PARAMETER_RANGE_ERROR
+	return res
+
 func duplicate_attribute_data(data : Dictionary) -> Dictionary:
 	if validate_attribute_data(data) == OK:
 		return {
@@ -40,9 +46,17 @@ func create_instance(component : Dictionary) -> Dictionary:
 		&"assigned": 0
 	}
 
-func validate_attribute_data(data : Dictionary) -> int:
-	var res : int = DSV.verify(data, SCHEMA)
-	if res == OK and data[&"max"] < data[&"req"]:
+func validate_instance_data(instance : Dictionary) -> int:
+	if not &"assigned" in instance:
+		return ERR_DATABASE_CANT_READ
+	if typeof(instance[&"assigned"]) != TYPE_INT:
+		return ERR_INVALID_DATA
+	if instance[&"assigned"] < 0:
 		return ERR_PARAMETER_RANGE_ERROR
-	return res
+	return OK
+
+func duplicate_instance_data(instance : Dictionary) -> Dictionary:
+	if validate_instance_data(instance) == OK:
+		return {&"assigned": instance[&"assigned"]}
+	return {}
 
