@@ -15,9 +15,9 @@ const ATTRIB_OBJECTS : Array = [
 
 enum COMPONENT_LAYOUT_TYPE {Static=0, Cluster=1, Growable=2}
 const COMPONENT_STRUCTURE : Dictionary = {
-	&"uuid":{&"req":true, &"type":TYPE_STRING_NAME},
-	&"name":{&"req":true, &"type":TYPE_STRING},
-	&"type":{&"req":true, &"type":TYPE_STRING_NAME},
+	&"uuid":{&"req":true, &"type":TYPE_STRING_NAME, &"allow_empty":false},
+	&"name":{&"req":true, &"type":TYPE_STRING, &"allow_empty":false},
+	&"type":{&"req":true, &"type":TYPE_STRING_NAME, &"allow_empty":false},
 	&"max_sp":{&"req":true, &"type":TYPE_INT},
 	&"absorption":{&"req":true, &"type":TYPE_INT},
 	&"bleed":{&"req":true, &"type":TYPE_INT},
