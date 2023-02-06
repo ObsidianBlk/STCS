@@ -25,11 +25,13 @@ size_flags_horizontal = 3
 
 [node name="MoveC" type="Button" parent="ctrls"]
 layout_mode = 2
+tooltip_text = "Move held component to selected database."
 icon = ExtResource("2_sgmx0")
 flat = true
 
 [node name="Tools" type="MenuButton" parent="ctrls"]
 layout_mode = 2
+tooltip_text = "Component Operations Menu"
 icon = ExtResource("5_pibbf")
 item_count = 4
 popup/item_0/text = "New"
