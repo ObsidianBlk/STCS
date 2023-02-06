@@ -18,18 +18,22 @@ script = ExtResource("1_a3dq2")
 [node name="ButtonGroup" type="HBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="Cancel" type="Button" parent="ButtonGroup"]
-layout_mode = 2
-tooltip_text = "Cancel Component data changes"
-disabled = true
-icon = ExtResource("2_annxv")
-flat = true
-
 [node name="Save" type="Button" parent="ButtonGroup"]
 layout_mode = 2
 tooltip_text = "Store Component data into database"
 disabled = true
 icon = ExtResource("3_e42pn")
+flat = true
+
+[node name="Spacer" type="Control" parent="ButtonGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Cancel" type="Button" parent="ButtonGroup"]
+layout_mode = 2
+tooltip_text = "Cancel Component data changes"
+disabled = true
+icon = ExtResource("2_annxv")
 flat = true
 
 [node name="HSeparator" type="HSeparator" parent="."]
@@ -244,5 +248,5 @@ custom_minimum_size = Vector2(0, 384)
 layout_mode = 2
 editable = false
 
-[connection signal="pressed" from="ButtonGroup/Cancel" to="." method="_on_cancel_pressed"]
 [connection signal="pressed" from="ButtonGroup/Save" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="ButtonGroup/Cancel" to="." method="_on_cancel_pressed"]

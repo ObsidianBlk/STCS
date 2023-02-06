@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://c1m7x0bnoic2l"]
+[gd_scene load_steps=8 format=3 uid="uid://c1m7x0bnoic2l"]
 
 [ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/Components/assets/icons/add.svg" id="1_4xj44"]
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/component_database_main/component_list/ComponentList.gd" id="1_qihml"]
 [ext_resource type="Texture2D" uid="uid://xch026vn771l" path="res://addons/Components/assets/icons/subtract.svg" id="2_36wu2"]
 [ext_resource type="Texture2D" uid="uid://bj5eloy6nk8tc" path="res://addons/Components/assets/icons/duplicate.svg" id="2_cormf"]
+[ext_resource type="Texture2D" uid="uid://cgb3syeve73s2" path="res://addons/Components/assets/icons/Transfer.svg" id="2_sgmx0"]
+[ext_resource type="Texture2D" uid="uid://c68x2etxdncyb" path="res://addons/Components/assets/icons/popout_menu.svg" id="5_pibbf"]
+[ext_resource type="Texture2D" uid="uid://duwjj4sk5y13p" path="res://addons/Components/assets/icons/Remember.svg" id="6_6t23o"]
 
 [node name="ComponentList" type="VBoxContainer"]
 custom_minimum_size = Vector2(256, 0)
@@ -20,23 +23,27 @@ text = "Components:"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DupC" type="Button" parent="ctrls"]
+[node name="MoveC" type="Button" parent="ctrls"]
 layout_mode = 2
-tooltip_text = "Remove currently select Component data block"
-icon = ExtResource("2_cormf")
+icon = ExtResource("2_sgmx0")
 flat = true
 
-[node name="AddC" type="Button" parent="ctrls"]
+[node name="Tools" type="MenuButton" parent="ctrls"]
 layout_mode = 2
-tooltip_text = "Create a new Component data block"
-icon = ExtResource("1_4xj44")
-flat = true
-
-[node name="RemC" type="Button" parent="ctrls"]
-layout_mode = 2
-tooltip_text = "Remove currently select Component data block"
-icon = ExtResource("2_36wu2")
-flat = true
+icon = ExtResource("5_pibbf")
+item_count = 4
+popup/item_0/text = "New"
+popup/item_0/icon = ExtResource("1_4xj44")
+popup/item_0/id = 0
+popup/item_1/text = "Remove"
+popup/item_1/icon = ExtResource("2_36wu2")
+popup/item_1/id = 1
+popup/item_2/text = "Duplicate"
+popup/item_2/icon = ExtResource("2_cormf")
+popup/item_2/id = 2
+popup/item_3/text = "Hold"
+popup/item_3/icon = ExtResource("6_6t23o")
+popup/item_3/id = 3
 
 [node name="Components" type="PanelContainer" parent="."]
 layout_mode = 2
@@ -51,7 +58,5 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 hide_root = true
 
-[connection signal="pressed" from="ctrls/DupC" to="." method="_on_dup_component_pressed"]
-[connection signal="pressed" from="ctrls/AddC" to="." method="_on_add_component_pressed"]
-[connection signal="pressed" from="ctrls/RemC" to="." method="_on_rem_component_pressed"]
+[connection signal="pressed" from="ctrls/MoveC" to="." method="_on_move_ccomponent_pressed"]
 [connection signal="item_selected" from="Components/Scroll/Tree" to="." method="_on_tree_item_selected"]

@@ -15,16 +15,36 @@ signal new_component_requested()
 const INFOREQUESTDIALOG : PackedScene = preload("res://addons/Components/ui/info_request_dialog/InfoRequestDialog.tscn")
 const CONFIRMDIALOG : PackedScene = preload("res://addons/Components/ui/confirm_dialog/ConfirmDialog.tscn")
 
+const TOOL_ADD : int = 0
+const TOOL_REMOVE : int = 1
+const TOOL_DUPLICATE : int = 2
+const TOOL_HOLD : int = 3
+
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
 var _db_key : StringName = &""
 var _db : WeakRef = weakref(null)
 
+var _held_component : Dictionary = {
+	&"db_key": &"",
+	&"uuid": &""
+}
+
 # ------------------------------------------------------------------------------
 # Onready Variables
 # ------------------------------------------------------------------------------
 @onready var _comp_tree : Tree = $Components/Scroll/Tree
+@onready var _tools_btn : MenuButton = $ctrls/Tools
+@onready var _move_btn = $ctrls/MoveC
+
+
+
+func _ready() -> void:
+	var tpop : PopupMenu = _tools_btn.get_popup()
+	if tpop != null:
+		tpop.id_pressed.connect(_on_tool_id_pressed)
+	_move_btn.visible = false
 
 # ------------------------------------------------------------------------------
 # Private Methods
@@ -69,7 +89,66 @@ func _AddComponentToTree(comp : Dictionary) -> TreeItem:
 		item.set_metadata(0, comp[&"uuid"])
 		item.select(0)
 	return item
+
+func _RemoveComponent() -> void:
+	var item = _comp_tree.get_selected()
+	if item == null:
+		_DisplayConfirmDialog("No component item selected.")
+		return
 	
+	var db : ComponentDB = _db.get_ref()
+	if db == null:
+		_DisplayConfirmDialog("No component database selected.")
+		return
+
+	var comp : Dictionary = db.get_component(item.get_metadata(0))
+	if comp.is_empty():
+		_DisplayConfirmDialog("Selected component not found in the active database!")
+		return
+	
+	var dialog = CONFIRMDIALOG.instantiate()
+	dialog.text = "This will remove component \"%s\" from the database. Are you sure?"%[comp[&"name"]]
+	dialog.yes_pressed.connect(_on_rem_component_confirmed.bind(comp))
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _DuplicateComponent() -> void:
+	var item = _comp_tree.get_selected()
+	if item == null:
+		_DisplayConfirmDialog("No component item selected.")
+		return
+	
+	var db : ComponentDB = _db.get_ref()
+	if db == null:
+		_DisplayConfirmDialog("No component database selected.")
+		return
+	
+	db.duplicate_component(item.get_metadata(0))
+
+func _HoldComponent() -> void:
+	var item = _comp_tree.get_selected()
+	if item == null:
+		_DisplayConfirmDialog("No component item selected.")
+		return
+	
+	var db : ComponentDB = _db.get_ref()
+	if db == null:
+		_DisplayConfirmDialog("No component database selected.")
+		return
+	
+	if _held_component[&"uuid"] != item.get_metadata(0):	
+		_held_component[&"db_key"] = _db_key
+		_held_component[&"uuid"] = item.get_metadata(0)
+		_move_btn.visible = true
+	else:
+		_held_component[&"db_key"] = &""
+		_held_component[&"uuid"] = &""
+		_move_btn.visible = false
+
+func _ClearHeldComponent() -> void:
+	_held_component[&"db_key"] = &""
+	_held_component[&"uuid"] = &""
+	_move_btn.visible = false
 
 func _BuildTree(db : ComponentDB) -> void:
 	_comp_tree.clear()
@@ -174,34 +253,6 @@ func _on_tree_item_selected():
 	if item != null and _db_key != &"":
 		component_selected.emit(_db_key, item.get_metadata(0))
 
-
-func _on_add_component_pressed():
-	if _db.get_ref() != null:
-		new_component_requested.emit()
-
-
-func _on_rem_component_pressed():
-	var item = _comp_tree.get_selected()
-	if item == null:
-		_DisplayConfirmDialog("No component item selected.")
-		return
-	
-	var db : ComponentDB = _db.get_ref()
-	if db == null:
-		_DisplayConfirmDialog("No component database selected.")
-		return
-
-	var comp : Dictionary = db.get_component(item.get_metadata(0))
-	if comp.is_empty():
-		_DisplayConfirmDialog("Selected component not found in the active database!")
-		return
-	
-	var dialog = CONFIRMDIALOG.instantiate()
-	dialog.text = "This will remove component \"%s\" from the database. Are you sure?"%[comp[&"name"]]
-	dialog.yes_pressed.connect(_on_rem_component_confirmed.bind(comp))
-	add_child(dialog)
-	dialog.popup_centered()
-
 func _on_rem_component_confirmed(comp : Dictionary) -> void:
 	if comp.is_empty(): return
 	var db : ComponentDB = _db.get_ref()
@@ -214,17 +265,35 @@ func _on_rem_component_confirmed(comp : Dictionary) -> void:
 				_DisplayConfirmDialog("Cannot remove component. Database is locked.")
 			ERR_DOES_NOT_EXIST:
 				_DisplayConfirmDialog("Failed to find component within active database!")
-				
 
-func _on_dup_component_pressed():
-	var item = _comp_tree.get_selected()
-	if item == null:
-		_DisplayConfirmDialog("No component item selected.")
-		return
-	
-	var db : ComponentDB = _db.get_ref()
-	if db == null:
-		_DisplayConfirmDialog("No component database selected.")
-		return
-	
-	db.duplicate_component(item.get_metadata(0))
+
+func _on_move_ccomponent_pressed():
+	if _db_key != &"" and _held_component[&"db_key"] != _db_key:
+		var odb : ComponentDB = CCDB.get_database_by_key(_held_component[&"db_key"])
+		if odb != null:
+			var cmp : Dictionary = odb.get_component(_held_component[&"uuid"], true)
+			if not cmp.is_empty() and _db.get_ref() != null:
+				var res : int = _db.get_ref().add_component(cmp)
+				if res != OK:
+					_DisplayConfirmDialog("Failed to move component. Error adding component to database. Error code %d"%[res])
+					return
+				res = odb.remove_component(_held_component[&"uuid"])
+				if res != OK:
+					_DisplayConfirmDialog("Failed to move component. Error removing component from database. Error code %d"%[res])
+	_ClearHeldComponent.call_deferred()
+
+
+func _on_tool_id_pressed(id : int) -> void:
+	match id:
+		TOOL_ADD:
+			if _db.get_ref() != null:
+				new_component_requested.emit()
+		TOOL_REMOVE:
+			_RemoveComponent()
+		TOOL_DUPLICATE:
+			_DuplicateComponent()
+		TOOL_HOLD:
+			_HoldComponent()
+
+
+
