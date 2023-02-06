@@ -19,12 +19,18 @@ static func _VerifyIntValue(val : int, def : Dictionary) -> int:
 	return OK
 
 static func _VerifyStringValue(s : String, def : Dictionary) -> int:
-	if s.strip_edges() == "":
+	var allow_empty : bool = true
+	if &"allow_empty" in def and typeof(def[&"allow_empty"]) == TYPE_BOOL:
+		allow_empty = def[&"allow_empty"]
+	if allow_empty == false and s.strip_edges() == "":
 		return ERR_PARAMETER_RANGE_ERROR
 	return OK
 
 static func _VerifyStringNameValue(s : StringName, def : Dictionary) -> int:
-	if s.strip_edges() == &"":
+	var allow_empty : bool = true
+	if &"allow_empty" in def and typeof(def[&"allow_empty"]) == TYPE_BOOL:
+		allow_empty = def[&"allow_empty"]
+	if allow_empty == false and s.strip_edges() == &"":
 		return ERR_PARAMETER_RANGE_ERROR
 	return OK
 
