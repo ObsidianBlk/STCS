@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://bhb7448be5328"]
+
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powbat/AttribCtrl_PowBat.gd" id="1_s286o"]
+
+[node name="AttribCtrl_PowBat" type="HBoxContainer"]
+offset_right = 128.0
+offset_bottom = 31.0
+script = ExtResource("1_s286o")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Points: "
+
+[node name="LineEdit" type="LineEdit" parent="."]
+layout_mode = 2
+size_flags_vertical = 4
+
+[connection signal="text_changed" from="LineEdit" to="." method="_on_text_changed"]
+[connection signal="text_submitted" from="LineEdit" to="." method="_on_line_edit_text_submitted"]

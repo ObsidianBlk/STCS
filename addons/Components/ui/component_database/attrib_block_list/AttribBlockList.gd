@@ -16,6 +16,9 @@ signal attribute_data_changed(attrib_name, data)
 const BLOCKLISTITEM : PackedScene = preload("res://addons/Components/ui/component_database/attrib_block_list/BlockListItem.tscn")
 const ATTRIB_EDITOR_CONTROL : Dictionary = {
 	&"pow_gen": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powgen/AttribCtrl_PowGen.tscn"),
+	&"pow_bat": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powbat/AttribCtrl_PowBat.tscn"),
+	&"pow_req": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powreq/AttribCtrl_PowReq.tscn"),
+	&"engine": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_engine/AttribCtrl_Engine.tscn"),
 	
 }
 const ATTRIB_MENU_DEFAULT_TEXT : String = "Select an Attribute"

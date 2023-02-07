@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://bu384bwa6s5pd"]
+
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powreq/AttribCtrl_PowReq.gd" id="1_fega0"]
+
+[node name="AttribCtrl_PowReq" type="GridContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+columns = 2
+script = ExtResource("1_fega0")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Max Capacity: "
+
+[node name="Max_LineEdit" type="LineEdit" parent="."]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 2
+text = "Required Capacity: "
+
+[node name="Req_LineEdit" type="LineEdit" parent="."]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="."]
+layout_mode = 2
+text = "Auto Draw:"
+
+[node name="Auto_CheckButton" type="CheckButton" parent="."]
+layout_mode = 2
+size_flags_horizontal = 0

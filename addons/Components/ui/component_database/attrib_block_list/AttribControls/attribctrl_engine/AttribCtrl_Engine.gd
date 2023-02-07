@@ -9,7 +9,7 @@ signal data_updated(data)
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
-const ANAME : StringName = &"pow_gen"
+const ANAME : StringName = &"engine"
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -30,7 +30,7 @@ func _ready() -> void:
 	if _data.is_empty(): # Technically this should NEVER happen, but JIC
 		_line.editable = false
 	else:
-		_line.text = "%s"%_data[&"ppt"]
+		_line.text = "%s"%_data[&"mpt"]
 
 # ------------------------------------------------------------------------------
 # Private Methods
@@ -54,7 +54,7 @@ func set_data(data : Dictionary) -> void:
 		_data = data
 		if _line != null:
 			_line.editable = true
-			_line.text = "%s"%_data[&"ppt"]
+			_line.text = "%s"%_data[&"mpt"]
 		data_updated.emit(_data)
 	else:
 		printerr("Attribute ", ANAME, " validation failure")
@@ -69,13 +69,13 @@ func get_data() -> Dictionary:
 func _on_text_changed(new_text : String) -> void:
 	if new_text.is_valid_int():
 		var val : int = new_text.to_int()
-		_data[&"ppt"] = max(1, val)
-		if _data[&"ppt"] != val:
-			_line.text = "%s"%[_data[&"ppt"]]
+		_data[&"mpt"] = max(1, val)
+		if _data[&"mpt"] != val:
+			_line.text = "%s"%[_data[&"mpt"]]
 	else:
-		_line.text = "%s"%[_data[&"ppt"]]
+		_line.text = "%s"%[_data[&"mpt"]]
 
-func _on_line_edit_text_submitted(new_text):
+func _on_text_submitted(new_text):
 	_on_text_changed(new_text)
 	data_updated.emit(_data)
-	
+

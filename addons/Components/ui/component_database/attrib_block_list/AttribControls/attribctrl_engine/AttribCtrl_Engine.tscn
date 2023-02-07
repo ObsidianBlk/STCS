@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bsunvbcg74skr"]
+
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_engine/AttribCtrl_Engine.gd" id="1_20kgl"]
+
+[node name="AttribCtrl_Engine" type="HBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_20kgl")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Movement Per Turn: "
+
+[node name="LineEdit" type="LineEdit" parent="."]
+layout_mode = 2
+
+[connection signal="text_changed" from="LineEdit" to="." method="_on_text_changed"]
+[connection signal="text_submitted" from="LineEdit" to="." method="_on_text_submitted"]
