@@ -11,7 +11,8 @@ const SCHEMA : Dictionary = {
 			&"type":TYPE_DICTIONARY,
 			&"def":{
 				&"type":{&"req":true, &"type":TYPE_STRING_NAME, &"allow_empty":false},
-				&"rank":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true}
+				&"rank":{&"req":true, &"type":TYPE_VECTOR2I, &"minmax":true},
+				&"cmd":{&"req":true, &"type":TYPE_BOOL}
 			}
 		}
 	}

@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://gvx37w7wwdbr"]
+
+[node name="AttribCtrl_Officers" type="VBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0

@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=3 uid="uid://dogvha6r7rufl"]
+
+[ext_resource type="Texture2D" uid="uid://c8y8lrciiyokw" path="res://addons/Components/assets/icons/arrow_left.svg" id="1_kne0u"]
+[ext_resource type="Texture2D" uid="uid://cgh5n7pdt7j8s" path="res://addons/Components/assets/icons/arrow_down.svg" id="2_3criv"]
+
+[node name="OfficerEntry" type="HBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+size_flags_vertical = 0
+icon = ExtResource("1_kne0u")
+flat = true
+
+[node name="VSeparator" type="VSeparator" parent="."]
+layout_mode = 2
+
+[node name="InfoBar" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 32
+
+[node name="Commandable" type="Label" parent="InfoBar"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "[ Non-Comm ]"
+
+[node name="Type" type="HBoxContainer" parent="InfoBar"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="Label" type="Label" parent="InfoBar/Type"]
+layout_mode = 2
+text = "O. Type:"
+
+[node name="TypeName" type="Label" parent="InfoBar/Type"]
+layout_mode = 2
+text = "Command"
+
+[node name="Rank" type="HBoxContainer" parent="InfoBar"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="Label" type="Label" parent="InfoBar/Rank"]
+layout_mode = 2
+text = "Rank(s):"
+
+[node name="RankRange" type="Label" parent="InfoBar/Rank"]
+layout_mode = 2
+text = "Ensign"
+
+[node name="EditBlock" type="GridContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+columns = 2
+
+[node name="Label" type="Label" parent="EditBlock"]
+layout_mode = 2
+text = "Officer Type: "
+
+[node name="OfficerType" type="MenuButton" parent="EditBlock"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Any"
+icon = ExtResource("2_3criv")
+flat = false
+alignment = 0
+icon_alignment = 2
+item_count = 6
+popup/item_0/text = "Any"
+popup/item_0/id = 0
+popup/item_1/text = "Command"
+popup/item_1/id = 1
+popup/item_2/text = "Medical"
+popup/item_2/id = 2
+popup/item_3/text = "Science"
+popup/item_3/id = 3
+popup/item_4/text = "Operations"
+popup/item_4/id = 4
+popup/item_5/text = "Engineering"
+popup/item_5/id = 5
