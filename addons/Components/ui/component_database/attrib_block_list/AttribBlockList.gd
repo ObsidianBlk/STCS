@@ -19,6 +19,7 @@ const ATTRIB_EDITOR_CONTROL : Dictionary = {
 	&"pow_bat": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powbat/AttribCtrl_PowBat.tscn"),
 	&"pow_req": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_powreq/AttribCtrl_PowReq.tscn"),
 	&"engine": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_engine/AttribCtrl_Engine.tscn"),
+	&"officers": preload("res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_officers/AttribCtrl_Officers.tscn"),
 	
 }
 const ATTRIB_MENU_DEFAULT_TEXT : String = "Select an Attribute"

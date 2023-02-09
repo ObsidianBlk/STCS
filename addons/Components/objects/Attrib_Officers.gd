@@ -5,7 +5,8 @@ extends "res://addons/Components/objects/ComponentAttribute.gd"
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
-const ANAME : StringName = &"crew"
+const ANAME : StringName = &"officers"
+enum RANK {Ensign=1, Lieutenant=2, LtCommander=3, Commander=4, Captain=5}
 const SCHEMA : Dictionary = {
 	&"list":{&"req":true, &"type":TYPE_ARRAY, &"item":{
 			&"type":TYPE_DICTIONARY,

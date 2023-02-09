@@ -1,5 +1,31 @@
-[gd_scene format=3 uid="uid://gvx37w7wwdbr"]
+[gd_scene load_steps=3 format=3 uid="uid://gvx37w7wwdbr"]
+
+[ext_resource type="Texture2D" uid="uid://ct2mwpvdrkvu4" path="res://addons/Components/assets/icons/add.svg" id="1_gr8ih"]
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_officers/AttribCtrl_Officers.gd" id="1_s0nha"]
 
 [node name="AttribCtrl_Officers" type="VBoxContainer"]
 offset_right = 40.0
 offset_bottom = 40.0
+size_flags_horizontal = 3
+script = ExtResource("1_s0nha")
+
+[node name="Operations" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="AddItem" type="Button" parent="Operations"]
+layout_mode = 2
+icon = ExtResource("1_gr8ih")
+flat = true
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_type_variation = &"Tree"
+
+[node name="ItemList" type="ScrollContainer" parent="Panel"]
+custom_minimum_size = Vector2(0, 256)
+layout_mode = 2
+
+[node name="List" type="VBoxContainer" parent="Panel/ItemList"]
+layout_mode = 2
+
+[connection signal="pressed" from="Operations/AddItem" to="." method="_on_add_item_pressed"]

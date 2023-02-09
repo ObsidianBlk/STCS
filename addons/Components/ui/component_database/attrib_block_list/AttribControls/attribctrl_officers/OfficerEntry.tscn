@@ -1,70 +1,102 @@
-[gd_scene load_steps=3 format=3 uid="uid://dogvha6r7rufl"]
+[gd_scene load_steps=7 format=3 uid="uid://dogvha6r7rufl"]
 
+[ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_officers/OfficerEntry.gd" id="1_4al7k"]
 [ext_resource type="Texture2D" uid="uid://c8y8lrciiyokw" path="res://addons/Components/assets/icons/arrow_left.svg" id="1_kne0u"]
 [ext_resource type="Texture2D" uid="uid://cgh5n7pdt7j8s" path="res://addons/Components/assets/icons/arrow_down.svg" id="2_3criv"]
+[ext_resource type="Texture2D" uid="uid://jxas6kr6golu" path="res://addons/Components/assets/icons/big_x.svg" id="3_icvyg"]
+[ext_resource type="StyleBox" uid="uid://bxhiho0lhjkai" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_officers/ItemPanel.stylebox" id="4_4pvwf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mworr"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.145098, 0.168627, 0.203922, 1)
+border_width_right = 1
+corner_radius_top_left = 4
+corner_radius_bottom_left = 4
 
 [node name="OfficerEntry" type="HBoxContainer"]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 460.0
+offset_bottom = 131.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_constants/separation = 0
+script = ExtResource("1_4al7k")
 
-[node name="Button" type="Button" parent="."]
+[node name="ItemCTRLs" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mworr")
+
+[node name="Buttons" type="VBoxContainer" parent="ItemCTRLs"]
+layout_mode = 2
+
+[node name="Collapse" type="Button" parent="ItemCTRLs/Buttons"]
 layout_mode = 2
 size_flags_vertical = 0
 icon = ExtResource("1_kne0u")
 flat = true
 
-[node name="VSeparator" type="VSeparator" parent="."]
+[node name="Remove" type="Button" parent="ItemCTRLs/Buttons"]
 layout_mode = 2
+icon = ExtResource("3_icvyg")
+flat = true
 
-[node name="InfoBar" type="HBoxContainer" parent="."]
+[node name="InfoBar" type="PanelContainer" parent="."]
 visible = false
 layout_mode = 2
+theme_override_styles/panel = ExtResource("4_4pvwf")
+
+[node name="Layout" type="HBoxContainer" parent="InfoBar"]
+layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 0
+size_flags_vertical = 4
 theme_override_constants/separation = 32
 
-[node name="Commandable" type="Label" parent="InfoBar"]
+[node name="Commandable" type="Label" parent="InfoBar/Layout"]
 layout_mode = 2
 size_flags_vertical = 0
 text = "[ Non-Comm ]"
 
-[node name="Type" type="HBoxContainer" parent="InfoBar"]
+[node name="Type" type="HBoxContainer" parent="InfoBar/Layout"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="Label" type="Label" parent="InfoBar/Type"]
+[node name="Label" type="Label" parent="InfoBar/Layout/Type"]
 layout_mode = 2
 text = "O. Type:"
 
-[node name="TypeName" type="Label" parent="InfoBar/Type"]
+[node name="TypeName" type="Label" parent="InfoBar/Layout/Type"]
 layout_mode = 2
 text = "Command"
 
-[node name="Rank" type="HBoxContainer" parent="InfoBar"]
+[node name="Rank" type="HBoxContainer" parent="InfoBar/Layout"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="Label" type="Label" parent="InfoBar/Rank"]
+[node name="Label" type="Label" parent="InfoBar/Layout/Rank"]
 layout_mode = 2
 text = "Rank(s):"
 
-[node name="RankRange" type="Label" parent="InfoBar/Rank"]
+[node name="RankRange" type="Label" parent="InfoBar/Layout/Rank"]
 layout_mode = 2
 text = "Ensign"
 
-[node name="EditBlock" type="GridContainer" parent="."]
+[node name="EditBlock" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("4_4pvwf")
+
+[node name="Layout" type="GridContainer" parent="EditBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 columns = 2
 
-[node name="Label" type="Label" parent="EditBlock"]
+[node name="Label" type="Label" parent="EditBlock/Layout"]
 layout_mode = 2
 text = "Officer Type: "
 
-[node name="OfficerType" type="MenuButton" parent="EditBlock"]
+[node name="OfficerType" type="MenuButton" parent="EditBlock/Layout"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Any"
@@ -85,3 +117,40 @@ popup/item_4/text = "Operations"
 popup/item_4/id = 4
 popup/item_5/text = "Engineering"
 popup/item_5/id = 5
+
+[node name="Label2" type="Label" parent="EditBlock/Layout"]
+layout_mode = 2
+text = "Min Rank: "
+
+[node name="MinRank" type="MenuButton" parent="EditBlock/Layout"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ensign"
+icon = ExtResource("2_3criv")
+flat = false
+alignment = 0
+icon_alignment = 2
+
+[node name="Label3" type="Label" parent="EditBlock/Layout"]
+layout_mode = 2
+text = "Max Rank: "
+
+[node name="MaxRank" type="MenuButton" parent="EditBlock/Layout"]
+layout_mode = 2
+text = "None"
+icon = ExtResource("2_3criv")
+flat = false
+alignment = 0
+icon_alignment = 2
+
+[node name="Label4" type="Label" parent="EditBlock/Layout"]
+layout_mode = 2
+text = "Captain Seat: "
+
+[node name="CaptainSeat" type="CheckButton" parent="EditBlock/Layout"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[connection signal="pressed" from="ItemCTRLs/Buttons/Collapse" to="." method="_on_collapse_pressed"]
+[connection signal="pressed" from="ItemCTRLs/Buttons/Remove" to="." method="_on_remove_pressed"]
+[connection signal="toggled" from="EditBlock/Layout/CaptainSeat" to="." method="_on_captain_seat_toggled"]
