@@ -93,6 +93,7 @@ func _RemoveAttribFromAvailable(attrib_name : StringName) -> void:
 			if _active_attrib_choice == attrib_name:
 				_active_attrib_choice = &""
 				_attribmenubtn.text = ATTRIB_MENU_DEFAULT_TEXT
+			break
 
 # ------------------------------------------------------------------------------
 # Public Methods

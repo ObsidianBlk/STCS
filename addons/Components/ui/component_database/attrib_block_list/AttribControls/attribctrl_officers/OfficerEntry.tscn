@@ -130,6 +130,17 @@ icon = ExtResource("2_3criv")
 flat = false
 alignment = 0
 icon_alignment = 2
+item_count = 5
+popup/item_0/text = "Ensign"
+popup/item_0/id = 0
+popup/item_1/text = "Lieutenant"
+popup/item_1/id = 1
+popup/item_2/text = "LtCommander"
+popup/item_2/id = 2
+popup/item_3/text = "Commander"
+popup/item_3/id = 3
+popup/item_4/text = "Captain"
+popup/item_4/id = 4
 
 [node name="Label3" type="Label" parent="EditBlock/Layout"]
 layout_mode = 2
