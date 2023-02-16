@@ -2,6 +2,11 @@
 extends Node
 
 # ------------------------------------------------------------------------------
+# Signals
+# ------------------------------------------------------------------------------
+signal readied()
+
+# ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
 const ATTRIB_OBJECTS : Array = [
@@ -32,6 +37,7 @@ const COMPONENT_STRUCTURE : Dictionary = {
 # Variables
 # ------------------------------------------------------------------------------
 var _attribs : Dictionary = {}
+var _is_ready : bool = false
 
 # ------------------------------------------------------------------------------
 # Override Methods
@@ -44,6 +50,8 @@ func _ready() -> void:
 			if aname != &"" and not aname in _attribs:
 				_attribs[aname] = atti
 				atti.response.connect(_on_attribute_response)
+	_is_ready = true
+	readied.emit()
 
 # ------------------------------------------------------------------------------
 # Private Methods
@@ -56,6 +64,8 @@ func _ready() -> void:
 #	if not attrib_name in _attribs:
 #		return ERR_DATABASE_CANT_READ
 #	return _attribs[attrib_name].validate_attribute_data(data)
+func is_ready() -> bool:
+	return _is_ready
 
 func create_component_data() -> Dictionary:
 	return {

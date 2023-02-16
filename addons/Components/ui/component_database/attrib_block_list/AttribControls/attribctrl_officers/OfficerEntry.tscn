@@ -43,7 +43,6 @@ icon = ExtResource("3_icvyg")
 flat = true
 
 [node name="InfoBar" type="PanelContainer" parent="."]
-visible = false
 layout_mode = 2
 theme_override_styles/panel = ExtResource("4_4pvwf")
 
@@ -56,7 +55,7 @@ theme_override_constants/separation = 32
 [node name="Commandable" type="Label" parent="InfoBar/Layout"]
 layout_mode = 2
 size_flags_vertical = 0
-text = "[ Non-Comm ]"
+text = "[ Non-CMD ]"
 
 [node name="Type" type="HBoxContainer" parent="InfoBar/Layout"]
 layout_mode = 2
@@ -68,7 +67,7 @@ text = "O. Type:"
 
 [node name="TypeName" type="Label" parent="InfoBar/Layout/Type"]
 layout_mode = 2
-text = "Command"
+text = "Any"
 
 [node name="Rank" type="HBoxContainer" parent="InfoBar/Layout"]
 layout_mode = 2
@@ -80,9 +79,10 @@ text = "Rank(s):"
 
 [node name="RankRange" type="Label" parent="InfoBar/Layout/Rank"]
 layout_mode = 2
-text = "Ensign"
+text = "Ens"
 
 [node name="EditBlock" type="PanelContainer" parent="."]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = ExtResource("4_4pvwf")
 
@@ -142,6 +142,17 @@ icon = ExtResource("2_3criv")
 flat = false
 alignment = 0
 icon_alignment = 2
+item_count = 5
+popup/item_0/text = "Lieutenant"
+popup/item_0/id = 1
+popup/item_1/text = "LtCommander"
+popup/item_1/id = 2
+popup/item_2/text = "Commander"
+popup/item_2/id = 3
+popup/item_3/text = "Captain"
+popup/item_3/id = 4
+popup/item_4/text = "None"
+popup/item_4/id = 5
 
 [node name="Label4" type="Label" parent="EditBlock/Layout"]
 layout_mode = 2

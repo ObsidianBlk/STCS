@@ -57,6 +57,8 @@ func _ready() -> void:
 		pop.index_pressed.connect(_on_officer_type_index_pressed)
 	
 	pop = _min_rank_mbtn.get_popup()
+	for i in range(0, 5):
+		pop.add_item(_RankIDToName(i), i)
 	if pop != null:
 		pop.id_pressed.connect(_on_min_rank_id_pressed)
 	

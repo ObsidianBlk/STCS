@@ -28,6 +28,8 @@ const CDB_PATH : Dictionary = {
 var _dbcollection : Dictionary = {}
 var _active_path_id : StringName = &"core"
 
+var _load_resources_requested : bool = false
+
 # ------------------------------------------------------------------------------
 # Private Methods
 # ------------------------------------------------------------------------------

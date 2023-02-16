@@ -72,7 +72,6 @@ func _BuildDataList() -> void:
 	if _data.is_empty(): return
 	for i in range(_data[&"list"].size()):
 		_AddItemToList(_data[&"list"][i])
-	print("Post Building Data: ", _data)
 
 # ------------------------------------------------------------------------------
 # Public Methods
@@ -92,16 +91,15 @@ func set_data(data : Dictionary) -> void:
 	if res == OK:
 		_ClearList()
 		_data = data
-		print("Data: ", _data)
 		_BuildDataList()
-		print("Data Set to: ", _data)
 	else:
 		printerr("Attribute ", ANAME, " validation failure")
 
 func get_data() -> Dictionary:
 	var list : Array = []
 	for child in _list.get_children():
-		list.append(child.get_data())
+		var data : Dictionary = child.get_data()
+		list.append(data)#child.get_data())
 	return {&"list":list}
 
 # ------------------------------------------------------------------------------

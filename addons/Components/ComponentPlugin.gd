@@ -21,7 +21,11 @@ var _main_ui : Control = null
 func _enter_tree() -> void:
 	#add_autoload_singleton(AUTO_UUID_NAME, "res://addons/STCSDataControl/autos/UUID.gd")
 	#add_autoload_singleton(AUTO_CCDB_NAME, "res://addons/STCSDataControl/autos/CCDB.gd")
-	CCDB.load_database_resources()
+	if CSys.is_ready():
+		CCDB.load_database_resources()
+	else:
+		CSys.readied.connect(func(): CCDB.load_database_resources())
+		
 	if _main_ui == null:
 		_main_ui = MAIN_UI.instantiate()
 	get_editor_interface().get_editor_main_screen().add_child(_main_ui)

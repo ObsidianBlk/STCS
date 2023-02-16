@@ -46,7 +46,8 @@ func duplicate_attribute_data(data : Dictionary) -> Dictionary:
 		for item in data[&"list"]:
 			list.append({
 				&"type": item[&"type"],
-				&"rank": item[&"rank"]
+				&"rank": item[&"rank"],
+				&"cmd": item[&"cmd"]
 			})
 		return {&"list": list}
 	return {}
