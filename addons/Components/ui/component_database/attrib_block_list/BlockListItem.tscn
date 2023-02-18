@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dirka7khh81lv"]
+[gd_scene load_steps=6 format=3 uid="uid://dirka7khh81lv"]
 
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/BlockListItem.gd" id="1_vm5i1"]
 [ext_resource type="Texture2D" uid="uid://jxas6kr6golu" path="res://addons/Components/assets/icons/big_x.svg" id="2_75861"]
+[ext_resource type="Texture2D" uid="uid://bxxol2vjbbeso" path="res://addons/Components/assets/icons/arrow_right.svg" id="2_p5mbm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y2bkj"]
 content_margin_left = 4.0
@@ -46,6 +47,7 @@ layout_mode = 2
 
 [node name="Revealer" type="Button" parent="Header/Layout"]
 layout_mode = 2
+icon = ExtResource("2_p5mbm")
 flat = true
 
 [node name="Title" type="Label" parent="Header/Layout"]

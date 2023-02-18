@@ -1,24 +1,52 @@
-[gd_scene load_steps=7 format=3 uid="uid://dogvha6r7rufl"]
+[gd_scene load_steps=11 format=3 uid="uid://dogvha6r7rufl"]
 
 [ext_resource type="Script" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_officers/OfficerEntry.gd" id="1_4al7k"]
-[ext_resource type="Texture2D" uid="uid://c8y8lrciiyokw" path="res://addons/Components/assets/icons/arrow_left.svg" id="1_kne0u"]
 [ext_resource type="Texture2D" uid="uid://cgh5n7pdt7j8s" path="res://addons/Components/assets/icons/arrow_down.svg" id="2_3criv"]
+[ext_resource type="Texture2D" uid="uid://bxxol2vjbbeso" path="res://addons/Components/assets/icons/arrow_right.svg" id="2_c20u1"]
 [ext_resource type="Texture2D" uid="uid://jxas6kr6golu" path="res://addons/Components/assets/icons/big_x.svg" id="3_icvyg"]
 [ext_resource type="StyleBox" uid="uid://bxhiho0lhjkai" path="res://addons/Components/ui/component_database/attrib_block_list/AttribControls/attribctrl_officers/ItemPanel.stylebox" id="4_4pvwf"]
+[ext_resource type="Texture2D" uid="uid://7o6ugbl7tkxs" path="res://addons/Components/assets/icons/ship_status/command_seat.svg" id="5_4n78a"]
+[ext_resource type="Texture2D" uid="uid://bmwbco8bes0bh" path="res://addons/Components/assets/icons/ranks/rank_ensign.svg" id="6_hiul7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mworr"]
-content_margin_left = 2.0
-content_margin_top = 2.0
-content_margin_right = 2.0
-content_margin_bottom = 2.0
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
 bg_color = Color(0.145098, 0.168627, 0.203922, 1)
 border_width_right = 1
 corner_radius_top_left = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_muukp"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sjqrd"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.145098, 0.168627, 0.203922, 1)
+border_width_left = 1
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+
 [node name="OfficerEntry" type="HBoxContainer"]
-offset_right = 460.0
-offset_bottom = 131.0
+offset_right = 164.0
+offset_bottom = 32.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_constants/separation = 0
@@ -28,22 +56,15 @@ script = ExtResource("1_4al7k")
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_mworr")
 
-[node name="Buttons" type="VBoxContainer" parent="ItemCTRLs"]
-layout_mode = 2
-
-[node name="Collapse" type="Button" parent="ItemCTRLs/Buttons"]
+[node name="Collapse" type="Button" parent="ItemCTRLs"]
 layout_mode = 2
 size_flags_vertical = 0
-icon = ExtResource("1_kne0u")
-flat = true
-
-[node name="Remove" type="Button" parent="ItemCTRLs/Buttons"]
-layout_mode = 2
-icon = ExtResource("3_icvyg")
+icon = ExtResource("2_c20u1")
 flat = true
 
 [node name="InfoBar" type="PanelContainer" parent="."]
 layout_mode = 2
+size_flags_vertical = 0
 theme_override_styles/panel = ExtResource("4_4pvwf")
 
 [node name="Layout" type="HBoxContainer" parent="InfoBar"]
@@ -52,34 +73,27 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_constants/separation = 32
 
-[node name="Commandable" type="Label" parent="InfoBar/Layout"]
+[node name="Commandable_icon" type="TextureRect" parent="InfoBar/Layout"]
 layout_mode = 2
-size_flags_vertical = 0
-text = "[ Non-CMD ]"
+texture = ExtResource("5_4n78a")
+stretch_mode = 5
 
-[node name="Type" type="HBoxContainer" parent="InfoBar/Layout"]
+[node name="Ranks" type="PanelContainer" parent="InfoBar/Layout"]
 layout_mode = 2
-size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_muukp")
 
-[node name="Label" type="Label" parent="InfoBar/Layout/Type"]
+[node name="HBC" type="HBoxContainer" parent="InfoBar/Layout/Ranks"]
 layout_mode = 2
-text = "O. Type:"
 
-[node name="TypeName" type="Label" parent="InfoBar/Layout/Type"]
+[node name="MinRank" type="TextureRect" parent="InfoBar/Layout/Ranks/HBC"]
 layout_mode = 2
-text = "Any"
+texture = ExtResource("6_hiul7")
+stretch_mode = 3
 
-[node name="Rank" type="HBoxContainer" parent="InfoBar/Layout"]
+[node name="MaxRank" type="TextureRect" parent="InfoBar/Layout/Ranks/HBC"]
 layout_mode = 2
-size_flags_vertical = 0
-
-[node name="Label" type="Label" parent="InfoBar/Layout/Rank"]
-layout_mode = 2
-text = "Rank(s):"
-
-[node name="RankRange" type="Label" parent="InfoBar/Layout/Rank"]
-layout_mode = 2
-text = "Ens"
+texture = ExtResource("6_hiul7")
+stretch_mode = 3
 
 [node name="EditBlock" type="PanelContainer" parent="."]
 visible = false
@@ -130,7 +144,7 @@ icon = ExtResource("2_3criv")
 flat = false
 alignment = 0
 icon_alignment = 2
-item_count = 5
+item_count = 10
 popup/item_0/text = "Ensign"
 popup/item_0/id = 0
 popup/item_1/text = "Lieutenant"
@@ -141,6 +155,16 @@ popup/item_3/text = "Commander"
 popup/item_3/id = 3
 popup/item_4/text = "Captain"
 popup/item_4/id = 4
+popup/item_5/text = "Ensign"
+popup/item_5/id = 0
+popup/item_6/text = "Lieutenant"
+popup/item_6/id = 1
+popup/item_7/text = "LtCommander"
+popup/item_7/id = 2
+popup/item_8/text = "Commander"
+popup/item_8/id = 3
+popup/item_9/text = "Captain"
+popup/item_9/id = 4
 
 [node name="Label3" type="Label" parent="EditBlock/Layout"]
 layout_mode = 2
@@ -173,6 +197,15 @@ text = "Captain Seat: "
 layout_mode = 2
 size_flags_horizontal = 0
 
-[connection signal="pressed" from="ItemCTRLs/Buttons/Collapse" to="." method="_on_collapse_pressed"]
-[connection signal="pressed" from="ItemCTRLs/Buttons/Remove" to="." method="_on_remove_pressed"]
+[node name="EndCapCTRLs" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_sjqrd")
+
+[node name="Remove" type="Button" parent="EndCapCTRLs"]
+layout_mode = 2
+icon = ExtResource("3_icvyg")
+flat = true
+
+[connection signal="pressed" from="ItemCTRLs/Collapse" to="." method="_on_collapse_pressed"]
 [connection signal="toggled" from="EditBlock/Layout/CaptainSeat" to="." method="_on_captain_seat_toggled"]
+[connection signal="pressed" from="EndCapCTRLs/Remove" to="." method="_on_remove_pressed"]

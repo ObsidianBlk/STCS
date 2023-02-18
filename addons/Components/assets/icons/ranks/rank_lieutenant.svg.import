@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8y8lrciiyokw"
-path="res://.godot/imported/arrow_left.svg-db0c8d3bc9c6bca89fbcb70483f0d02e.ctex"
+uid="uid://x3gs5o2o4c4"
+path="res://.godot/imported/rank_lieutenant.svg-58b2a0bc4424ab67c0b7d43bb028baab.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/Components/assets/icons/arrow_left.svg"
-dest_files=["res://.godot/imported/arrow_left.svg-db0c8d3bc9c6bca89fbcb70483f0d02e.ctex"]
+source_file="res://addons/Components/assets/icons/ranks/rank_lieutenant.svg"
+dest_files=["res://.godot/imported/rank_lieutenant.svg-58b2a0bc4424ab67c0b7d43bb028baab.ctex"]
 
 [params]
 

@@ -11,7 +11,7 @@ signal remove_requested()
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
-const ARROW_LEFT : Texture = preload("res://addons/Components/assets/icons/arrow_left.svg")
+const ARROW_RIGHT : Texture = preload("res://addons/Components/assets/icons/arrow_right.svg")
 const ARROW_DOWN : Texture = preload("res://addons/Components/assets/icons/arrow_down.svg")
 
 # ------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ func _ready() -> void:
 	if _content_control != null:
 		_content.add_child(_content_control)
 	_content.visible = false
-	_revealer_btn.icon = ARROW_LEFT
+	_revealer_btn.icon = ARROW_RIGHT
 
 
 # ------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ func set_metadata(metadata) -> void:
 # ------------------------------------------------------------------------------
 func _on_revealer_pressed():
 	_content.visible = not _content.visible
-	_revealer_btn.icon = ARROW_DOWN if _content.visible else ARROW_LEFT
+	_revealer_btn.icon = ARROW_DOWN if _content.visible else ARROW_RIGHT
 
 
 func _on_remove_pressed():

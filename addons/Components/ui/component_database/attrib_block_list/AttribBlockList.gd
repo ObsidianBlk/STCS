@@ -58,7 +58,7 @@ func set_editable(e : bool) -> void:
 func _ready() -> void:
 	var mpop : PopupMenu = _attribmenubtn.get_popup()
 	mpop.clear() # We're a tool. Make sure this list is empty!
-	mpop.id_pressed.connect(_on_attrib_menu_id_pressed)
+	mpop.index_pressed.connect(_on_attrib_menu_index_pressed)
 	for key in ATTRIB_EDITOR_CONTROL:
 		mpop.add_item(String(key))
 		mpop.set_item_metadata(-1, key)
@@ -191,9 +191,8 @@ func _on_item_content_revealed(showing : bool, attrib_name : StringName) -> void
 func _on_attrib_data_updated(data : Dictionary, attrib_name : StringName) -> void:
 	attribute_data_changed.emit(attrib_name, data)
 
-func _on_attrib_menu_id_pressed(id : int) -> void:
+func _on_attrib_menu_index_pressed(idx : int) -> void:
 	var mpop : PopupMenu = _attribmenubtn.get_popup()
-	var idx : int = mpop.get_item_index(id)
 	_attribmenubtn.text = mpop.get_item_text(idx)
 	_active_attrib_choice = mpop.get_item_metadata(idx)
 

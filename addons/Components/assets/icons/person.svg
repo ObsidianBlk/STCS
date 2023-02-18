@@ -8,7 +8,7 @@
    version="1.1"
    id="svg3149"
    inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
-   sodipodi:docname="arrow_left.svg"
+   sodipodi:docname="person.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,9 +25,9 @@
      showgrid="false"
      units="px"
      width="16px"
-     inkscape:zoom="8"
-     inkscape:cx="2.0625"
-     inkscape:cy="11.75"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="9.1039998"
+     inkscape:cy="-4.7729708"
      inkscape:window-width="1916"
      inkscape:window-height="1033"
      inkscape:window-x="0"
@@ -44,9 +44,14 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       id="rect323"
-       style="fill:#ffffff;stroke-width:4.16934;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
-       d="M 3.4395833,3.4395833 0.79375,2.1883596 3.4395833,0.79375 Z"
-       sodipodi:nodetypes="cccc" />
+       id="path19471"
+       style="fill:#ffffff;stroke-width:3.79573;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
+       d="M 3.2716349 2.9925822 A 1.7197917 1.7197917 0 0 1 2.1166667 3.4395833 A 1.7197917 1.7197917 0 0 1 0.96273194 2.993099 A 2.1166668 1.3229166 0 0 0 0 4.1010417 L 4.2333333 4.1010417 A 2.1166668 1.3229166 0 0 0 3.2716349 2.9925822 z " />
+    <circle
+       style="fill:#ffffff;stroke-width:4.14242;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke markers fill"
+       id="path19479"
+       cx="2.1166666"
+       cy="1.4552083"
+       r="1.4552083" />
   </g>
 </svg>

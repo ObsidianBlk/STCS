@@ -23,6 +23,7 @@ var _next_id : int = 0
 # Onready Variables
 # ------------------------------------------------------------------------------
 @onready var _list : Control = $Panel/ItemList/List
+@onready var _seatcount_lbl : Label = $Operations/SeatCount/Label
 
 
 # ------------------------------------------------------------------------------
@@ -42,10 +43,18 @@ func _GetNewData() -> Dictionary:
 		return ah.get_attribute_data()
 	return {}
 
+func _UpdateSeatCount() -> void:
+	var count : int = 0
+	for child in _list.get_children():
+		if not child.is_queued_for_deletion():
+			count += 1
+	_seatcount_lbl.text = "%d"%[count]
+
 func _ClearList() -> void:
 	for child in _list.get_children():
 		child.queue_free()
 	_next_id = 0
+	_UpdateSeatCount.call_deferred()
 
 func _AddItemToList(item_data : Dictionary = {}) -> void:
 	var oe = OFFICER_ENTRY.instantiate()
@@ -60,6 +69,7 @@ func _AddItemToList(item_data : Dictionary = {}) -> void:
 	oe.changed.connect(_on_entity_data_changed)
 	oe.remove_requested.connect(_on_entity_remove_requested)
 	_list.add_child(oe)
+	_UpdateSeatCount()
 
 func _RemoveItemByID(item_id : int) -> void:
 	for child in _list.get_children():
@@ -67,6 +77,7 @@ func _RemoveItemByID(item_id : int) -> void:
 			child.queue_free()
 			data_updated.emit(get_data())
 			break
+	_UpdateSeatCount.call_deferred()
 
 func _BuildDataList() -> void:
 	if _data.is_empty(): return
