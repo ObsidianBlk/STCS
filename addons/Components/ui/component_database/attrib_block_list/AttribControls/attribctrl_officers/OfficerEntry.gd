@@ -14,7 +14,6 @@ signal remove_requested(id)
 const DOWN_ARROW_TEXTURE : Texture = preload("res://addons/Components/assets/icons/arrow_down.svg")
 const RIGHT_ARROW_TEXTURE : Texture = preload("res://addons/Components/assets/icons/arrow_right.svg")
 
-const RANK_COUNT : int = 5
 const RANKS : Array = [
 	{"short":"Ens", "name":"Ensign", "ico":preload("res://addons/Components/assets/icons/ranks/rank_ensign.svg")},
 	{"short":"LtJG", "name":"Lt Jr. Grade", "ico":preload("res://addons/Components/assets/icons/ranks/rank_ltjg.svg")},
@@ -160,6 +159,9 @@ func set_data(data : Dictionary) -> void:
 	_UpdateEditBlockValues()
 
 func get_data() -> Dictionary:
+	if _data[&"rank"].y <= _data[&"rank"].x:
+		_data[&"rank"].y = OFFICER_TYPES.size()
+	
 	return {
 		&"type": _data[&"type"],
 		&"rank": _data[&"rank"],

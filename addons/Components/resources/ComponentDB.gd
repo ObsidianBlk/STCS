@@ -53,7 +53,7 @@ func _set(property : StringName, value) -> bool:
 			else : success = false
 		&"db":
 			if typeof(value) == TYPE_DICTIONARY:
-				set_database_dictionary(value, true)
+				set_database_dictionary(value, not Engine.is_editor_hint())
 			else : success = false
 		_:
 			success = false
@@ -134,6 +134,7 @@ func get_component_list_of_type(type : StringName) -> Array:
 	var items : Array = []
 	if type in _types:
 		for uuid in _types[type]:
+			if not uuid in _db: continue
 			items.append({
 				&"uuid": uuid,
 				&"type":_db[uuid][&"type"],
@@ -187,9 +188,18 @@ func set_database_dictionary(db : Dictionary, fail_on_warnings : bool = false) -
 	for key in db:
 		var result : int = add_component(db[key])
 		if result != OK:
+			match result:
+				ERR_LOCKED:
+					printerr("COMPONENTDB Load Warning: Database locked. Failed to load in new component.")
+				ERR_ALREADY_EXISTS:
+					printerr("COMPONENTDB Load Warning: Database already has component id \"", key, "\"")
+				_:
+					printerr("COMPOENTDB Load Warning: Failed to validate component id \"", key, "\". Skipping.")
+					printerr(db[key])
 			if fail_on_warnings:
-				printerr("Database object contains invalid data. Abandoning import.")
+				printerr("COMPONENTDB Warnings or Errors during import. Abandoning.")
 				_db.clear()
+				_types.clear()
 				_dirty = false
 				return result
 	
