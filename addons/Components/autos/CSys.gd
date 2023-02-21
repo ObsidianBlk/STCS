@@ -33,6 +33,14 @@ const COMPONENT_STRUCTURE : Dictionary = {
 	&"attributes":{&"req":false, &"type":TYPE_DICTIONARY}
 }
 
+const COMPONENT_INSTANCE_SCHEMA : Dictionary = {
+	&"db_name": {&"req":true, &"type":TYPE_STRING_NAME, &"allow_empty":false},
+	&"uuid": {&"req":true, &"type":TYPE_STRING_NAME, &"allow_empty":false},
+	&"sp": {&"req":true, &"type":TYPE_INT},
+	&"stress": {&"req":true, &"type":TYPE_INT},
+	&"attributes": {&"req":false, &"type":TYPE_DICTIONARY}
+}
+
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
@@ -152,6 +160,45 @@ func create_instance(db_name : StringName, uuid : StringName) -> Dictionary:
 						if not idat.is_empty():
 							inst[&"attributes"][akey] = idat
 	return inst
+
+func duplicate_instance(instance : Dictionary) -> Dictionary:
+	if validate_instance(instance) == OK:
+		var dup : Dictionary = {
+			&"db_name": instance[&"db_name"],
+			&"uuid": instance[&"uuid"],
+			&"sp": instance[&"sp"],
+			&"stress": instance[&"stress"],
+			&"attributes": {}
+		}
+		
+		for attrib_name in instance[&"attributes"].keys():
+			dup[&"attributes"][attrib_name] = _attribs[attrib_name]\
+				.duplicate_instance_data(instance[&"attributes"][attrib_name])
+		return dup
+	return {}
+
+func validate_instance(instance : Dictionary) -> int:
+	var res : int = DSV.verify(instance, COMPONENT_INSTANCE_SCHEMA)
+	if res != OK:
+		return res
+	
+	if not CCDB.has_database(instance[&"db_name"]):
+		return ERR_DATABASE_CANT_READ
+	if not CCDB.is_component_in_database(instance[&"db_name"], instance[&"uuid"]):
+		return ERR_DOES_NOT_EXIST
+	
+	if &"attributes" in instance:
+		for attrib_name in instance[&"attributes"].keys():
+			if not attrib_name in _attribs:
+				printerr("Unknown attribute \"%s\"."%[attrib_name])
+				return ERR_INVALID_PARAMETER
+			res = _attribs[attrib_name].validate_instance_data(
+				instance[&"attributes"][attrib_name]
+			)
+			if res != OK:
+				return res
+	
+	return OK
 
 func exec(op : StringName, instance : Dictionary, default = null):
 	pass

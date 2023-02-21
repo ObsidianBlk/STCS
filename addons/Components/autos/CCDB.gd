@@ -154,6 +154,12 @@ func save_database_by_key(key : StringName) -> int:
 			database_saved.emit(key)
 	return OK
 
+func has_database(db_name : String) -> bool:
+	return has_database_by_key(db_name.sha256_text())
+
+func has_database_by_key(key : StringName) -> bool:
+	return (key in _dbcollection)
+
 func get_database_key_from_name(db_name : String) -> StringName:
 	var sha : StringName = db_name.sha256_text()
 	if sha in _dbcollection:
@@ -191,3 +197,11 @@ func get_database_list(limit_to_path_id : StringName = &"") -> Array:
 			})
 	return list
 
+func is_component_in_database(db_name : String, uuid : StringName) -> bool:
+	return is_component_in_database_by_key(db_name.sha256_text(), uuid)
+
+func is_component_in_database_by_key(key : StringName, uuid : StringName) -> bool:
+	var db : ComponentDB = get_database_by_key(key)
+	if db:
+		return db.has_component(uuid)
+	return false
