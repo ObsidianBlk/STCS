@@ -1,6 +1,6 @@
 # (D)ictionary (S)chema (V)erifier
 # Author: Bryan Miller
-# Version: 0.0.2
+# Version: 0.0.4
 #
 # The intent of this script is to allow users to validate the data contained in
 # a dictionary against a specially formatted schema dictionary.
@@ -28,6 +28,11 @@ const ALLOWED_TYPES : PackedByteArray = [
 	TYPE_PACKED_BYTE_ARRAY, TYPE_PACKED_COLOR_ARRAY, TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY,
 	TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY, TYPE_PACKED_STRING_ARRAY,
 	TYPE_PACKED_VECTOR2_ARRAY, TYPE_PACKED_VECTOR3_ARRAY,
+]
+
+const ALLOWED_KEY_TYPES : PackedByteArray = [
+	TYPE_INT, TYPE_FLOAT, TYPE_STRING, TYPE_STRING_NAME,
+	TYPE_VECTOR2, TYPE_VECTOR2I, TYPE_VECTOR3, TYPE_VECTOR3I, TYPE_VECTOR4, TYPE_VECTOR4I
 ]
 
 # ------------------------------------------------------------------------------
@@ -179,6 +184,86 @@ static func _VerifyArrayValue(val : Array, def : Dictionary, state : Dictionary)
 				return res
 	return OK
 
+
+# NOTE: This method is a helper method for the _VerifyDictionaryValue() method defined below.
+static func _VerifyValAgainstSchema(val, schema : Dictionary, key, base_path : String, state : Dictionary) -> int:
+	if not &"type" in schema:
+		printerr("VALIDATION ERROR [", base_path, "]: Schema for entry missing required 'type' property.")
+		return ERR_INVALID_DECLARATION
+	if ALLOWED_TYPES.find(schema[&"type"]) < 0:
+		printerr("VALIDATION ERROR [", base_path, "]: Schema 'type' property invalid value.")
+		return ERR_INVALID_DECLARATION
+	
+	if typeof(val) != schema[&"type"]:
+		printerr("VALIDATION ERROR [", base_path, "]: Data structure property \"", key, "\" value invalid type.")
+		return ERR_INVALID_DATA
+	
+	match schema[&"type"]:
+		TYPE_INT:
+			var res : int = _VerifyIntValue(val, schema, state)
+			if res != OK:
+				return res
+		TYPE_STRING:
+			var res : int = _VerifyStringValue(val, schema, state)
+			if res != OK:
+				return res
+		TYPE_STRING_NAME:
+			var res : int = _VerifyStringNameValue(val, schema, state)
+			if res != OK:
+				return res
+		TYPE_VECTOR2I:
+			var res : int = _VerifyVec2IValue(val, schema, state)
+			if res != OK:
+				return res
+		TYPE_ARRAY:
+			var res : int = _VerifyArrayValue(val, schema, state)
+			if res != OK:
+				return res
+		TYPE_DICTIONARY:
+			if &"def" in schema:
+				var res : int = _VerifyDictionaryValue(val, schema[&"def"], state)
+				if res != OK:
+					return res
+	return OK
+
+static func _FindSchemaFrom(d : Dictionary, refs : RefSchema, return_source_if_no_ref : bool = false) -> Dictionary:
+	if &"ref" in d:
+		if refs != null:
+			if typeof(d[&"ref"]) == TYPE_STRING or typeof(d[&"ref"]) == TYPE_STRING_NAME:
+				return refs.get_ref_schema(d[&"ref"])
+	elif not return_source_if_no_ref:
+		if &"def" in d:
+			if typeof(d[&"def"]) == TYPE_DICTIONARY:
+				return d[&"def"]
+	else: return d
+	
+	return {}
+
+
+static func _ScrapeKeysOfType(schema : Dictionary, refs : RefSchema, base_path : String, key_type_defs : Dictionary) -> int:
+	for key in schema.keys():
+		if typeof(key) == TYPE_STRING or typeof(key) == TYPE_STRING_NAME:
+			if key.begins_with("!"):
+				if key.begins_with("!KEY_OF_TYPE_"):
+					if not &"type" in schema[key]:
+						printerr("SCHEMA ERROR [", base_path, ".", key, "]: Key-type for entry missing required 'type' property.")
+						return ERR_INVALID_DECLARATION
+					if ALLOWED_KEY_TYPES.find(schema[key][&"type"]) < 0:
+						printerr("SCHEMA ERROR [", base_path, ".", key, "]: Key-type 'type' property invalid value.")
+						return ERR_INVALID_DECLARATION
+					if schema[key][&"type"] in key_type_defs:
+						printerr("SCHEMA ERROR [", base_path, ".", key, "]: Key-type definition previously defined.")
+						return ERR_ALREADY_IN_USE
+					
+					# def[key] needs either the property "ref" or "def" and return a non-empty dictionary.
+					var key_schema = _FindSchemaFrom(schema[key], refs, false)
+					if key_schema.is_empty():
+						printerr("SCHEMA ERROR [", base_path, ".", key, "]: Schema definition does not exist or referencing undefined sub-schema.")
+						return ERR_DOES_NOT_EXIST
+					key_type_defs[schema[key][&"type"]] = schema[key][&"def"]
+	return OK
+
+
 static func _VerifyDictionaryValue(val : Dictionary, def : Dictionary, state : Dictionary) -> int:
 	var base_path : String = "ROOT" if not &"path" in state else state[&"path"]
 	var refs : RefSchema = null if not &"refs" in state else state[&"refs"]
@@ -191,6 +276,11 @@ static func _VerifyDictionaryValue(val : Dictionary, def : Dictionary, state : D
 				if res != OK:
 					printerr("VALIDATION WARNING: Schema redefining sub-schema \"", key, "\". Validation may be effected.")
 	
+	var key_type_defs : Dictionary = {} # May or may not be used.
+	var res : int = _ScrapeKeysOfType(def, refs, base_path, key_type_defs)
+	if not res == OK:
+		return res
+	
 	# Determines if only validation should fail if dictionary has keys other than the ones defined.
 	# By default, this is true.
 	var only_def : bool = true
@@ -199,14 +289,18 @@ static func _VerifyDictionaryValue(val : Dictionary, def : Dictionary, state : D
 	
 	if only_def:
 		for vkey in val.keys():
+			if typeof(vkey) in key_type_defs:
+				continue # This key is a valid type.
+			
 			if not vkey in def:
 				printerr("VALIDATION ERROR [", base_path, "]: Object key \"", vkey, "\" not defined in Schema.")
 				return ERR_CANT_RESOLVE
 	
 	for key in def.keys():
-		if key.begins_with("!"):
-			continue # These are state directives. We don't process these at this point
-		
+		if typeof(key) == TYPE_STRING or typeof(key) == TYPE_STRING_NAME:
+			if key.begins_with("!"):
+				continue
+	
 		var path : String = key
 		if base_path != "ROOT":
 			path = "%s.%s"%[base_path, key]
@@ -217,53 +311,32 @@ static func _VerifyDictionaryValue(val : Dictionary, def : Dictionary, state : D
 				return ERR_INVALID_DECLARATION
 			continue
 		
-		var schema : Dictionary = {}
-		if &"ref" in def[key]:
-			if refs != null:
-				schema = refs.get_ref_schema(def[key][&"ref"])
-			if schema.is_empty():
-				printerr("VALIDATION ERROR [", base_path, "]: Referencing undefined sub-schema \"", def[key][&"ref"], "\". Validation may be effected.")
-				return ERR_DOES_NOT_EXIST
-		else:
-			schema = def[key]
+		# def[key] needs the property "ref" (and have it be a non-empty dictionary) or def[key] is assumed to be the whole schema.
+		var schema : Dictionary = _FindSchemaFrom(def[key], refs, true)
+		if schema.is_empty():
+			printerr("SCHEMA ERROR [", base_path, "]: Schema definition does not exist or referencing undefined sub-schema.")
+			return ERR_DOES_NOT_EXIST
 		
-		if not &"type" in schema:
-			printerr("VALIDATION ERROR [", base_path, "]: Schema for entry missing required 'type' property.")
-			return ERR_INVALID_DECLARATION
-		if ALLOWED_TYPES.find(schema[&"type"]) < 0:
-			printerr("VALIDATION ERROR [", base_path, "]: Schema 'type' property invalid value.")
-			return ERR_INVALID_DECLARATION
-		
-		if typeof(val[key]) != schema[&"type"]:
-			printerr("VALIDATION ERROR [", base_path, "]: Data structure property \"", key, "\" value invalid type.")
-			return ERR_INVALID_DATA
-		
-		match schema[&"type"]:
-			TYPE_INT:
-				var res : int = _VerifyIntValue(val[key], schema, {&"path":path})
-				if res != OK:
-					return res
-			TYPE_STRING:
-				var res : int = _VerifyStringValue(val[key], schema, {&"path":path})
-				if res != OK:
-					return res
-			TYPE_STRING_NAME:
-				var res : int = _VerifyStringNameValue(val[key], schema, {&"path":path})
-				if res != OK:
-					return res
-			TYPE_VECTOR2I:
-				var res : int = _VerifyVec2IValue(val[key], schema, {&"path":path})
-				if res != OK:
-					return res
-			TYPE_ARRAY:
-				var res : int = _VerifyArrayValue(val[key], schema, {&"path":path, &"refs":refs})
-				if res != OK:
-					return res
-			TYPE_DICTIONARY:
-				if &"def" in schema:
-					var res : int = _VerifyDictionaryValue(val[key], schema[&"def"], {&"path":path, &"refs":refs})
+		res = _VerifyValAgainstSchema(val[key], schema, key, base_path, {&"path":path, &"refs":refs})
+		if res != OK:
+			return res
+
+	# If there are key type definitions/schemas
+	if not key_type_defs.is_empty():
+		# We loop through every defined key type
+		for ktype in key_type_defs.keys():
+			# and every key in val
+			for key in val.keys():
+				# and if they match
+				if typeof(key) == ktype:
+					# Validate the value against the key_type_defs schema!
+					var path : String = "%s.%s"%[base_path, key]
+					res = _VerifyValAgainstSchema(val[key], key_type_defs[ktype], key, base_path, {
+						&"path":path, &"refs":refs
+					})
 					if res != OK:
 						return res
+	
 	return OK
 
 

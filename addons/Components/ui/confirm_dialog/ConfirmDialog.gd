@@ -15,6 +15,11 @@ signal no_pressed()
 @export var ok_only : bool = false
 @export var close_on_pressed : bool = true
 
+# ------------------------------------------------------------------------------
+# Variables
+# ------------------------------------------------------------------------------
+# TODO: This is to fix a bug in RC3 ... may not be needed in next version.
+var _reset_visible : bool = false
 
 # ------------------------------------------------------------------------------
 # Onready Variables
@@ -55,8 +60,25 @@ func _SetConfirmState() -> void:
 			no_button.visible = true
 
 # ------------------------------------------------------------------------------
+# Public Methods
+# ------------------------------------------------------------------------------
+func popup_centered(position : Vector2i = Vector2i.ZERO) -> void:
+	# TODO: This is to fix a bug in RC3 ... may not be needed in next version.
+	super.popup_centered(position)
+	_reset_visible = true
+	visibility_changed.connect(_on_visibility_changed, CONNECT_ONE_SHOT)
+
+# ------------------------------------------------------------------------------
 # Handler Methods
 # ------------------------------------------------------------------------------
+func _on_visibility_changed() -> void:
+	# TODO: This is to fix a bug in RC3 ... may not be needed in next version.
+	if _reset_visible:
+		if not visible:
+			_reset_visible = false
+			set_visible.call_deferred(true)
+			#visible = true
+
 func _on_yes_pressed():
 	yes_pressed.emit()
 	if close_on_pressed:

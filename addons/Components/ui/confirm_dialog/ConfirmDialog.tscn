@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://d336a8qfudc6x"]
 
 [ext_resource type="Script" path="res://addons/Components/ui/confirm_dialog/ConfirmDialog.gd" id="1_i77vl"]
 
@@ -6,7 +6,6 @@
 size = Vector2i(226, 100)
 visible = true
 script = ExtResource("1_i77vl")
-ok_only = null
 
 [node name="Center" type="CenterContainer" parent="."]
 anchors_preset = 15
@@ -14,8 +13,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = -930.0
-offset_bottom = -552.0
+offset_right = 222.0
+offset_bottom = 96.0
 grow_horizontal = 2
 grow_vertical = 2
 

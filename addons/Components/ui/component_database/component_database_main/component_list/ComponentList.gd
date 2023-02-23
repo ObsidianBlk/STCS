@@ -110,7 +110,7 @@ func _RemoveComponent() -> void:
 	dialog.text = "This will remove component \"%s\" from the database. Are you sure?"%[comp[&"name"]]
 	dialog.yes_pressed.connect(_on_rem_component_confirmed.bind(comp))
 	add_child(dialog)
-	dialog.popup_centered()
+	dialog.popup_centered.call_deferred()
 
 func _DuplicateComponent() -> void:
 	var item = _comp_tree.get_selected()

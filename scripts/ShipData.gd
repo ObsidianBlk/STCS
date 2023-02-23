@@ -4,7 +4,9 @@ class_name ShipData
 # ------------------------------------------------------------------------------
 # Signals
 # ------------------------------------------------------------------------------
-
+signal grid_changed()
+signal position_changed()
+signal component_modified(position)
 
 # ------------------------------------------------------------------------------
 # Constants and ENUMs
@@ -12,6 +14,12 @@ class_name ShipData
 const SECTION_REGION_RADIUS : int = 4
 const COMMAND_CENTER_COORD : Vector3i = Vector3i(2, 3, -5)
 const DRIVE_CENTER_COORD : Vector3i = Vector3i(-3, -2, 5)
+const SECTION_GAP_COORDS : Array = [
+	Vector3i(-2, 2, 0),
+	Vector3i(-1, 1, 0),
+	Vector3i(0, 0, 0),
+	Vector3i(1, -1, 0)
+]
 
 # ------------------------------------------------------------------------------
 # "Export" Variables
@@ -19,6 +27,7 @@ const DRIVE_CENTER_COORD : Vector3i = Vector3i(-3, -2, 5)
 var _designation : String = "DESIGNATION"
 var _frame_size : int = 0
 var _sections_seperated : bool = true
+var _position : HexCell = HexCell.new()
 
 var _grid : Dictionary = {}
 
@@ -50,40 +59,53 @@ func _get(property : StringName):
 			return _frame_size
 		&"sections_seperated":
 			return _sections_seperated
+		&"position_qrs":
+			return _position.qrs
+		&"position":
+			return _position.clone()
 		&"grid":
 			return _grid
 	return null
 
+
 func _set(property : StringName, value : Variant) -> bool:
-	var success : bool = true
+	var success : bool = false
 	match property:
 		&"designation":
 			if typeof(value) == TYPE_STRING:
 				value = value.strip_edges()
 				if not value.is_empty():
 					_designation = value
-				else : success = false
-			else : success = false
+					success = true
 		&"frame_size":
 			if typeof(value) == TYPE_INT:
 				if value >= 0:
 					_frame_size = value
-				else : success = false
-			else : success = false
+					success = true
 		
 		&"sections_seperated":
 			if typeof(value) == TYPE_BOOL:
 				_sections_seperated = value
-			else : success = false
+				_UpdateGridSeperation()
+				success = true
+		
+		&"position_qrs", &"position":
+			if typeof(value) == TYPE_VECTOR3I:
+				_position.qrs = value
+				success = true
+				position_changed.emit()
+			elif value is HexCell:
+				_position.qrs = value.qrs
+				success = true
+				position_changed.emit()
 		
 		&"grid":
 			if typeof(value) == TYPE_DICTIONARY:
-				# TODO: Validate the dictionary is a valid grid
-				_grid = value
-			else : success = false
-		_:
-			success = false
+				if _ValidateGridData(value) == OK:
+					_grid = value
+					success = true
 	return success
+
 
 func _get_property_list() -> Array:
 	var arr : Array = [
@@ -108,6 +130,11 @@ func _get_property_list() -> Array:
 			usage = PROPERTY_USAGE_DEFAULT
 		},
 		{
+			name = "position_qrs",
+			type = TYPE_VECTOR3I,
+			usage = PROPERTY_USAGE_DEFAULT
+		},
+		{
 			name = "grid",
 			type = TYPE_DICTIONARY,
 			usage = PROPERTY_USAGE_STORAGE
@@ -120,14 +147,18 @@ func _get_property_list() -> Array:
 # ------------------------------------------------------------------------------
 # Private Methods
 # ------------------------------------------------------------------------------
+func _ValidateGridData(gdata : Dictionary) -> int:
+	for coord in gdata:
+		if typeof(coord) != TYPE_VECTOR3I:
+			return ERR_INVALID_PARAMETER
+		var res : int = CSys.validate_instance(gdata[coord])
+		if res != OK:
+			return res
+	return OK
+
+
 func _UpdateGridSeperation() -> void:
-	var line : Array = [
-		Vector3i(-2, 2, 0),
-		Vector3i(-1, 1, 0),
-		Vector3i(0, 0, 0),
-		Vector3i(1, -1, 0)
-	]
-	for v in line:
+	for v in SECTION_GAP_COORDS:
 		if v in _grid:
 			if _sections_seperated:
 				_grid.erase(v)
@@ -154,4 +185,48 @@ func clone() -> ShipData:
 	sd.sections_seperated = _sections_seperated
 	sd.grid = _CloneGrid()
 	return sd
+
+func get_component_positions() -> Array:
+	return _grid.keys()
+
+func set_component(position : Variant, cdata : Dictionary) -> void:
+	var pos : Vector3i = Vector3i.ZERO
+	if position is HexCell:
+		pos = position.qrs
+	elif typeof(position) == TYPE_VECTOR3I:
+		pos = position
+	else:
+		return
+	
+	if not pos in _grid:
+		printerr("SHIP DATA ERROR: No component cell at position ", pos)
+		return
+	if not cdata.is_empty():
+		var res : int = CSys.validate_instance(cdata)
+		if res != OK:
+			printerr("SHIP DATA ERROR: Failed to validate component instance data.")
+			return
+		# TODO: Come up with mechanism for multi-celled components being placed.
+		# TODO 2: If using a cell reference system, growable and clusterable may benefit.
+	_grid[pos] = cdata
+	component_modified.emit(pos)
+
+func get_component(position : Variant) -> Dictionary:
+	var pos : Vector3i = Vector3i.ZERO
+	if position is HexCell:
+		pos = position.qrs
+	elif typeof(position) == TYPE_VECTOR3I:
+		pos = position
+	else:
+		return {}
+		
+	if not pos in _grid:
+		return {}
+	if not _grid[pos].is_empty():
+		return CSys.duplicate_instance(_grid[pos])
+	
+	return {}
+
+func get_position_unit_xy() -> Vector2i:
+	return _position.to_point()
 
