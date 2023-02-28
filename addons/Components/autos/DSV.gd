@@ -1,6 +1,6 @@
 # (D)ictionary (S)chema (V)erifier
 # Author: Bryan Miller
-# Version: 0.0.4
+# Version: 0.0.5
 #
 # The intent of this script is to allow users to validate the data contained in
 # a dictionary against a specially formatted schema dictionary.
@@ -21,6 +21,7 @@ extends Node
 # ------------------------------------------------------------------------------
 const ALLOWED_TYPES : PackedByteArray = [
 	TYPE_BOOL,
+	TYPE_COLOR,
 	TYPE_ARRAY, TYPE_DICTIONARY,
 	TYPE_INT, TYPE_FLOAT,
 	TYPE_STRING, TYPE_STRING_NAME,

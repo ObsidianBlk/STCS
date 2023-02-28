@@ -22,6 +22,11 @@ DSV="*res://addons/Components/autos/DSV.gd"
 CSys="*res://addons/Components/autos/CSys.gd"
 CCDB="*res://addons/Components/autos/CCDB.gd"
 
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/Components/plugin.cfg")

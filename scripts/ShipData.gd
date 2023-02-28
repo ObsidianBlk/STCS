@@ -162,8 +162,8 @@ func _UpdateGridSeperation() -> void:
 		if v in _grid:
 			if _sections_seperated:
 				_grid.erase(v)
-			else:
-				_grid[v] = {}
+		else:
+			_grid[v] = {}
 
 func _CloneGrid() -> Dictionary:
 	var ngrid : Dictionary = {}
