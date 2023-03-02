@@ -200,6 +200,20 @@ func validate_instance(instance : Dictionary) -> int:
 	
 	return OK
 
+func get_component_from_instance(instance : Dictionary) -> Dictionary:
+	var res : int = DSV.verify(instance, COMPONENT_INSTANCE_SCHEMA)
+	if res != OK:
+		return {}
+	
+	if not CCDB.has_database(instance[&"db_name"]):
+		return {}
+	var db : ComponentDB = CCDB.get_database(instance[&"db_name"])
+	if db == null:
+		return {}
+	return db.get_component(instance[&"uuid"])
+	
+	
+
 func exec(op : StringName, instance : Dictionary, default = null):
 	pass
 

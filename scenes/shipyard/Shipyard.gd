@@ -43,7 +43,7 @@ func set_zoom(z : float) -> void:
 func _ready() -> void:
 	# I'm cheating for now...
 	var sd : ShipData = ShipData.new()
-	#sd.sections_seperated = false
+	sd.sections_seperated = false
 	set_ship_data(sd)
 	#_grid_update_requested = true
 

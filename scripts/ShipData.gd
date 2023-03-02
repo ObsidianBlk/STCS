@@ -11,6 +11,40 @@ signal component_modified(position)
 # ------------------------------------------------------------------------------
 # Constants and ENUMs
 # ------------------------------------------------------------------------------
+const STRUCT_SCHEMA : Dictionary = {
+	&"g":{&"req":true, &"type":TYPE_DICTIONARY, &"def":{
+		&"!KEY_OF_TYPE_v3i":{
+			&"type":TYPE_VECTOR3I,
+			&"def":{
+				&"req":true,
+				&"type":TYPE_STRING_NAME,
+				&"allow_empty":true
+			}
+		}
+	}},
+	&"c":{&"req":true, &"type":TYPE_DICTIONARY, &"def":{
+		&"!KEY_OF_TYPE_sn":{
+			&"type":TYPE_STRING_NAME,
+			&"def":{
+				&"type":TYPE_DICTIONARY,
+				&"def":{
+					&"instance":{
+						&"req":true,
+						&"type":TYPE_DICTIONARY
+					},
+					&"cells":{
+						&"req":true,
+						&"type":TYPE_ARRAY,
+						&"item":{
+							&"type":TYPE_VECTOR3I
+						}
+					}
+				}
+			}
+		}
+	}}
+}
+
 const SECTION_REGION_RADIUS : int = 4
 const COMMAND_CENTER_COORD : Vector3i = Vector3i(2, 3, -5)
 const DRIVE_CENTER_COORD : Vector3i = Vector3i(-3, -2, 5)
@@ -29,12 +63,14 @@ var _frame_size : int = 0
 var _sections_seperated : bool = true
 var _position : HexCell = HexCell.new()
 
-var _grid : Dictionary = {}
+var _struct : Dictionary = {
+	&"g": {}, # Grid
+	&"c": {}  # Components
+}
 
 # ------------------------------------------------------------------------------
 # Variables
 # ------------------------------------------------------------------------------
-
 
 # ------------------------------------------------------------------------------
 # Override Methods
@@ -43,12 +79,12 @@ func _init() -> void:
 	var hexCMD : HexCell = HexCell.Flat(COMMAND_CENTER_COORD)
 	var cells : Array = hexCMD.get_region(SECTION_REGION_RADIUS)
 	for cell in cells:
-		_grid[cell.qrs] = {}
+		_struct.g[cell.qrs] = &""
 	
 	var hexDrive : HexCell = HexCell.Flat(DRIVE_CENTER_COORD)
 	cells = hexDrive.get_region(SECTION_REGION_RADIUS)
 	for cell in cells:
-		_grid[cell.qrs] = {}
+		_struct.g[cell.qrs] = &""
 
 
 func _get(property : StringName):
@@ -63,8 +99,8 @@ func _get(property : StringName):
 			return _position.qrs
 		&"position":
 			return _position.clone()
-		&"grid":
-			return _grid
+		&"struct":
+			return _struct
 	return null
 
 
@@ -99,10 +135,10 @@ func _set(property : StringName, value : Variant) -> bool:
 				success = true
 				position_changed.emit()
 		
-		&"grid":
+		&"struct":
 			if typeof(value) == TYPE_DICTIONARY:
-				if _ValidateGridData(value) == OK:
-					_grid = value
+				if _ValidateStructData(value) == OK:
+					_struct = value
 					success = true
 	return success
 
@@ -135,7 +171,7 @@ func _get_property_list() -> Array:
 			usage = PROPERTY_USAGE_DEFAULT
 		},
 		{
-			name = "grid",
+			name = "struct",
 			type = TYPE_DICTIONARY,
 			usage = PROPERTY_USAGE_STORAGE
 		}
@@ -147,33 +183,112 @@ func _get_property_list() -> Array:
 # ------------------------------------------------------------------------------
 # Private Methods
 # ------------------------------------------------------------------------------
-func _ValidateGridData(gdata : Dictionary) -> int:
-	for coord in gdata:
-		if typeof(coord) != TYPE_VECTOR3I:
-			return ERR_INVALID_PARAMETER
-		var res : int = CSys.validate_instance(gdata[coord])
+func _ValidateStructData(struct : Dictionary) -> int:
+	var res : int = DSV.verify(struct, STRUCT_SCHEMA)
+	if res != OK:
+		return res
+	
+	# Loop through the grid and validate that the component reference
+	# matches an index in struct.c
+	for coord in struct.g.keys():
+		if struct.g[coord] == &"":
+			continue
+		if not (struct.g[coord] in struct.c):
+			return ERR_DOES_NOT_EXIST
+	
+	# Loop through the component references...
+	for cref in struct.c.keys():
+		# Validate the component instance data
+		res = CSys.validate_instance(_struct.c[cref].instance)
 		if res != OK:
 			return res
+		
+		# Loop through cells to verify they're in the grid and
+		# the grid references the current component reference.
+		for cell in _struct.c[cref].cells:
+			if not cell in struct.g:
+				return ERR_LINK_FAILED
+			if struct.g[cell] != cref:
+				return ERR_LINK_FAILED
 	return OK
-
 
 func _UpdateGridSeperation() -> void:
 	for v in SECTION_GAP_COORDS:
-		if v in _grid:
+		if v in _struct.g:
 			if _sections_seperated:
-				_grid.erase(v)
+				_struct.g.erase(v)
 		else:
-			_grid[v] = {}
+			_struct.g[v] = {}
 
-func _CloneGrid() -> Dictionary:
-	var ngrid : Dictionary = {}
-	for idx in _grid.keys():
-		if not _grid[idx].is_empty():
-			# TODO: Shit myself if duplication fails.
-			ngrid[idx] = CSys.duplicate_instance(_grid[idx])
-		else:
-			ngrid[idx] = {}
-	return ngrid
+func _CloneStructure() -> Dictionary:
+	var nstruct : Dictionary = {
+		&"g":{},
+		&"c":{}
+	}
+	for cell in _struct.g.keys():
+		nstruct.g[cell] = _struct.g[cell]
+	
+	for cref in _struct.c.keys():
+		nstruct.c[cref] = {
+			&"instance": CSys.duplicate_instance(_struct.c[cref].instance),
+			&"cells": _struct.c[cref].cells.duplicate()
+		}
+	
+	return nstruct
+
+
+func _VariantToQRS(position : Variant) -> Vector3i:
+	if position is HexCell:
+		return position.qrs
+	elif typeof(position) == TYPE_VECTOR3I:
+		return position
+	var hc : HexCell = HexCell.Flat(COMMAND_CENTER_COORD)
+	hc = hc.get_neighbor(0, SECTION_REGION_RADIUS + 1)
+	return hc.qrs
+
+func _ComponentLayoutToPositionList(layout : int) -> Array:
+	var positions : Array = []
+	var hex : HexCell = HexCell.new()
+	for idx in range(7):
+		if layout & (1 << idx) != 0:
+			if idx == 0:
+				positions.append(hex.qrs)
+			else:
+				var qrs : Vector3i = hex.get_neighbor_qrs(idx - 1, 1)
+				positions.append(qrs)
+	return positions
+
+func _GetComponentLayoutType(cdata : Dictionary) -> int:
+	var component : Dictionary = CSys.get_component_from_instance(cdata)
+	if not component.is_empty():
+		return component[&"layout_type"]
+	return -1
+
+func _GetComponentStaticLayoutPositions(cdata : Dictionary) -> Array:
+	var component : Dictionary = CSys.get_component_from_instance(cdata)
+	if component.is_empty():
+		return []
+	if component[&"layout_type"] != CSys.COMPONENT_LAYOUT_TYPE.Static:
+		return []
+	if not (component[&"size_range"].x >= _frame_size and component[&"size_range"].y <= _frame_size):
+		return []
+	var idx : int = _frame_size - component[&"size_range"].x
+	return _ComponentLayoutToPositionList(component[&"layout_list"][idx])
+
+func _CanPlaceComponent(position : Vector3i, cdata : Dictionary) -> bool:
+	var layout_type : int = _GetComponentLayoutType(cdata)
+	match layout_type:
+		CSys.COMPONENT_LAYOUT_TYPE.Static:
+			var cposlist : Array = _GetComponentStaticLayoutPositions(cdata)
+			if cposlist.size() <= 0:
+				return false
+			for cpos in cposlist:
+				if (cpos + position) in _struct.g:
+					if not _struct.g[(cpos + position)].is_empty():
+						return false
+		CSys.COMPONENT_LAYOUT_TYPE.Growable, CSys.COMPONENT_LAYOUT_TYPE.Cluster:
+			return _struct.g[position].is_empty()
+	return false
 
 # ------------------------------------------------------------------------------
 # Public Methods
@@ -183,47 +298,75 @@ func clone() -> ShipData:
 	sd.designation = _designation
 	sd.frame_size = _frame_size
 	sd.sections_seperated = _sections_seperated
-	sd.grid = _CloneGrid()
+	sd.struct = _CloneStructure()
 	return sd
 
 func get_component_positions() -> Array:
-	return _grid.keys()
+	return _struct.g.keys()
 
-func set_component(position : Variant, cdata : Dictionary) -> void:
-	var pos : Vector3i = Vector3i.ZERO
-	if position is HexCell:
-		pos = position.qrs
-	elif typeof(position) == TYPE_VECTOR3I:
-		pos = position
-	else:
-		return
+func can_place_component(position : Variant, cdata : Dictionary) -> bool:
+	var pos : Vector3i = _VariantToQRS(position)
 	
-	if not pos in _grid:
+	if not pos in _struct.g:
+		printerr("SHIP DATA ERROR: No component cell at position ", pos)
+		return false
+	if not cdata.is_empty():
+		return false
+	
+	var res : int = CSys.validate_instance(cdata)
+	if res != OK:
+		printerr("SHIP DATA ERROR: Failed to validate component instance data.")
+		return false
+	
+	return _CanPlaceComponent(pos, cdata)
+
+
+func place_component(position : Variant, cdata : Dictionary) -> void:
+	var pos : Vector3i = _VariantToQRS(position)
+	
+	if not pos in _struct.g:
 		printerr("SHIP DATA ERROR: No component cell at position ", pos)
 		return
-	if not cdata.is_empty():
-		var res : int = CSys.validate_instance(cdata)
-		if res != OK:
-			printerr("SHIP DATA ERROR: Failed to validate component instance data.")
-			return
-		# TODO: Come up with mechanism for multi-celled components being placed.
-		# TODO 2: If using a cell reference system, growable and clusterable may benefit.
-	_grid[pos] = cdata
-	component_modified.emit(pos)
+	if cdata.is_empty():
+		return
+		
+	var res : int = CSys.validate_instance(cdata)
+	if res != OK:
+		printerr("SHIP DATA ERROR: Failed to validate component instance data.")
+		return
+	
+	if _CanPlaceComponent(pos, cdata):
+		var layout_type = _GetComponentLayoutType(cdata)
+		match layout_type:
+			# TODO: Figure out how to "name" each component instance
+			CSys.COMPONENT_LAYOUT_TYPE.Static:
+				var plist : Array = _GetComponentStaticLayoutPositions(cdata)
+				var cname : StringName = "%s:%s"%[cdata[&"uuid"], pos]
+				# TODO: Store component into _struct.c, then store the component "name" in to
+				#  all plist position in _struct.g
+			CSys.COMPONENT_LAYOUT_TYPE.Growable:
+				# TODO: After placing, need to handle grouping of adjacent growable components of
+				#  the same type.
+				pass
+			CSys.COMPONENT_LAYOUT_TYPE.Cluster:
+				pass
+
+func remove_component(position : Variant) -> void:
+	# TODO: Actually write this method!
+	
+	# REMINDER: Growables removed will need to handle possibility of being broken out into
+	#  two different groups... THIS IS GOING TO SUUUUUUCK!
+	pass
+
 
 func get_component(position : Variant) -> Dictionary:
-	var pos : Vector3i = Vector3i.ZERO
-	if position is HexCell:
-		pos = position.qrs
-	elif typeof(position) == TYPE_VECTOR3I:
-		pos = position
-	else:
-		return {}
+	var pos : Vector3i = _VariantToQRS(position)
 		
-	if not pos in _grid:
+	if not pos in _struct.g:
 		return {}
-	if not _grid[pos].is_empty():
-		return CSys.duplicate_instance(_grid[pos])
+	if _struct.g[pos] in _struct.c:
+		var cref : StringName = _struct.g[pos]
+		return CSys.duplicate_instance(_struct.c[cref].instance)
 	
 	return {}
 
