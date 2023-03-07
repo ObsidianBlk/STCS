@@ -27,19 +27,19 @@ const STRUCT_SCHEMA : Dictionary = {
 			&"type":TYPE_STRING_NAME,
 			&"def":{
 				&"type":TYPE_DICTIONARY,
-				&"def":{
-					&"instance":{
-						&"req":true,
-						&"type":TYPE_DICTIONARY
-					},
-					&"cells":{
-						&"req":true,
-						&"type":TYPE_ARRAY,
-						&"item":{
-							&"type":TYPE_VECTOR3I
-						}
-					}
-				}
+#				&"def":{
+#					&"instance":{
+#						&"req":true,
+#						&"type":TYPE_DICTIONARY
+#					},
+#					&"cells":{
+#						&"req":true,
+#						&"type":TYPE_ARRAY,
+#						&"item":{
+#							&"type":TYPE_VECTOR3I
+#						}
+#					}
+#				}
 			}
 		}
 	}}
@@ -342,6 +342,10 @@ func place_component(position : Variant, cdata : Dictionary) -> void:
 			CSys.COMPONENT_LAYOUT_TYPE.Static:
 				var plist : Array = _GetComponentStaticLayoutPositions(cdata)
 				var cname : StringName = "%s:%s"%[cdata[&"uuid"], pos]
+				_struct.c[cname] = cdata
+				for p in plist:
+					_struct.g[p + pos] = cname
+				grid_changed.emit()
 				# TODO: Store component into _struct.c, then store the component "name" in to
 				#  all plist position in _struct.g
 			CSys.COMPONENT_LAYOUT_TYPE.Growable:
@@ -349,14 +353,38 @@ func place_component(position : Variant, cdata : Dictionary) -> void:
 				#  the same type.
 				pass
 			CSys.COMPONENT_LAYOUT_TYPE.Cluster:
-				pass
+				var cname : StringName = "%s:%s"%[cdata[&"uuid"], pos]
+				_struct.c[cname] = cdata
+				_struct.g[pos] = cname
+				grid_changed.emit()
+
 
 func remove_component(position : Variant) -> void:
-	# TODO: Actually write this method!
+	var pos : Vector3i = _VariantToQRS(position)
+	if not pos in _struct.g: return
 	
-	# REMINDER: Growables removed will need to handle possibility of being broken out into
-	#  two different groups... THIS IS GOING TO SUUUUUUCK!
-	pass
+	var cname : StringName = _struct.g[pos]
+	if not cname in _struct.c:
+		printerr("ERROR: Grid references non-existant component data.")
+		return
+	
+	var cdata : Dictionary = _struct.c[cname]
+	var layout_type = _GetComponentLayoutType(cdata)
+	match layout_type:
+		CSys.COMPONENT_LAYOUT_TYPE.Static:
+			_struct.c.erase(cname)
+			for key in _struct.g.keys():
+				if _struct.g[key] == cname:
+					_struct.g.erase(key)
+			grid_changed.emit()
+		CSys.COMPONENT_LAYOUT_TYPE.Growable:
+			# REMINDER: Growables removed will need to handle possibility of being broken out into
+		#  two different groups... THIS IS GOING TO SUUUUUUCK!
+			pass
+		CSys.COMPONENT_LAYOUT_TYPE.Cluster:
+			_struct.c.erase(cname)
+			_struct.g.erase(pos)
+			grid_changed.emit()
 
 
 func get_component(position : Variant) -> Dictionary:

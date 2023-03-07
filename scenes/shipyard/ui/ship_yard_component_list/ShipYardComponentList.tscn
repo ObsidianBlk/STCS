@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1tugrti1wpcq"]
+
+[ext_resource type="Script" path="res://scenes/shipyard/ui/ship_yard_component_list/ShipYardComponentList.gd" id="1_cln3k"]
+
+[node name="ShipYardComponentList" type="PanelContainer"]
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+script = ExtResource("1_cln3k")
+
+[node name="Content" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Layout" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="Filter" type="HBoxContainer" parent="Content/Layout"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Content/Layout/Filter"]
+layout_mode = 2
+text = "Component Type:"
+
+[node name="FilterOptions" type="OptionButton" parent="Content/Layout/Filter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "Bridges"
+popup/item_0/id = 0
+popup/item_1/text = "Power Cores"
+popup/item_1/id = 1
+popup/item_2/text = "Engines"
+popup/item_2/id = 2
+
+[node name="HSeparator" type="HSeparator" parent="Content/Layout"]
+layout_mode = 2
+
+[node name="ItemList" type="ItemList" parent="Content/Layout"]
+layout_mode = 2
+size_flags_vertical = 3

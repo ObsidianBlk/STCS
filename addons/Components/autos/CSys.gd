@@ -211,8 +211,16 @@ func get_component_from_instance(instance : Dictionary) -> Dictionary:
 	if db == null:
 		return {}
 	return db.get_component(instance[&"uuid"])
+
+func instance_has_attributes(instance : Dictionary, attribs : Array[StringName]) -> bool:
+	var component : Dictionary = get_component_from_instance(instance)
+	if not &"attributes" in component: return false
 	
+	for attrib_name in attribs:
+		if not attrib_name in component[&"attributes"]:
+			return false
 	
+	return true
 
 func exec(op : StringName, instance : Dictionary, default = null):
 	pass

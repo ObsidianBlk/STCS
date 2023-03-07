@@ -143,6 +143,26 @@ func get_component_list_of_type(type : StringName) -> Array:
 			})
 	return items
 
+func get_component_list_with_attribs(attrib : Array[StringName]) -> Array:
+	var arr : Array = []
+	for uuid in _db.keys():
+		if component_has_attributes(uuid, attrib):
+			arr.append({
+				&"uuid": uuid,
+				&"type":_db[uuid][&"type"],
+				&"name":_db[uuid][&"name"],
+				&"size_range":_db[uuid][&"size_range"]
+			})
+	return arr
+
+func component_has_attributes(uuid : StringName, attrib : Array[StringName]) -> bool:
+	if not uuid in _db: return false
+	if not &"attributes" in _db[uuid]: return false
+	for attrib_name in attrib:
+		if not attrib_name in _db[uuid][&"attributes"]:
+			return false
+	return true
+
 func has_component(uuid : StringName) -> bool:
 	return uuid in _db
 

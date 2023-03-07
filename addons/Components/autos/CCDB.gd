@@ -18,9 +18,10 @@ const CDB_PATH : Dictionary = {
 	&"user": "user://data/cdb/"
 }
 
-
-#func create_blank_component_database():
-#	return preload("res://addons/STCSDataControl/resources/ComponentDB.gd").new()
+const COMP_SEARCH_OPTIONS_SCHEMA : Dictionary = {
+	&"size":{&"req":false, &"type":TYPE_INT, &"min":0},
+	&"attribs":{&"req":false, &"type":TYPE_ARRAY, &"item":{&"type":TYPE_STRING_NAME}}
+}
 
 # ------------------------------------------------------------------------------
 # Variables
@@ -196,6 +197,23 @@ func get_database_list(limit_to_path_id : StringName = &"") -> Array:
 				&"name": _dbcollection[key][&"db"].name
 			})
 	return list
+
+func get_component_list(options : Dictionary = {}) -> Array:
+	var arr : Array = []
+	if DSV.verify(options, COMP_SEARCH_OPTIONS_SCHEMA) == OK:
+		for key in _dbcollection.keys():
+			var cdb : ComponentDB = _dbcollection[key][&"db"]
+			for item in cdb.get_component_list():
+				item[&"db_name"] = cdb.name
+				if not options.is_empty():
+					if &"size" in options:
+						if not (item[&"size_range"].x >= options[&"size"] and item[&"size_range"].y <= options[&"size"]):
+							continue
+					if &"attribs" in options:
+						if not cdb.component_has_attributes(item[&"uuid"], options[&"attribs"]):
+							continue
+				arr.append(item)
+	return arr
 
 func is_component_in_database(db_name : String, uuid : StringName) -> bool:
 	return is_component_in_database_by_key(db_name.sha256_text(), uuid)
