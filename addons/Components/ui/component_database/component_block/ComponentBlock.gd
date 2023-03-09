@@ -17,7 +17,8 @@ var _data : Dictionary = {}
 # ------------------------------------------------------------------------------
 @onready var uuid_line_edit : LineEdit = %UUID_LineEdit
 @onready var name_line_edit : LineEdit  = %Name_LineEdit
-@onready var type_line_edit : LineEdit  = %Type_LineEdit
+@onready var type_option_btn : OptionButton = %Type_OptionButton
+#@onready var type_line_edit : LineEdit  = %Type_LineEdit
 @onready var sp_line_edit : LineEdit  = %SP_LineEdit
 @onready var absorp_line_edit : LineEdit  = %Absorp_LineEdit
 @onready var bleed_line_edit : LineEdit  = %Bleed_LineEdit
@@ -36,8 +37,15 @@ var _data : Dictionary = {}
 # Override Methods
 # ------------------------------------------------------------------------------
 func _ready() -> void:
+	for item in CSys.COMPONENT_TYPES:
+		type_option_btn.add_item(item)
+	
 	name_line_edit.text_submitted.connect(_on_line_edit_text_submitted.bind(&"name", name_line_edit))
 	name_line_edit.focus_exited.connect(_on_line_edit_focus_exited.bind(&"name", name_line_edit))
+	
+	type_option_btn.item_selected.connect(_on_type_option_item_selected.bind(&"type"))
+	#type_line_edit.text_submitted.connect(_on_line_edit_text_submitted.bind(&"type", type_line_edit, true))
+	#type_line_edit.focus_exited.connect(_on_line_edit_focus_exited.bind(&"type", type_line_edit, true))
 	
 	sp_line_edit.text_submitted.connect(_on_line_edit_text_submitted.bind(&"max_sp", sp_line_edit))
 	sp_line_edit.focus_exited.connect(_on_line_edit_focus_exited.bind(&"max_sp", sp_line_edit))
@@ -78,7 +86,7 @@ func _ready() -> void:
 func _EnableControls(enable : bool = true) -> void:
 	#uuid_line_edit.editable = enable
 	name_line_edit.editable = enable
-	type_line_edit.editable = enable
+	type_option_btn.disabled = not enable
 	sp_line_edit.editable = enable
 	absorp_line_edit.editable = enable
 	bleed_line_edit.editable = enable
@@ -117,6 +125,11 @@ func _UpdateRangeIndicator() -> void:
 		range_indicator_label.text = "[ INVALID ]"
 		range_indicator_label.self_modulate = Color.RED
 
+func _SelectType(type : StringName) -> void:
+	for idx in range(type_option_btn.item_count):
+		if type_option_btn.get_item_text(idx) == type:
+			type_option_btn.select(idx)
+			break
 
 # ------------------------------------------------------------------------------
 # Public Methods
@@ -125,7 +138,7 @@ func clear() -> void:
 	_data = {}
 	uuid_line_edit.clear()
 	name_line_edit.clear()
-	type_line_edit.clear()
+	type_option_btn.select(-1)
 	sp_line_edit.clear()
 	absorp_line_edit.clear()
 	bleed_line_edit.clear()
@@ -152,7 +165,7 @@ func set_record(crecord : Dictionary) -> void:
 	_data = crecord
 	uuid_line_edit.text = _data[&"uuid"]
 	name_line_edit.text = _data[&"name"]
-	type_line_edit.text = _data[&"type"]
+	_SelectType(_data[&"type"])
 	sp_line_edit.text = "%s"%[_data[&"max_sp"]]
 	absorp_line_edit.text = "%s"%[_data[&"absorption"]]
 	bleed_line_edit.text = "%s"%[_data[&"bleed"]]
@@ -198,6 +211,9 @@ func _on_line_edit_text_submitted(new_text : String, val_name : StringName, leno
 			lenode.text = "%s"%[_data[val_name]]
 	else:
 		_data[val_name] = new_text
+
+func _on_type_option_item_selected(idx : int, val_name : StringName) -> void:
+	_data[val_name] = StringName(type_option_btn.get_item_text(idx))
 
 func _on_layout_range_line_edit_focus_exited(is_min : bool) -> void:
 	if is_min:

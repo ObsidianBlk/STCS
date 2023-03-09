@@ -29,17 +29,11 @@ text = "Component Type:"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
-item_count = 3
-popup/item_0/text = "Bridges"
-popup/item_0/id = 0
-popup/item_1/text = "Power Cores"
-popup/item_1/id = 1
-popup/item_2/text = "Engines"
-popup/item_2/id = 2
 
 [node name="HSeparator" type="HSeparator" parent="Content/Layout"]
 layout_mode = 2
 
-[node name="ItemList" type="ItemList" parent="Content/Layout"]
+[node name="ComponentList" type="ItemList" parent="Content/Layout"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3

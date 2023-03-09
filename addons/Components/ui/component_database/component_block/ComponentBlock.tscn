@@ -90,13 +90,10 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Type: "
 
-[node name="Type_LineEdit" type="LineEdit" parent="Layout/Type"]
+[node name="Type_OptionButton" type="OptionButton" parent="Layout/Type"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-editable = false
-caret_blink = true
-caret_blink_interval = 0.5
 
 [node name="BasicStats" type="VBoxContainer" parent="Layout"]
 layout_mode = 2

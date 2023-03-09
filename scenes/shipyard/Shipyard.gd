@@ -6,10 +6,6 @@ extends Node2D
 # ------------------------------------------------------------------------------
 const BASE_SIZE : float = 20.0
 
-const COMP_TYPE_DEF : Dictionary = {
-	&"bridge":[]
-}
-
 # ------------------------------------------------------------------------------
 # Export Variables
 # ------------------------------------------------------------------------------
@@ -25,6 +21,8 @@ var _grid_update_requested : bool = false
 # Onready Variables
 # ------------------------------------------------------------------------------
 @onready var grid_container : Node2D = $GridContainer
+@onready var component_list : Control = %ShipYardComponentList
+@onready var cursor : Node2D = %Cursor
 
 # ------------------------------------------------------------------------------
 # Setters
@@ -34,6 +32,8 @@ func set_ship_data(sd : ShipData) -> void:
 		# TODO: Disconnect any signals
 		ship_data = sd
 		# TODO: Connect any signals
+		if component_list != null:
+			component_list.frame_size = ship_data.frame_size
 		_grid_update_requested = true
 
 func set_zoom(z : float) -> void:
@@ -45,8 +45,11 @@ func set_zoom(z : float) -> void:
 # Override Methods
 # ------------------------------------------------------------------------------
 func _ready() -> void:
+	component_list.component_selected.connect(_on_component_selected)
+	
 	# I'm cheating for now...
 	var sd : ShipData = ShipData.new()
+	sd.frame_size = 1
 	sd.sections_seperated = false
 	set_ship_data(sd)
 	#_grid_update_requested = true
@@ -94,3 +97,32 @@ func _UpdateHexGrid() -> void:
 			grid_container.add_child(hex)
 			hex.set_qrs_position(qrs)
 
+func _UpdateCursor(db_name : StringName, uuid : StringName) -> void:
+	if ship_data == null: return
+	
+	for child in cursor.get_children():
+		if is_instance_of(child, Hex):
+			child.queue_free()
+	
+	var component : Dictionary = CCDB.get_component(db_name, uuid)
+	if component.is_empty(): return
+	
+	var layout : int = CSys.get_component_layout(component, ship_data.frame_size)
+	if layout <= 0: return
+	
+	var coord : HexCell = HexCell.new()
+	for i in range(7):
+		if layout & (1 << i) == 0: continue
+		var hex : Hex = Hex.new()
+		hex.size = BASE_SIZE * zoom
+		cursor.add_child(hex)
+		var ncoord : HexCell = coord if i == 0 else coord.get_neighbor(i-1, 1)
+		hex.set_qrs_position(ncoord.qrs)
+
+
+# ------------------------------------------------------------------------------
+# Handler Methods
+# ------------------------------------------------------------------------------
+func _on_component_selected(db_name : StringName, uuid : StringName) -> void:
+	print("Selected: ", db_name, "->", uuid)
+	_UpdateCursor(db_name, uuid)

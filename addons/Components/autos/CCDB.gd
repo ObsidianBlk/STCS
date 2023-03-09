@@ -19,6 +19,7 @@ const CDB_PATH : Dictionary = {
 }
 
 const COMP_SEARCH_OPTIONS_SCHEMA : Dictionary = {
+	&"type":{&"req":false, &"type":TYPE_STRING_NAME},
 	&"size":{&"req":false, &"type":TYPE_INT, &"min":0},
 	&"attribs":{&"req":false, &"type":TYPE_ARRAY, &"item":{&"type":TYPE_STRING_NAME}}
 }
@@ -188,6 +189,12 @@ func get_database_path_id_by_key(key : StringName) -> StringName:
 		return _dbcollection[key][&"path_id"]
 	return &""
 
+func get_component(db_name : StringName, uuid : StringName) -> Dictionary:
+	var db : ComponentDB = get_database(db_name)
+	if db != null:
+		return db.get_component(uuid)
+	return {}
+
 func get_database_list(limit_to_path_id : StringName = &"") -> Array:
 	var list : Array = []
 	for key in _dbcollection.keys():
@@ -206,8 +213,11 @@ func get_component_list(options : Dictionary = {}) -> Array:
 			for item in cdb.get_component_list():
 				item[&"db_name"] = cdb.name
 				if not options.is_empty():
+					if &"type" in options:
+						if not item[&"type"] == options[&"type"]:
+							continue
 					if &"size" in options:
-						if not (item[&"size_range"].x >= options[&"size"] and item[&"size_range"].y <= options[&"size"]):
+						if not (item[&"size_range"].x <= options[&"size"] and item[&"size_range"].y >= options[&"size"]):
 							continue
 					if &"attribs" in options:
 						if not cdb.component_has_attributes(item[&"uuid"], options[&"attribs"]):

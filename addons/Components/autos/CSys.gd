@@ -18,11 +18,17 @@ const ATTRIB_OBJECTS : Array = [
 	preload("res://addons/Components/objects/Attrib_Officers.gd"),
 ]
 
+const COMPONENT_TYPES : PackedStringArray = [
+	&"Bridge",
+	&"Power Core",
+	&"Engine",
+]
+
 enum COMPONENT_LAYOUT_TYPE {Static=0, Cluster=1, Growable=2}
 const COMPONENT_STRUCTURE : Dictionary = {
 	&"uuid":{&"req":true, &"type":TYPE_STRING_NAME, &"allow_empty":false},
 	&"name":{&"req":true, &"type":TYPE_STRING, &"allow_empty":false},
-	&"type":{&"req":true, &"type":TYPE_STRING_NAME, &"allow_empty":false},
+	&"type":{&"req":true, &"type":TYPE_STRING_NAME, &"one_of":COMPONENT_TYPES},
 	&"max_sp":{&"req":true, &"type":TYPE_INT},
 	&"absorption":{&"req":true, &"type":TYPE_INT},
 	&"bleed":{&"req":true, &"type":TYPE_INT},
@@ -59,6 +65,11 @@ func _ready() -> void:
 				_attribs[aname] = atti
 				atti.response.connect(_on_attribute_response)
 	_is_ready = true
+	
+	if not Engine.is_editor_hint():
+		CCDB.load_database_resources()
+	
+	# TODO: Ummmm... can't I just use the ready() signal? Maybe?
 	readied.emit()
 
 # ------------------------------------------------------------------------------
@@ -134,6 +145,20 @@ func validate_component_data(component : Dictionary, ignore_attribs : bool = fal
 			if res != OK:
 				return res
 	return OK
+
+func get_component_layout(component : Dictionary, size : int) -> int:
+	var res : int = DSV.verify(component, COMPONENT_STRUCTURE)
+	if res != OK:
+		return 0
+	
+	if not (component[&"size_range"].x <= size and component[&"size_range"].y >= size):
+		return 0
+	
+	if &"layout_list" in component:
+		var idx = size - component[&"size_range"].x
+		return component[&"layout_list"][idx]
+	
+	return 1
 
 func get_attribute_handler(attrib_name : StringName) -> ComponentAttribute:
 	if attrib_name in _attribs:
